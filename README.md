@@ -6,8 +6,8 @@ It supports column chooser and row filtering.
 ### How to build from source
 ```
 git clone https://github.com/devizer/Universe.SqlTrace.git
-cd pet-project
-call restore-build-test-run.cmd
+cd Sample report is attached
+call restore-build-test.cmd
 ```
 
 ### How to install using nuget
