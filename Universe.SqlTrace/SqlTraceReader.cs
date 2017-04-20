@@ -336,7 +336,7 @@ namespace Universe.SqlTrace
                     }
 
                     if (summary == null)
-                        summary = new SqlCounters();
+                        summary = new SqlCounters() {Requests = 0};
 
                     return summary;
                 }
