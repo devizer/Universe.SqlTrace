@@ -1,0 +1,1 @@
+set SqlTrace_Version=1.2.8.0
