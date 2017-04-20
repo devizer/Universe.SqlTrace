@@ -1,14 +1,16 @@
+using System;
 using System.Collections.Generic;
 
 namespace Universe.SqlTrace
 {
+    [Serializable]
     public class SqlCounters
     {
-        public long Duration;
-        public long CPU;
-        public long Reads;
-        public long Writes;
-        public long Requests = 1;
+        public long Duration { get; set; }
+        public long CPU { get; set; }
+        public long Reads { get; set; }
+        public long Writes { get; set; }
+        public long Requests { get; set; } = 1;
 
         public static SqlCounters operator +(SqlCounters one, SqlCounters two)
         {

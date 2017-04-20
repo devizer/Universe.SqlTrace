@@ -442,7 +442,7 @@ EXEC sp_trace_setstatus @trace, 2",
                 @"SELECT {0} FROM ::fn_trace_gettable (@file, -1)",
 
             SqlSelectSummary =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(1) FROM ::fn_trace_gettable(@file, -1)",
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Sum(1) FROM ::fn_trace_gettable(@file, -1)",
 
             SqlSelectGroups =
                 "SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}",
