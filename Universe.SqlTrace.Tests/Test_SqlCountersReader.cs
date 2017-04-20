@@ -131,6 +131,19 @@ namespace Universe.SqlTrace.Tests
         }
 
         [Test]
+        public void Test_Empty_Session()
+        {
+            using (SqlTraceReader reader = new SqlTraceReader())
+            {
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(Guid.NewGuid().ToString()));
+                var summary = reader.ReadSummaryReport();
+                Console.WriteLine("Summary of empty session " + summary);
+                reader.Stop();
+                reader.Dispose();
+            }
+        }
+
+        [Test]
         public void Single_StoredProcedure_Is_Captured()
         {
             string sql = "SELECT @@version, @parameter; declare @i int set @i=0 while @i<10 begin set @i=@i+1 select count(1) from dbo.sysobjects end";
