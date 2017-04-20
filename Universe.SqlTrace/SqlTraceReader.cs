@@ -329,9 +329,9 @@ namespace Universe.SqlTrace
                     SqlCounters summary = null;
                     using (SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow))
                     {
-                        while (rdr.Read())
+                        if (rdr.Read())
                         {
-                            summary = ReadCounters(rdr, 0);
+                            summary = ReadCounters2(rdr, 0);
                         }
                     }
 
@@ -343,6 +343,26 @@ namespace Universe.SqlTrace
             }
         }
 
+
+        private static SqlCounters ReadCounters2(SqlDataReader rdr, int startIndex)
+        {
+
+            SqlCounters ret = new SqlCounters();
+            bool isNull0 = rdr.IsDBNull(startIndex + 0);
+            bool isNull1 = rdr.IsDBNull(startIndex + 1);
+            bool isNull2 = rdr.IsDBNull(startIndex + 2);
+            bool isNull3 = rdr.IsDBNull(startIndex + 3);
+            bool isNull4 = rdr.IsDBNull(startIndex + 4);
+            if (isNull0 && isNull1 && isNull2 && isNull3 && isNull4)
+                return null;
+
+            ret.Duration = isNull0 ? 0 : rdr.GetInt64(startIndex + 0) / 1000;
+            ret.CPU = isNull1 ? 0 : rdr.GetInt32(startIndex + 1);
+            ret.Reads = isNull2 ? 0 : rdr.GetInt64(startIndex + 2);
+            ret.Writes = isNull3 ? 0 : rdr.GetInt64(startIndex + 3);
+            ret.Requests = isNull4 ? 0 : rdr.GetInt32(startIndex + 4);
+            return ret;
+        }
 
         private static SqlCounters ReadCounters(SqlDataReader rdr, int startIndex)
         {
@@ -422,7 +442,7 @@ EXEC sp_trace_setstatus @trace, 2",
                 @"SELECT {0} FROM ::fn_trace_gettable (@file, -1)",
 
             SqlSelectSummary =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes) FROM ::fn_trace_gettable(@file, -1)",
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(1) FROM ::fn_trace_gettable(@file, -1)",
 
             SqlSelectGroups =
                 "SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}",

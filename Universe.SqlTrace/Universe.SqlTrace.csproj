@@ -69,6 +69,7 @@
     <Compile Include="LocalInstances\LocalInstancesDiscovery.cs" />
     <Compile Include="PInvoke.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyVersion.cs" />
     <Compile Include="SqlCounters.cs" />
     <Compile Include="SqlTraceReader.cs" />
     <Compile Include="SqlGroupCounters.cs" />

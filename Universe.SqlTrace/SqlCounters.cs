@@ -8,6 +8,7 @@ namespace Universe.SqlTrace
         public long CPU;
         public long Reads;
         public long Writes;
+        public long Requests = 1;
 
         public static SqlCounters operator +(SqlCounters one, SqlCounters two)
         {
@@ -16,12 +17,14 @@ namespace Universe.SqlTrace
             ret.CPU = one.CPU + two.CPU;
             ret.Reads = one.Reads + two.Reads;
             ret.Writes = one.Writes + two.Writes;
+            ret.Requests = one.Requests + two.Requests;
             return ret;
         }
 
+
         public override string ToString()
         {
-            return string.Format("Duration: {0}, CPU: {1}, Reads: {2}, Writes: {3}", Duration, CPU, Reads, Writes);
+            return string.Format("Duration: {0}, CPU: {1}, Reads: {2}, Writes: {3}, Requests: {4}", Duration, CPU, Reads, Writes, Requests);
         }
     }
 }
