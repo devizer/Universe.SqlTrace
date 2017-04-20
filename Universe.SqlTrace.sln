@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace", "Universe.SqlTrace\Universe.SqlTrace.csproj", "{656428BD-D958-4A92-B000-E44DCADA5477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace.Tests", "Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj", "{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{656428BD-D958-4A92-B000-E44DCADA5477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{656428BD-D958-4A92-B000-E44DCADA5477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{656428BD-D958-4A92-B000-E44DCADA5477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{656428BD-D958-4A92-B000-E44DCADA5477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

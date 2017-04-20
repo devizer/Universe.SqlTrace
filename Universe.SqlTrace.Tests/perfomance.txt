@@ -1,0 +1,17 @@
+﻿Оси:
+  Кол-во команд
+  Кол-во апдейтов
+  Кол-во прочитанных данных
+  Пулинг
+  Конкурентные запросы
+  
+  
+X: 1+5
+Y: конкурентные потоки {pool}
+cell: client(C+T)+server(C+D+R+W)
+
+1. На каждый запрос создается и SqlTraceReader
+1a. То же что и 1. но с фильтром по ServerProcess и ClientProcess
+1b. То же что и 1. но с фильтром по Application, ServerProcess и ClientProcess
+2. На каждый Unit of work создается SqlTraceReader
+2a. С фильтром по Application и ClientProcess.
