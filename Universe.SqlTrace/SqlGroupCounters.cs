@@ -2,6 +2,7 @@ using System;
 
 namespace Universe.SqlTrace
 {
+
     public class SqlGroupCounters<TKey>
     {
         public TKey Group;
