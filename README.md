@@ -6,7 +6,7 @@ It supports column chooser and row filtering.
 ### How to build from source
 ```
 git clone https://github.com/devizer/Universe.SqlTrace.git
-cd Sample report is attached
+cd Universe.SqlTrace
 call restore-build-test.cmd
 ```
 

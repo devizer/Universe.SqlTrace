@@ -135,8 +135,10 @@ namespace Universe.SqlTrace.Tests
         {
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(Guid.NewGuid().ToString()));
+                var dismatchFilter = TraceRowFilter.CreateByApplication(Guid.NewGuid().ToString());
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, dismatchFilter);
                 var summary = reader.ReadSummaryReport();
+                Assert.Zero(summary.Requests);
                 Console.WriteLine("Summary of empty session " + summary);
                 reader.Stop();
                 reader.Dispose();

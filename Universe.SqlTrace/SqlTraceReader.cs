@@ -326,25 +326,23 @@ namespace Universe.SqlTrace
                 using (SqlCommand cmd = new SqlCommand(SqlSelectSummary, con))
                 {
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
-                    SqlCounters summary = null;
                     using (SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow))
                     {
+                        SqlCounters summary;
                         if (rdr.Read())
-                        {
-                            summary = ReadCounters2(rdr, 0);
-                        }
+                            summary = ReadCounters_WithRequestsCount(rdr, 0);
+                        else
+                            summary = SqlCounters.Zero;
+
+                        return summary;
                     }
 
-                    if (summary == null)
-                        summary = new SqlCounters() {Requests = 0};
-
-                    return summary;
                 }
             }
         }
 
 
-        private static SqlCounters ReadCounters2(SqlDataReader rdr, int startIndex)
+        private static SqlCounters ReadCounters_WithRequestsCount(SqlDataReader rdr, int startIndex)
         {
 
             SqlCounters ret = new SqlCounters();

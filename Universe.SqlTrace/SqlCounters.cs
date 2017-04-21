@@ -23,6 +23,10 @@ namespace Universe.SqlTrace
             return ret;
         }
 
+        public static SqlCounters Zero
+        {
+            get { return new SqlCounters() {Requests = 0}; }
+        }
 
         public override string ToString()
         {
