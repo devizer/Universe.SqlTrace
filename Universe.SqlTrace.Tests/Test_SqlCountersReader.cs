@@ -137,9 +137,18 @@ namespace Universe.SqlTrace.Tests
             {
                 var dismatchFilter = TraceRowFilter.CreateByApplication(Guid.NewGuid().ToString());
                 reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, dismatchFilter);
+                
+                // summary
                 var summary = reader.ReadSummaryReport();
                 Assert.Zero(summary.Requests);
-                Console.WriteLine("Summary of empty session " + summary);
+                Console.WriteLine("Summary of empty session is " + summary);
+
+                // details
+                var details = reader.ReadDetailsReport();
+                CollectionAssert.IsEmpty(details, "Details Collection");
+                Assert.Zero(details.Summary.Requests);
+                CollectionAssert.IsEmpty(details.GroupByApplication(), "Groups by application");
+
                 reader.Stop();
                 reader.Dispose();
             }

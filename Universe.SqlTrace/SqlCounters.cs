@@ -30,7 +30,7 @@ namespace Universe.SqlTrace
 
         public override string ToString()
         {
-            return string.Format("Duration: {0}, CPU: {1}, Reads: {2}, Writes: {3}, Requests: {4}", Duration, CPU, Reads, Writes, Requests);
+            return string.Format("{{Duration: {0}, CPU: {1}, Reads: {2}, Writes: {3}, Requests: {4}}}", Duration, CPU, Reads, Writes, Requests);
         }
     }
 }

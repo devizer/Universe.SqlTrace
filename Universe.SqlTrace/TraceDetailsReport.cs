@@ -44,7 +44,7 @@ namespace Universe.SqlTrace
             {
                 if (_Summary == null)
                 {
-                    SqlCounters ret = new SqlCounters();
+                    SqlCounters ret = SqlCounters.Zero;
                     foreach (SqlStatementCounters value in this)
                         ret = ret + value.Counters;
 
