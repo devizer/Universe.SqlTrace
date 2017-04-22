@@ -17,13 +17,13 @@ nuget install Universe.SqlTrace
 
 ### About API
 #### Optional columns chooser
- * `Sql`: **SP name or SQL Batch Text**
- * `Application`: **Application Name**
- * `Database`: **Database Name**
- * `ClientHost`: **Client Host Name**
- * `ClientProcess`: **Client Process Id**
- * `Login`: **Login**
- * `ServerProcess`: **SQL Server Process Id**
+ * `Sql`: SP name or SQL Batch Text
+ * `Application`: Application Name
+ * `Database`: Database Name
+ * `ClientHost`: Client Host Name
+ * `ClientProcess`: Client Process Id
+ * `Login`: Login
+ * `ServerProcess`: SQL Server Process Id
 
 #### Mandatory trace columns, which are always presented in the trace session
 * `Duration`
