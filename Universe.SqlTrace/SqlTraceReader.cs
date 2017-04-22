@@ -410,6 +410,10 @@ SET @ON = 1
 EXEC @ERROR = sp_trace_create @TRACE OUTPUT, 0, @file, @maxfilesize
 -- IF @ERROR <> 0 Begin RAISEERROR ('Failed to create trace', 16, 0) End
 EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%PlAcE hoLDER to ignoRE tHIS crEATIon stateMENT by Universe Trace Library%'
+-- ignore sp_reset_connection
+EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%sp_reset_connection%'
+-- Statement below also works
+-- EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 1, N'exec sp_reset_connection '
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 17, @ON -- Writes

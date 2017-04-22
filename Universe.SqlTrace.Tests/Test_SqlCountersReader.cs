@@ -105,6 +105,7 @@ namespace Universe.SqlTrace.Tests
             sql = sql + sql + sql;
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                Console.WriteLine("Master Connection: " + TestEnvironment.MasterConnectionString);
                 reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.Sql | TraceColumns.ClientProcess);
 
                 using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
@@ -184,6 +185,35 @@ namespace Universe.SqlTrace.Tests
                 }
 
                 Assert.Fail("Expected sql proc '{0}' call by process {1}", sql, idProcess);
+            }
+        }
+
+        [Test]
+        public void Test_Sp_Reset_Connection()
+        {
+            string app = "Test " + Guid.NewGuid();
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(TestEnvironment.DbConnectionString);
+            b.ApplicationName = app;
+
+            using (SqlTraceReader reader = new SqlTraceReader())
+            {
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
+
+                int n = 42;
+                for (int i = 0; i < n; i++)
+                {
+                    using (SqlConnection con = new SqlConnection(b.ConnectionString))
+                    {
+                        con.Open();
+                        using (SqlCommand cmd = new SqlCommand("Select @@version", con))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                // Details
+                var details = reader.ReadDetailsReport();
+                Assert.AreEqual(n, details.Count);
             }
         }
 
