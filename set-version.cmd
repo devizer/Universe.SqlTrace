@@ -1,1 +1,2 @@
-set SqlTrace_Version=1.3.10
+set SqlTrace_Version=1.4.3
+set PKG_VERSION=%SqlTrace_Version%

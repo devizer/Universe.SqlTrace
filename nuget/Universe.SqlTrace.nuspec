@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding='utf-8'?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Universe.SqlTrace</id>
+    <version>$version$</version>
+    <iconUrl>https://raw.githubusercontent.com/devizer/glist/master/Devizer0-200.png</iconUrl>
+    <title>This library manages MS SQL Profiler in runtime.</title>
+    <authors>Volodymyr Hoida</authors>
+    <owners>Volodymyr Hoida</owners>
+    <projectUrl>https://github.com/devizer/Universe.SqlTrace</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Tiny library, which wraps MS SQL Server sp_trace* calls and queries to ::fn_trace_gettable into strongly types data access.
+It supports column chooser and row filtering. Tested on SQL Server 2000 ... 2016
+    </description>
+    <summary>It wraps SQL's tracing managment into strongly typed data access</summary>
+    <copyright>Copyright © 2017 Volodymyr Hoida</copyright>
+    <tags>mssql trace</tags>
+  </metadata>
+  <files>
+    <file src="V:\_GIT\Universe.SqlTrace\Universe.SqlTrace\bin\Release\Universe.SqlTrace.*" 
+          target="lib\net40" />
+  </files>
+</package>
