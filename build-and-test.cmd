@@ -14,4 +14,5 @@ call build-only.cmd
 set work=Universe.SqlTrace.Tests\bin\Debug\
 pushd "%work%"
 "%NUNIT_RUNNER_EXE%" --workers=1 Universe.SqlTrace.Tests.exe
+"%REPORT_UNIT_EXE%" .\ 1>report_unit.log 2>&1
 popd
