@@ -1,3 +1,7 @@
 ﻿[submodule "Universe.SqlServerJam"]
     path = include/Universe.SqlServerJam
-    url = git://github.com/devizer/Universe.SqlServerJam
+    url = https://github.com/devizer/Universe.SqlServerJam
+[submodule "include/Universe.SqlServerJam"]
+	path = include/Universe.SqlServerJam
+	url = https://github.com/devizer/Universe.SqlServerJam
+	branch = master
