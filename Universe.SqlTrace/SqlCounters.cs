@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Universe.SqlTrace
 {
@@ -10,7 +9,12 @@ namespace Universe.SqlTrace
         public long CPU { get; set; }
         public long Reads { get; set; }
         public long Writes { get; set; }
-        public long Requests { get; set; } = 1;
+        public long Requests { get; set; }
+
+        public SqlCounters()
+        {
+            Requests = 1;
+        }
 
         public static SqlCounters operator +(SqlCounters one, SqlCounters two)
         {
