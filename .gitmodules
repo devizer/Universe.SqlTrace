@@ -1,0 +1,3 @@
+﻿[submodule "Universe.SqlServerJam"]
+    path = include/Universe.SqlServerJam
+    url = git://github.com/devizer/Universe.SqlServerJam

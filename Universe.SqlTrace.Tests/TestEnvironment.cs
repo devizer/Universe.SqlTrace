@@ -24,7 +24,7 @@ namespace Universe.SqlTrace.Tests
             foreach (var sqlInstance in servers.Instances)
                 if (sqlInstance.Status == ServiceControllerStatus.Running)
                     if (sqlInstance.Description != null)
-                        if (sqlInstance.Edition == SqlEdition.Express)
+                        // if (sqlInstance.Edition == SqlEdition.Express)
                             if (SqlServerUtils.IsAdmin(sqlInstance.FullLocalName))
                             {
                                 AnySqlServer = sqlInstance.FullLocalName;

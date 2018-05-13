@@ -4,7 +4,7 @@
     <id>Universe.SqlTrace</id>
     <version>$version$</version>
     <iconUrl>https://raw.githubusercontent.com/devizer/glist/master/Devizer0-200.png</iconUrl>
-    <title>This library manages MS SQL Profiler in runtime.</title>
+    <title>MS SQL Profiler .NET</title>
     <authors>Volodymyr Hoida</authors>
     <owners>Volodymyr Hoida</owners>
     <projectUrl>https://github.com/devizer/Universe.SqlTrace</projectUrl>
@@ -17,7 +17,7 @@ It supports column chooser and row filtering. Tested on SQL Server 2000 ... 2016
     <tags>mssql trace</tags>
   </metadata>
   <files>
-    <file src="V:\_GIT\Universe.SqlTrace\Universe.SqlTrace\bin\Release\Universe.SqlTrace.*" 
+    <file src="..\Universe.SqlTrace\bin\Release\Universe.SqlTrace.*" 
           target="lib\net40" />
   </files>
 </package>
