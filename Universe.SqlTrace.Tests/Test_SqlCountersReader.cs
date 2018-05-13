@@ -16,7 +16,7 @@ namespace Universe.SqlTrace.Tests
     [TestFixture]
     public class Test_SqlCountersReader
     {
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
             TestEnvironment.Initialize();
@@ -199,8 +199,8 @@ namespace Universe.SqlTrace.Tests
             {
                 reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
 
-                int n = 42;
-                for (int i = 0; i < n; i++)
+                int nQueries = 42;
+                for (int i = 0; i < nQueries; i++)
                 {
                     using (SqlConnection con = new SqlConnection(b.ConnectionString))
                     {
@@ -213,13 +213,13 @@ namespace Universe.SqlTrace.Tests
                 }
                 // Details
                 var details = reader.ReadDetailsReport();
-                Assert.AreEqual(n, details.Count);
+                Assert.AreEqual(details.Count, nQueries);
             }
         }
 
 
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void TestFixtureTearDown()
         {
             TestEnvironment.TearDown();

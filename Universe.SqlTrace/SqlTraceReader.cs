@@ -20,92 +20,6 @@ namespace Universe.SqlTrace
         public bool IsReady;
         private bool _NeedStop = false;
 
-        public class TraceFieldInfo
-        {
-            public readonly int SqlId;
-            public readonly string Select;
-            public readonly string GroupExpression;
-
-            private static TraceColumns[] allColumns =
-                new[]
-                    {
-                        TraceColumns.Application, 
-                        TraceColumns.ClientHost, 
-                        TraceColumns.ClientProcess, 
-                        TraceColumns.Database, 
-                        TraceColumns.Login, 
-                        TraceColumns.ServerProcess, 
-                        TraceColumns.Sql,
-                    };
-
-            public TraceFieldInfo(int sqlId, string select)
-                : this(sqlId, select, select)
-            {
-            }
-
-            public TraceFieldInfo(int sqlId, string @select, string groupExpression)
-            {
-                SqlId = sqlId;
-                Select = select;
-                GroupExpression = groupExpression;
-            }
-
-
-            public static TraceFieldInfo Get(TraceColumns field)
-            {
-                if (field == TraceColumns.Application)
-                    return new TraceFieldInfo(10, "ApplicationName");
-
-                if (field == TraceColumns.ClientHost)
-                    return new TraceFieldInfo(8, "HostName");
-
-                if (field == TraceColumns.ClientProcess)
-                    return new TraceFieldInfo(9, "ClientProcessID");
-
-                if (field == TraceColumns.Database)
-                    return new TraceFieldInfo(35, "DatabaseName");
-
-                if (field == TraceColumns.Login)
-                    return new TraceFieldInfo(11, "LoginName");
-
-                if (field == TraceColumns.ServerProcess)
-                    return new TraceFieldInfo(12, "SPID");
-
-                if (field == TraceColumns.Sql)
-                    return new TraceFieldInfo(
-                        1, 
-                        "CASE WHEN EventClass = 10 THEN ObjectName ELSE NULL END, TextData",
-                        "CASE WHEN EventClass = 10 THEN ObjectName ELSE TextData END");
-
-                throw new ArgumentException(
-                    "Unknown TraceColumn " + field,
-                    "field");
-            }
-
-            public static List<TraceColumns> ToArray(TraceColumns columns)
-            {
-                List<TraceColumns> ret = new List<TraceColumns>();
-                foreach (TraceColumns item in allColumns)
-                    if (0 != (item & columns))
-                        ret.Add(item);
-
-                return ret;
-            }
-
-            public static string GetSqlSelect(TraceColumns columns)
-            {
-                List<TraceColumns> list = ToArray(columns);
-                StringBuilder ret = new StringBuilder();
-                foreach (TraceColumns field in list)
-                {
-                    TraceFieldInfo info = Get(field);
-                    ret.Append(ret.Length > 0 ? ", " : "").Append(info.Select);
-                }
-
-                return ret.ToString();
-            }
-        }
-
         private static string _PrevCreatedDirectory = null;
         
         public void Start(string connectionString, string tracePath, TraceColumns columns, params TraceRowFilter[] rowFilters)
@@ -131,7 +45,7 @@ namespace Universe.SqlTrace
                 foreach (TraceColumns field in TraceFieldInfo.ToArray(columns))
                 {
                     TraceFieldInfo info = TraceFieldInfo.Get(field);
-                    sqlSetFields.AppendFormat(SqlSetTraceColumn, info.SqlId, field);
+                    sqlSetFields.AppendFormat(SQL_SET_TRACE_COLUMN, info.SqlId, field);
                 }
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
@@ -152,7 +66,7 @@ namespace Universe.SqlTrace
                     rowFilterColumns.Add(rowFilter.Column);
                 }
 
-                string sqlCmd = SqlStart1 + sqlSetFields + SqlStart2;
+                string sqlCmd = SQL_START1_TRACE + sqlSetFields + SQL_START2_TRACE;
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
                     cmd.CommandType = CommandType.Text;
@@ -176,7 +90,7 @@ namespace Universe.SqlTrace
                 {
                     con.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(SqlStop, con))
+                    using (SqlCommand cmd = new SqlCommand(SQL_STOP_TRACE, con))
                     {
                         cmd.Parameters.Add("@trace", SqlDbType.Int).Value = _traceId;
                         cmd.ExecuteNonQuery();
@@ -201,8 +115,8 @@ namespace Universe.SqlTrace
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
                 string sqlCmd =
                     string.Format(
-                        SqlSelectDetails,
-                        sqlSelect == "" ? SqlSelectCounters : sqlSelect + ", " + SqlSelectCounters
+                        SQL_SELECT_DETAILS,
+                        sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS
                         );
 
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
@@ -279,7 +193,7 @@ namespace Universe.SqlTrace
             TraceFieldInfo info = TraceFieldInfo.Get(groupingField);
 
             string sql = string.Format(
-                SqlSelectGroups,
+                SQL_SELECT_GROUPS,
                 info.GroupExpression);
                 
 
@@ -323,7 +237,7 @@ namespace Universe.SqlTrace
                 if (con.State != ConnectionState.Open)
                     con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(SqlSelectSummary, con))
+                using (SqlCommand cmd = new SqlCommand(SQL_SELECT_SUMMARY, con))
                 {
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
                     using (SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow))
@@ -398,7 +312,7 @@ namespace Universe.SqlTrace
         }
 
         private static readonly string
-            SqlStart1 =
+            SQL_START1_TRACE =
                 @"
 SET NOCOUNT ON
 DECLARE @ERROR int
@@ -427,31 +341,31 @@ EXEC @ERROR = sp_trace_setevent @TRACE, 10, 27, @ON -- EventClass
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 34, @ON -- ObjectName
 ",
 
-            SqlStart2 = @"
+            SQL_START2_TRACE = @"
 EXEC @ERROR = sp_trace_setstatus @TRACE, 1
 SELECT @TRACE
 ",
 
-            SqlStop =
+            SQL_STOP_TRACE =
                 @"
 EXEC sp_trace_setstatus @trace, 0
 EXEC sp_trace_setstatus @trace, 2",
 
-            SqlSelectCounters =
+            SQL_SELECT_COUNTERS =
                 "[Duration], [CPU], [Reads], [Writes]",
 
-            SqlSelectDetails =
+            SQL_SELECT_DETAILS =
                 @"SELECT {0} FROM ::fn_trace_gettable (@file, -1)",
 
-            SqlSelectSummary =
+            SQL_SELECT_SUMMARY =
                 @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1)",
 
-            SqlSelectGroups =
+            SQL_SELECT_GROUPS =
                 "SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}",
 
-            SqlSetTraceColumn = @"
-EXEC @ERROR = sp_trace_setevent @TRACE, 10, {0}, @ON; -- {1}
-EXEC @ERROR = sp_trace_setevent @TRACE, 12, {0}, @ON; -- {1}
+            SQL_SET_TRACE_COLUMN = @"
+EXEC @ERROR = sp_trace_SetEvent @TRACE, 10, {0}, @ON; -- {1}
+EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 ";
     }
 }

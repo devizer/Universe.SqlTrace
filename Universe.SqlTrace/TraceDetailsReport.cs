@@ -8,21 +8,21 @@ namespace Universe.SqlTrace
     public class TraceDetailsReport : ReadOnlyCollection<SqlStatementCounters>
     {
         public readonly TraceColumns _includedColumns = TraceColumns.None;
-
         public delegate bool Predicate(SqlStatementCounters filter);
+
+        private SqlCounters _Summary;
+
+
 
         public TraceDetailsReport()
             : base(new SqlStatementCounters[] { })
         {
         }
 
-        
         public TraceDetailsReport(TraceColumns includedColumns, IList<SqlStatementCounters> list) : base(list)
         {
             _includedColumns = includedColumns;
         }
-
-        private SqlCounters _Summary;
 
         public void Filter(Predicate filter)
         {
