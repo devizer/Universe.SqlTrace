@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
+using Universe.SqlServerJam;
 using Universe.SqlTrace.LocalInstances;
 
 namespace Universe.SqlTrace.Tests
@@ -18,13 +19,14 @@ namespace Universe.SqlTrace.Tests
         public static void Initialize()
         {
             if (AnySqlServer != null) return;
+            var serversNew = SqlDiscovery.GetLocalDbAndServerList();
             var servers = LocalInstancesDiscovery.GetFull(TimeSpan.FromSeconds(9));
             LocalInstanceInfo.SqlInstance found = null;
             Debug.WriteLine("SQL Server Instances: " + servers);
             foreach (var sqlInstance in servers.Instances)
                 if (sqlInstance.Status == ServiceControllerStatus.Running)
                     if (sqlInstance.Description != null)
-                        // if (sqlInstance.Edition == SqlEdition.Express)
+                        if (sqlInstance.Ver.Major == 9)
                             if (SqlServerUtils.IsAdmin(sqlInstance.FullLocalName))
                             {
                                 AnySqlServer = sqlInstance.FullLocalName;
@@ -47,7 +49,7 @@ namespace Universe.SqlTrace.Tests
             Environment.SystemDirectory.Substring(0, 2)
             + @"\\temp\\traces";
 
-        public static readonly string WorkingAppicationName =
+        public static readonly string WorkingApplicationName =
             "SqlTrace unit-test";
 
         public static string MasterConnectionString
@@ -67,7 +69,7 @@ namespace Universe.SqlTrace.Tests
             get
             {
                 return
-                    "Application Name=" + WorkingAppicationName + ";" +
+                    "Application Name=" + WorkingApplicationName + ";" +
                     "Integrated Security=SSPI;"
                     + "Data Source=" + AnySqlServer + ";"
                     + "Pooling=true;"

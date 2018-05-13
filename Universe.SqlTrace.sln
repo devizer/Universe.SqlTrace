@@ -1,9 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace", "Universe.SqlTrace\Universe.SqlTrace.csproj", "{656428BD-D958-4A92-B000-E44DCADA5477}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace.Tests", "Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj", "{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlServerJam", "include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj", "{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,8 +23,15 @@ Global
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5CCEAFA7-29B3-4CDF-BCA8-6BCFF6B59E62}
 	EndGlobalSection
 EndGlobal

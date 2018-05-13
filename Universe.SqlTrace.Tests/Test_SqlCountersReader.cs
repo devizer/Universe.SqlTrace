@@ -47,7 +47,7 @@ namespace Universe.SqlTrace.Tests
         {
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(TestEnvironment.WorkingAppicationName), TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(TestEnvironment.WorkingApplicationName), TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
 
                 using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
                 {

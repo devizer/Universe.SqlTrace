@@ -81,6 +81,10 @@
     <Compile Include="Test_SqlCountersReader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj">
+      <Project>{9ef049b1-cc08-4d1b-8f89-b462652e4d9d}</Project>
+      <Name>Universe.SqlServerJam</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Universe.SqlTrace\Universe.SqlTrace.csproj">
       <Project>{656428BD-D958-4A92-B000-E44DCADA5477}</Project>
       <Name>Universe.SqlTrace</Name>
