@@ -1,5 +1,6 @@
 type Prepare-NuGet-And-build-tools.ps1 | powershell -c -
 call ~local-build-tools.cmd
+"%NUGET_EXE%" restore
 
 pushd include\Universe.SqlServerJam\src
 set TEST_SQL_NET_DURATION_OF_Ping=42
@@ -14,5 +15,5 @@ call build-only.cmd
 set work=Universe.SqlTrace.Tests\bin\Debug\
 pushd "%work%"
 "%NUNIT_RUNNER_EXE%" --workers=1 Universe.SqlTrace.Tests.exe
-"%REPORT_UNIT_EXE%" .\ 1>report_unit.log 2>&1
+"%REPORT_UNIT_EXE%" .\ tests-report\ 1>report_unit.log 2>&1
 popd
