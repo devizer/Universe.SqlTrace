@@ -15,7 +15,8 @@ $report_Cmd = "~local-build-tools.cmd"
 
 function AddVar { param([string]$var, [string]$value)
   [IO.File]::AppendAllText($report_Cmd, "set $var=$value`r`n");
-  # $Env:$var=$value
+  Write-Host "$var=$value" -ForegroundColor Green
+  ${Env:$var}=$value
   # [Environment]::SetEnvironmentVariable($var, $value, "User")
 }
 
@@ -84,8 +85,12 @@ AddVar "VS_PATH" "$vs_Dir"
 if ($vs_Dir) { 
   $msbuild_x86 = join-Path -Path "$vs_Dir" -ChildPath "MSBuild\*\Bin\MSBuild.exe" -Resolve
   $msbuild_x64 = join-Path -Path "$vs_Dir" -ChildPath "\MSBuild\*\Bin\amd64\MSBuild.exe" -Resolve
-  $msbuild=$msbuild_x64; if (-Not $msbuild) { $msbuild=$msbuild_x86; }
 }
+if (-Not "${Env:PROCESSOR_ARCHITECTURE}".ToUpper() -eq "AMD64") { 
+  $msbuild_x64 = $null;
+}
+$msbuild=$msbuild_x64; if (-Not $msbuild) { $msbuild=$msbuild_x86; }
+
 AddVar "MSBUILD_EXE" $msbuild
 AddVar "MSBUILD_x86_EXE" $msbuild_x86
 AddVar "MSBUILD_x64_EXE" $msbuild_x64
