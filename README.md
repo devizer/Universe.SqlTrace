@@ -40,10 +40,4 @@ Any optional column above could be used as row filter: Application, Database, Cl
 * `ReadDetailsReport()`: returns all the info from trace session, namely TraceDetailsReport instance. Its possible to get summary or group by using TraceDetailsReport instance
 * `ReadGroupsReport<TKey>()`: returns sums of mandatory trace columns, grouped by one of optional trace column above.
 
-
-          
-          
-          
-          
-          
           
