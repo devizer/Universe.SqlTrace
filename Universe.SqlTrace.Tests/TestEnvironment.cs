@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
 using Universe.SqlServerJam;
 using Universe.SqlTrace.LocalInstances;
@@ -18,32 +17,36 @@ namespace Universe.SqlTrace.Tests
 
         public static void Initialize()
         {
-            if (AnySqlServer != null) return;
-            var serversNew = SqlDiscovery.GetLocalDbAndServerList();
-            var servers = LocalInstancesDiscovery.GetFull(TimeSpan.FromSeconds(9));
-            LocalInstanceInfo.SqlInstance found = null;
-            Debug.WriteLine("SQL Server Instances: " + servers);
-            foreach (var sqlInstance in servers.Instances)
-                if (sqlInstance.Status == ServiceControllerStatus.Running)
-                    if (sqlInstance.Description != null)
-                        if (sqlInstance.Ver.Major == 9)
-                            if (SqlServerUtils.IsAdmin(sqlInstance.FullLocalName))
-                            {
-                                AnySqlServer = sqlInstance.FullLocalName;
-                                found = sqlInstance;
-                                break;
-                            }
+            if (MasterConnectionString != null) return;
+            var servers = MyServers.GetSqlServers();
+            foreach (var server in servers)
+            {
+                try
+                {
+                    using (SqlConnection con = new SqlConnection(server))
+                    {
+                        var man = con.Manage();
+                        var isSysAdmin = (man.FixedServerRoles & FixedServerRoles.SysAdmin) != 0;
+                        bool isLinux = man.HostPlatform == "Linux";
+                        // if (!man.IsLocalDB && isSysAdmin)
+                        if (isLinux || true)
+                        {
+                            MasterConnectionString = server;
+                            Console.WriteLine("Discovered SQL Server: {0}, Ver is {1}", MasterConnectionString, man.ShortServerVersion);
+                            return;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    continue;
+                }
+            }
 
-            if (string.IsNullOrEmpty(AnySqlServer))
-                Console.WriteLine("SQL Server Not Found. Tests should not work properly");
-            else
-                Console.WriteLine("Discovered SQL Server: {0}, Ver is {1}", AnySqlServer, found.FileVer);
+            throw new InvalidOperationException("Local Sql Express (or above) with SysAdmin authorization of the current user not found");
         }
 
-        public static string AnySqlServer;
-
-        public static readonly string DB =
-            "UNITEST_" + Guid.NewGuid().ToString("N");
+        public static readonly string DB = "UNITEST_" + Guid.NewGuid().ToString("N");
 
         public static string TracePath =
             Environment.SystemDirectory.Substring(0, 2)
@@ -52,36 +55,31 @@ namespace Universe.SqlTrace.Tests
         public static readonly string WorkingApplicationName =
             "SqlTrace unit-test";
 
-        public static string MasterConnectionString
-        {
-            get
-            {
-                return
-                    "Application Name=SQL Unit Testing framework;"
-                    + "Integrated Security=SSPI;"
-                    + "Data Source=" + AnySqlServer + ";"
-                    + "Pooling=false;";
-            }
-        }
+        public static string MasterConnectionString { get; private set; }
 
         public static string DbConnectionString
         {
             get
             {
-                return
-                    "Application Name=" + WorkingApplicationName + ";" +
-                    "Integrated Security=SSPI;"
-                    + "Data Source=" + AnySqlServer + ";"
-                    + "Pooling=true;"
-                    + "Initial Catalog=" + DB + ";"
-                    + "Max Pool Size=300";
+                SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(MasterConnectionString);
+                b.InitialCatalog = DB;
+                b.ApplicationName = "SqlTrace unit-tests";
+                return b.ConnectionString;
+            }
+        }
+
+        public static string AnySqlServer
+        {
+            get
+            {
+                return new SqlConnectionStringBuilder(MasterConnectionString).DataSource;
             }
         }
 
         public static void SetUp()
         {
             Trace.WriteLine(
-                "Working SQL Server instance is " + AnySqlServer);
+                "Working SQL Server instance is " + MasterConnectionString);
 
             using (var con = new SqlConnection(MasterConnectionString))
             {
@@ -97,30 +95,8 @@ namespace Universe.SqlTrace.Tests
 
         public static void TearDown()
         {
-            try
-            {
-                List<SqlServerUtils.ConnectionInfo> connections;
-                using (var con = new SqlConnection(MasterConnectionString))
-                {
-                    connections =
-                        SqlServerUtils.GetConnections(con)
-                            .FindAll(info => info.Database == DB && info.Spid > 50);
-                }
-
-                SqlServerUtils.KillConnections(MasterConnectionString, connections);
-
-                using (var con = new SqlConnection(MasterConnectionString))
-                using (var cmd = new SqlCommand("Drop Database " + DB, con))
-                {
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(
-                    "Failed to teardown unit test" + Environment.NewLine + ex);
-            }
+            AgileDbKiller.Kill(DbConnectionString, throwOnError: false, retryCount: 7);
         }
+
     }
 }

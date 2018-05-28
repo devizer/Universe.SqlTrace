@@ -12,8 +12,18 @@ popd
 
 echo START TRACE
 call build-only.cmd
+
 set work=Universe.SqlTrace.Tests\bin\Debug\
 pushd "%work%"
+
+goto skip1
+"%DOTCOVER_EXE%" analyse /TargetExecutable="%NUNIT_RUNNER_EXE%" ^
+  /TargetArguments="Universe.SqlTrace.Tests.exe" ^
+  /Output="tests-report\App-Coverage-Report.html" ^
+  /TargetWorkingDir=V:\_GIT\Universe.SqlTrace\Universe.SqlTrace.Tests\bin\Debug\ ^
+  /ReportType="HTML"
+:skip1
+
 "%NUNIT_RUNNER_EXE%" --workers=1 Universe.SqlTrace.Tests.exe
 "%REPORT_UNIT_EXE%" .\ tests-report\ 1>report_unit.log 2>&1
 popd

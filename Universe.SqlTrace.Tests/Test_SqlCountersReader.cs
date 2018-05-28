@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -178,13 +179,17 @@ namespace Universe.SqlTrace.Tests
                 var details = reader.ReadDetailsReport();
                 DumpCounters(details);
                 int idProcess = Process.GetCurrentProcess().Id;
-                foreach (SqlStatementCounters report in details)
-                {
-                    if (report.SpName == "sp_executesql" && report.Sql.IndexOf(sql) >= 0 && report.ClientProcess == idProcess)
-                        return;
-                }
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Trace summary is " + details.Summary);
+                Console.ForegroundColor = ConsoleColor.White;
 
-                Assert.Fail("Expected sql proc '{0}' call by process {1}", sql, idProcess);
+                bool isCaught = details.Any(x => 
+                    x.SpName == "sp_executesql" 
+                    && x.Sql.IndexOf(sql) >= 0 
+                    && x.ClientProcess == idProcess);
+
+                if (!isCaught)
+                    Assert.Fail("Expected sql proc '{0}' call by process {1}", sql, idProcess);
             }
         }
 
@@ -194,6 +199,8 @@ namespace Universe.SqlTrace.Tests
             string app = "Test " + Guid.NewGuid();
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(TestEnvironment.DbConnectionString);
             b.ApplicationName = app;
+            // important
+            b.Pooling = true;
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
@@ -213,9 +220,13 @@ namespace Universe.SqlTrace.Tests
                 }
                 // Details
                 var details = reader.ReadDetailsReport();
+                Console.WriteLine("Trace summary is " + details.Summary);
+
                 Assert.AreEqual(details.Count, nQueries);
             }
         }
+
+
 
 
 

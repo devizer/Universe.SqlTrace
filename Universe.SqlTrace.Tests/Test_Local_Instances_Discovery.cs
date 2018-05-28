@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using Universe.SqlServerJam;
 using Universe.SqlTrace.LocalInstances;
 
 namespace Universe.SqlTrace.Tests
@@ -42,6 +44,29 @@ namespace Universe.SqlTrace.Tests
                 Assert.IsNotNull(i.Name, "Instance should have name");
             }
         }
+
+
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Test_Discovery(string master)
+        {
+            using (SqlConnection con = new SqlConnection(master))
+            {
+                var server = new SqlConnectionStringBuilder(master).DataSource;
+                Console.WriteLine($"Ver: {con.Manage().ShortServerVersion} {con.Manage().ProductLevel} {con.Manage().ProductUpdateLevel} ({server})");
+                // Console.WriteLine($"{master}");
+            }
+        }
+
+        [Test]
+        public void Test_Explicit_Discovery()
+        {
+            var servers = MyServers.GetSqlServers();
+            foreach (var server in servers)
+            {
+                Console.WriteLine($" * {server}");
+            }
+        }
+        
 
 
     }
