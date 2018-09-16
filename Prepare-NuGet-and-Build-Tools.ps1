@@ -15,9 +15,14 @@ $report_Cmd = "~local-build-tools.cmd"
 [IO.File]::WriteAllText($report_Cmd, "@REM Local Build Tools. Auto-generated.`r`n");
 
 function AddVar { param([string]$var, [string]$value)
+<<<<<<< HEAD
   [IO.File]::AppendAllText($report_Cmd, "@set $var=$value`r`n");
   Write-Host "$var=$value" -ForegroundColor Green
   ${Env:$var}=$value
+=======
+  [IO.File]::AppendAllText($report_Cmd, "set $var=$value`r`n");
+  # $Env:$var=$value
+>>>>>>> parent of 1f0bd32... Fixed Colnolas build on x86
   # [Environment]::SetEnvironmentVariable($var, $value, "User")
 }
 
@@ -105,12 +110,16 @@ AddVar "VS_PATH" "$vs_Dir"
 if ($vs_Dir) { 
   $msbuild_x86 = join-Path -Path "$vs_Dir" -ChildPath "MSBuild\*\Bin\MSBuild.exe" -Resolve
   $msbuild_x64 = join-Path -Path "$vs_Dir" -ChildPath "\MSBuild\*\Bin\amd64\MSBuild.exe" -Resolve
+  $msbuild=$msbuild_x64; if (-Not $msbuild) { $msbuild=$msbuild_x86; }
 }
+<<<<<<< HEAD
 if (-Not ("${Env:PROCESSOR_ARCHITECTURE}".ToUpper() -eq "AMD64")) { 
   $msbuild_x64 = $null;
 }
 $msbuild=$msbuild_x64; if (-Not $msbuild) { $msbuild=$msbuild_x86; }
 
+=======
+>>>>>>> parent of 1f0bd32... Fixed Colnolas build on x86
 AddVar "MSBUILD_EXE" $msbuild
 AddVar "MSBUILD_x86_EXE" $msbuild_x86
 AddVar "MSBUILD_x64_EXE" $msbuild_x64
