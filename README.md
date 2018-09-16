@@ -16,6 +16,7 @@ nuget install Universe.SqlTrace
 ```
 
 
+
 ### About API
 #### Optional columns chooser
  * `Sql`: SP name or SQL Batch Text
