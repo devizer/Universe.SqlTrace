@@ -58,7 +58,7 @@ namespace Universe.SqlTrace
                 return new TraceFieldInfo(
                     1, 
                     "CASE WHEN EventClass = 10 THEN ObjectName ELSE NULL END, TextData",
-                    "CASE WHEN EventClass = 10 THEN ObjectName ELSE TextData END");
+                    "Cast((CASE WHEN EventClass = 10 THEN ObjectName ELSE TextData END) as NVARCHAR(MAX))");
 
             throw new ArgumentException(
                 "Unknown TraceColumn " + field,

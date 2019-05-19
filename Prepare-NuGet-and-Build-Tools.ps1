@@ -21,12 +21,12 @@ function AddVar { param([string]$var, [string]$value)
   # [Environment]::SetEnvironmentVariable($var, $value, "User")
 }
 
-function GetSHA1 { param([string]$fileName)
+function GetSHA1 { param( [string] $fileName )
   $sha1 = New-Object System.Security.Cryptography.SHA1CryptoServiceProvider 
   [System.BitConverter]::ToString( $sha1.ComputeHash([System.IO.File]::ReadAllBytes($fileName))).Replace("-","")
 }
 
-function SmartDownload { param([string]$key, [string]$url, [string]$fileName)
+function SmartDownload { param([string] $key, [string] $url, [string] $fileName)
   $path = ""; if (Test-Path "$workdir\${key}.path") { $path = Get-Content "$workdir\${key}.path"; }
   $sha1 = ""; if (Test-Path "$workdir\${key}.sha1") { $sha1 = Get-Content "$workdir\${key}.sha1"; }
   if ($path -And (Test-Path $path) -And ($sha1 -eq (GetSHA1 $path))) { 
@@ -44,7 +44,7 @@ function SmartDownload { param([string]$key, [string]$url, [string]$fileName)
   return $path
 }
 
-function SmartDownloadSfx { param([string]$key, [string]$url, [string]$fileName)
+function SmartDownloadSfx { param([string] $key, [string] $url, [string] $fileName)
   $sfx = SmartDownload $key $url $fileName
   Write-Host "SFX ${fileName}: $sfx" -ForegroundColor DarkGray
   $dir = [System.IO.Path]::GetDirectoryName($sfx)
@@ -56,7 +56,7 @@ function SmartDownloadSfx { param([string]$key, [string]$url, [string]$fileName)
 
 # function SmartExtractUrl { param([string]$url, [string]$relPath, [string]$exe)
 
-function SmartNugetInstall { param([string]$package) 
+function SmartNugetInstall { param( [string] $package ) 
   $done=""; if (Test-Path "$packagesDir\$package.is-done") { $done = Get-Content "$packagesDir\$package.is-done"; }
   if (-Not $done) {
     pushd "$packagesDir"

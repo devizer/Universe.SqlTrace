@@ -8,11 +8,19 @@ namespace Universe.SqlTrace
     {
         private TraceColumns _column;
         private object _value;
+        private bool _strictEquality = true;
 
         public TraceRowFilter(TraceColumns column, object value)
         {
             _column = column;
             _value = value;
+        }
+
+        public TraceRowFilter(TraceColumns column, object value, bool strictEquality)
+        {
+            _column = column;
+            _value = value;
+            _strictEquality = strictEquality;
         }
 
         public TraceColumns Column
@@ -25,6 +33,11 @@ namespace Universe.SqlTrace
             get { return _value; }
         }
 
+        public bool StrictEquality
+        {
+            get { return _strictEquality; }
+        }
+
         public static TraceRowFilter CreateByDatabase(string databaseName)
         {
             CheckArg("databaseName", databaseName);
@@ -35,6 +48,13 @@ namespace Universe.SqlTrace
         {
             CheckArg("applicationName", applicationName);
             return new TraceRowFilter(TraceColumns.Application, applicationName);
+        }
+
+        public static TraceRowFilter CreateLikeApplication(string applicationName)
+        {
+            CheckArg("applicationName", applicationName);
+            var ret = new TraceRowFilter(TraceColumns.Application, applicationName, false);
+            return ret;
         }
 
         public static TraceRowFilter CreateByClientProcess(int idClientProcess)

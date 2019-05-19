@@ -29,6 +29,7 @@ namespace Universe.SqlTrace
             _traceFile = Path.Combine(tracePath, "trace_" + Guid.NewGuid().ToString("N"));
             _columns = columns;
 
+            // For non-local sql server it doesn't work
             if (_PrevCreatedDirectory != tracePath)
             {
                 if (!Directory.Exists(tracePath))
@@ -55,9 +56,19 @@ namespace Universe.SqlTrace
                 {
                     TraceFieldInfo info = TraceFieldInfo.Get(rowFilter.Column);
                     string pName = "@filter_" + info.GroupExpression + "_" + parameters.Count;
-                    sqlSetFields.AppendFormat("exec sp_trace_setfilter @TRACE, {0}, 0, 0, {1} -- {2}", info.SqlId, pName, info.GroupExpression);
+                    string comparisonOperator = rowFilter.StrictEquality ? "0" : "6";
+                    object comparisonValue = rowFilter.Value;
+                    if (!rowFilter.StrictEquality && comparisonValue != null)
+                        comparisonValue = "%" + Convert.ToString(comparisonValue).Replace("'", "''") + "%";
+
+                    sqlSetFields.AppendFormat("exec sp_trace_setfilter @TRACE, {0}, 0, {1}, {2} -- {3}", 
+                        info.SqlId, 
+                        comparisonOperator,
+                        pName, 
+                        info.GroupExpression);
+
                     sqlSetFields.AppendLine();
-                    SqlParameter p = new SqlParameter(pName, rowFilter.Value);
+                    SqlParameter p = new SqlParameter(pName, comparisonValue);
                     parameters.Add(p);
 
                     if (rowFilterColumns.Contains(rowFilter.Column))
@@ -67,6 +78,7 @@ namespace Universe.SqlTrace
                 }
 
                 string sqlCmd = SQL_START1_TRACE + sqlSetFields + SQL_START2_TRACE;
+                Console.WriteLine($"TRACE ON {connectionString}");
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
                     cmd.CommandType = CommandType.Text;
@@ -95,9 +107,6 @@ namespace Universe.SqlTrace
                         cmd.Parameters.Add("@trace", SqlDbType.Int).Value = _traceId;
                         cmd.ExecuteNonQuery();
                     }
-
-                    // OkStop++;
-                    // Trace.WriteLine("OkStop: " + OkStop);
                 }
             }
         }
@@ -195,7 +204,6 @@ namespace Universe.SqlTrace
             string sql = string.Format(
                 SQL_SELECT_GROUPS,
                 info.GroupExpression);
-                
 
             using (SqlConnection con = new SqlConnection(_connectionString))
             {
@@ -323,7 +331,7 @@ set @maxfilesize = 16384
 SET @ON = 1
 EXEC @ERROR = sp_trace_create @TRACE OUTPUT, 0, @file, @maxfilesize
 -- IF @ERROR <> 0 Begin RAISEERROR ('Failed to create trace', 16, 0) End
-EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%PlAcE hoLDER to ignoRE tHIS crEATIon stateMENT by Universe Trace Library%'
+EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%-- This magic comment as well as a batch are skipped by SqlTraceReader.Read call%'
 -- ignore sp_reset_connection
 EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%sp_reset_connection%'
 -- Statement below also works
@@ -355,13 +363,17 @@ EXEC sp_trace_setstatus @trace, 2",
                 "[Duration], [CPU], [Reads], [Writes]",
 
             SQL_SELECT_DETAILS =
-                @"SELECT {0} FROM ::fn_trace_gettable (@file, -1)",
+                @"SELECT {0} FROM ::fn_trace_gettable (@file, -1);
+-- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_SUMMARY =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1)",
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1);
+-- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_GROUPS =
-                "SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}",
+                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}
+-- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
+                
 
             SQL_SET_TRACE_COLUMN = @"
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 10, {0}, @ON; -- {1}

@@ -91,6 +91,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test_SqlCountersReader.cs" />
+    <Compile Include="TraceTetsEnv.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj">

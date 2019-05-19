@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Dapper;
@@ -15,8 +14,9 @@ namespace Universe.SqlTrace.Tests
         {
 
             var all = SqlDiscovery.GetLocalDbAndServerList();
-            ThreadPool.GetMinThreads(out _, out var prevPorts);
-            ThreadPool.SetMinThreads(all.Count+1, prevPorts);
+            ThreadPool.GetMinThreads(out var prevWorkers, out var prevPorts);
+            var workers = Math.Max(prevWorkers, all.Count + 1);
+            ThreadPool.SetMinThreads(workers, prevPorts);
 
             return all.Select(x => x.ConnectionString)
                 .AsParallel().WithDegreeOfParallelism(all.Count)
@@ -28,12 +28,12 @@ namespace Universe.SqlTrace.Tests
         {
             try
             {
-                using (var con = new SqlConnection(cs + "; Connection Timeout=3"))
-                    con.Execute("-- ping", commandTimeout: 3);
+                using (var con = new SqlConnection(cs + "; Connection Timeout=9"))
+                    con.Execute("Select 'Pong'", commandTimeout: 9);
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
