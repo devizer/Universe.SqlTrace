@@ -28,6 +28,20 @@ init:
 
 before_build:
 # - appveyor-retry dotnet restore -v Minimal
+- ps: |
+    $names = @();
+    foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
+        try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
+    }
+
+    [System.Array]::Sort($names);
+    $info=""; foreach($name in $names) { $info += " [$name]"; } Write-Host "Sql Servers: $info";
+    foreach($sqlname in $names) {
+        if ($sqlname.Length -eq 0) { continue; }
+        Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+    }
+    get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+
 - ps: | 
         pushd SQL-Express; 
         .\SQL-Express-2017-Updated.cmd 
@@ -39,7 +53,7 @@ before_build:
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
 build_script:
-- ps: cd src; .\Modern-Build-and-Test.cmd
+- ps: .\build-and-test.cmd
 # - ps: cd KernelManagementJam.Tests
 # - dotnet --info
 # - dotnet build -c %CONFIGURATION% 
