@@ -15,7 +15,6 @@ environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 init:
 - ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
-- cmd: dir /b /s
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
     Set-Service RemoteAccess -StartupType Manual
@@ -23,9 +22,14 @@ init:
     Set-Service NetTcpPortSharing -StartupType Manual
     Start-Service NetTcpPortSharing
 - ps: | 
-        pushd SQL-Express; 
         netsh advfirewall firewall add rule name="All ICMP V4" protocol=icmpv4:any,any dir=in action=allow
         netsh advfirewall firewall add rule name="Open Port 1433 (SQL Servers)" dir=in action=allow protocol=TCP localport=1433
+
+
+before_build:
+# - appveyor-retry dotnet restore -v Minimal
+- ps: | 
+        pushd SQL-Express; 
         .\SQL-Express-2017-Updated.cmd 
         .\SQL-Express-2014-SP2-x86.cmd
         .\SQL-Express-2012-SP3.cmd
@@ -34,10 +38,6 @@ init:
 
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
-
-    
-before_build:
-# - appveyor-retry dotnet restore -v Minimal
 build_script:
 - ps: cd src; .\Modern-Build-and-Test.cmd
 # - ps: cd KernelManagementJam.Tests
