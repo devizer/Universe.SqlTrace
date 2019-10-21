@@ -1,0 +1,62 @@
+version: '1.0.{build}'
+image:
+- Visual Studio 2013
+- Visual Studio 2015
+- Visual Studio 2017
+- Visual Studio 2019
+
+      
+configuration: 
+- Release
+
+platform: Any CPU
+environment:
+  # Don't report back to the mothership
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+init:
+- ps: $Env:LABEL = "CI" + $Env:APPVEYOR_BUILD_NUMBER.PadLeft(5, "0")
+- cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
+- ps: |
+    Set-Service RemoteAccess -StartupType Manual
+    Start-Service RemoteAccess
+    Set-Service NetTcpPortSharing -StartupType Manual
+    Start-Service NetTcpPortSharing
+- ps: | 
+        pushd SQL-Express; 
+        netsh advfirewall firewall add rule name="All ICMP V4" protocol=icmpv4:any,any dir=in action=allow
+        netsh advfirewall firewall add rule name="Open Port 1433 (SQL Servers)" dir=in action=allow protocol=TCP localport=1433
+        .\SQL-Express-2017-Updated.cmd 
+        .\SQL-Express-2014-SP2-x86.cmd
+        .\SQL-Express-2012-SP3.cmd
+        .\SQL-Express-2008-R2-SP2-x86.cmd
+        popd
+
+        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+
+
+    
+before_build:
+# - appveyor-retry dotnet restore -v Minimal
+build_script:
+- ps: cd src; .\Modern-Build-and-Test.cmd
+# - ps: cd KernelManagementJam.Tests
+# - dotnet --info
+# - dotnet build -c %CONFIGURATION% 
+
+after_build:
+# - echo Im AFTER a BUILD. Nothing todo
+test_script:
+# - dotnet test KernelManagementJam.Tests\KernelManagementJam.Tests.csproj -c %CONFIGURATION%
+# - dotnet test Universe.Dashboard.DAL.Tests\Universe.Dashboard.DAL.Tests.csproj -c %CONFIGURATION%
+# - ps: |
+    # $Env:MSSQL_TEST_SERVER_2014="Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!;Pooling=false"
+    $Env:MSSQL_TEST_SERVER_1="Server=(local)\SQL2014;Database=master;UID=sa;PWD=Password12!;Pooling=false"
+    dotnet test Universe.Dashboard.DAL.Tests\Universe.Dashboard.DAL.Tests.csproj -c %CONFIGURATION%
+        
+artifacts:
+# - path: artifacts\**\*.*
+cache:
+# - '%USERPROFILE%\.nuget\packages'
+on_finish: # Run the demo to show that it works
+# - dotnet artifacts\ConsoleApplication\ConsoleApplication.dll
+
