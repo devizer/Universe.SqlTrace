@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
+using Dapper;
 using NUnit.Framework;
-using Universe.SqlTrace.LocalInstances;
+using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
 {
@@ -17,6 +13,12 @@ namespace Universe.SqlTrace.Tests
     [TestFixture]
     public class Test_SqlCountersReader
     {
+        private string Table1Name = "##Temp_" + Guid.NewGuid().ToString("N");
+
+        // Tricky hack - Table1Holder prevents deletion of Table1Name table until teardown.
+        SqlConnection Table1Holder;
+
+
         [OneTimeSetUp]
         public void TestFixtureSetUp()
         {
@@ -25,22 +27,14 @@ namespace Universe.SqlTrace.Tests
                 Assert.Fail("At least one instance of running SQL Server is required");
 
             TestEnvironment.SetUp();
-
-            using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
+            
+            Table1Holder = new SqlConnection(TestEnvironment.DbConnectionString);
+            Table1Holder.Open();
+            using (SqlCommand cmd = new SqlCommand($"Create table {Table1Name}(id int)", Table1Holder))
             {
-                con.Open();
-                
-                using (SqlCommand cmd = new SqlCommand("Create table T1(id int)", con))
-                {
-                    cmd.ExecuteNonQuery();
-                }
-
-                using (SqlCommand cmd = new SqlCommand(SqlProc1, con))
-                {
-                    cmd.ExecuteNonQuery();
-                }
+                cmd.ExecuteNonQuery();
+                Console.WriteLine($"Table Created: {Table1Name}");
             }
-
         }
 
         [Test]
@@ -48,26 +42,34 @@ namespace Universe.SqlTrace.Tests
         {
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(TestEnvironment.WorkingApplicationName), TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
+                var filterByProcess = TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id);
+                var filterLikeSqlTrace = TraceRowFilter.CreateLikeApplication("SqlTrace");
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, filterByProcess, filterLikeSqlTrace);
 
                 using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
                 {
                     con.Open();
 
-                    for (int i = 0; i < 10; i++)
-                    {
-                        using (SqlCommand cmd = new SqlCommand("Insert T1(id) Values(" + i + ")", con))
-                        {
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-
-                    using (SqlCommand cmd = new SqlCommand("Select * From T1", con))
+                    using (SqlCommand cmd = new SqlCommand(SqlBatch, con))
                     {
                         cmd.ExecuteNonQuery();
                     }
 
-                    using (SqlCommand cmd = new SqlCommand("proc1", con))
+                    for (int i = 1; i < 10; i++)
+                    {
+                        using (SqlCommand cmd = new SqlCommand($"Insert {Table1Name}(id) Values(@i)", con))
+                        {
+                            cmd.Parameters.Add("@i", i);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand($"Select * From {Table1Name}", con))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand cmd = new SqlCommand("sp_server_info", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         cmd.ExecuteNonQuery();
@@ -77,59 +79,108 @@ namespace Universe.SqlTrace.Tests
 
                 reader.Stop();
                 var rptGroups = reader.ReadGroupsReport<string>(TraceColumns.ClientHost);
+                var bySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
+
                 var rptSummary = reader.ReadSummaryReport();
                 var rpt = reader.ReadDetailsReport();
-                Trace.WriteLine("Statements: " + rpt.Count);
+                Console.WriteLine("Statements: " + rpt.Count);
                 DumpCounters(rpt);
 
-                Trace.WriteLine("");
-                Trace.WriteLine("My Process: " + Process.GetCurrentProcess().Id);
-                Trace.WriteLine("Summary: " + rptSummary);
-                Trace.WriteLine("Details Summary " + rpt.Summary);
+                Console.WriteLine("");
+                Console.WriteLine("My Process: " + Process.GetCurrentProcess().Id);
+                Console.WriteLine("Summary: " + rptSummary);
+                Console.WriteLine("Details Summary " + rpt.Summary);
             }
         }
 
-        private void DumpCounters(TraceDetailsReport rpt)
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Single_SqlBatch_Is_Captured(string masterConnectionString)
         {
-            foreach (SqlStatementCounters statement in rpt)
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
-                Trace.WriteLine(
-                    "{" + (statement.SpName == null ? statement.Sql : statement.SpName + ": " + statement.Sql) + "}: " 
-                    + statement.Counters);
-            }
-        }
-
-        [Test]
-        public void Single_SqlBatch_Is_Captured()
-        {
-            string sql = "SELECT @@version, 'Hello, World!'; Exec Proc1;";
-            sql = sql + sql + sql;
-            using (SqlTraceReader reader = new SqlTraceReader())
-            {
-                Console.WriteLine("Master Connection: " + TestEnvironment.MasterConnectionString);
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.Sql | TraceColumns.ClientProcess);
-
-                using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
+                if (con.Manage().IsAzure)
                 {
-                    con.Open();
-                    using (SqlCommand cmd = new SqlCommand(sql, con))
+                    Console.WriteLine("Tracing for Azure is not yet implemented");
+                    return;
+                }
+            }
+
+            TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
+            using (env)
+            {
+                string sql = "SELECT @@version, 'Hello, World!'; Exec sp_server_info;";
+                sql = sql + sql + sql;
+                using (SqlTraceReader reader = new SqlTraceReader())
+                {
+                    Console.WriteLine($@"
+Master Connection: {env.MasterConnectionString}
+TraceDir:          {env.TraceDirectory}
+TableName:         {env.TableName}");
+
+                    reader.Start(env.MasterConnectionString, env.TraceDirectory,
+                        TraceColumns.Sql | TraceColumns.ClientProcess);
+
+                    using (SqlConnection con = new SqlConnection(masterConnectionString))
                     {
-                        cmd.ExecuteNonQuery();
+                        con.Open();
+                        using (SqlCommand cmd = new SqlCommand(sql, con))
+                        {
+                            cmd.ExecuteNonQuery();
+                        }
                     }
-                }
 
-                reader.Stop();
-                var rpt = reader.ReadDetailsReport();
-                DumpCounters(rpt);
-                int idProcess = Process.GetCurrentProcess().Id;
-                foreach (SqlStatementCounters report in rpt)
-                {
-                    if (report.Sql == sql && report.ClientProcess == idProcess)
-                        return;
-                }
+                    reader.Stop();
+                    var detailsReport = reader.ReadDetailsReport();
+                    DumpCounters(detailsReport);
+                    Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
 
-                Assert.Fail("Expected sql statement {0} by process {1}", sql, idProcess);
+                    int idProcess = Process.GetCurrentProcess().Id;
+                    foreach (SqlStatementCounters report in detailsReport)
+                    {
+                        if (report.Sql == sql && report.ClientProcess == idProcess)
+                            return;
+                    }
+
+                    Assert.Fail("Expected sql statement {0} by process {1}", sql, idProcess);
+                }
             }
+        }
+
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void RaiseDeadLock1205(string connectionString)
+        {
+            var cmds = new[]
+            {
+                "begin tran",
+                "CREATE TYPE dbo.IntIntSet_42 AS TABLE(Value0 Int NOT NULL,Value1 Int NOT NULL)",
+                "declare @myPK dbo.IntIntSet_42",
+                "rollback"
+            };
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+
+                if (con.Manage().ShortServerVersion.Major <= 9)
+                {
+                    Console.WriteLine("Current implementation of the test does not support very old SQL Server");
+                    return;
+                }
+
+                try
+                {
+                    foreach (var cmd in cmds)
+                        con.Execute(cmd);
+                }
+                catch (SqlException e)
+                {
+                    bool isDeadLock = e.Errors.OfType<SqlError>().Any(x => x.Number == 1205);
+                    if (isDeadLock) return;
+                    throw;
+                }
+            }
+
+            Assert.Fail("Deadlock is expected");
         }
 
         [Test]
@@ -137,15 +188,14 @@ namespace Universe.SqlTrace.Tests
         {
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                var dismatchFilter = TraceRowFilter.CreateByApplication(Guid.NewGuid().ToString());
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, dismatchFilter);
+                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All);
                 
                 // summary
                 var summary = reader.ReadSummaryReport();
                 Assert.Zero(summary.Requests);
                 Console.WriteLine("Summary of empty session is " + summary);
 
-                // details
+                // details. Summary query above should not be present in details report below.
                 var details = reader.ReadDetailsReport();
                 CollectionAssert.IsEmpty(details, "Details Collection");
                 Assert.Zero(details.Summary.Requests);
@@ -159,7 +209,8 @@ namespace Universe.SqlTrace.Tests
         [Test]
         public void Single_StoredProcedure_Is_Captured()
         {
-            string sql = "SELECT @@version, @parameter; declare @i int set @i=0 while @i<10 begin set @i=@i+1 select count(1) from dbo.sysobjects end";
+            string sql = @"SELECT @@version, @parameter;";
+
             using (SqlTraceReader reader = new SqlTraceReader())
             {
                 reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All);
@@ -179,9 +230,7 @@ namespace Universe.SqlTrace.Tests
                 var details = reader.ReadDetailsReport();
                 DumpCounters(details);
                 int idProcess = Process.GetCurrentProcess().Id;
-                Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Trace summary is " + details.Summary);
-                Console.ForegroundColor = ConsoleColor.White;
 
                 bool isCaught = details.Any(x => 
                     x.SpName == "sp_executesql" 
@@ -189,7 +238,7 @@ namespace Universe.SqlTrace.Tests
                     && x.ClientProcess == idProcess);
 
                 if (!isCaught)
-                    Assert.Fail("Expected sql proc '{0}' call by process {1}", sql, idProcess);
+                    Assert.Fail("Expected sql proc '{0}' call by process {1}", "sp_executesql", idProcess);
             }
         }
 
@@ -227,6 +276,16 @@ namespace Universe.SqlTrace.Tests
         }
 
 
+        private void DumpCounters(TraceDetailsReport rpt)
+        {
+            foreach (SqlStatementCounters statement in rpt)
+            {
+                Console.WriteLine(
+                    "{" + (statement.SpName == null ? statement.Sql : statement.SpName + ": " + statement.Sql) + "}: "
+                    + statement.Counters);
+            }
+        }
+
 
 
 
@@ -236,33 +295,26 @@ namespace Universe.SqlTrace.Tests
             TestEnvironment.TearDown();
         }
 
-        private static readonly string SqlProc1 = @"
-Create PROCEDURE [dbo].[proc1]
-AS
-BEGIN
-	SET NOCOUNT ON;
+        private static readonly string SqlBatch = @"
+Declare @T2 TABLE(id int identity, title nchar(2000))
 	
-	Declare @T2 TABLE(id int identity, title nchar(2000))
+Insert @T2(title) Values('title1')
+insert @T2(title) Values('title2')
+insert @T2(title) Values('title3')
+insert @T2(title) Values('title4')
+insert @T2(title) Values('title5')
 	
-	insert @T2(title) Values('title1')
-	insert @T2(title) Values('title2')
-	insert @T2(title) Values('title3')
-	insert @T2(title) Values('title4')
-	insert @T2(title) Values('title5')
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
+insert @T2(title) select title from @T2
 	
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	insert @T2(title) select title from @T2
-	
-	Select GETDATE()
-
-END
+Select GETDATE()
 ";
 
     }

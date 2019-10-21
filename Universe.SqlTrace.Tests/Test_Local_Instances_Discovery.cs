@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Universe.SqlServerJam;
@@ -45,6 +43,17 @@ namespace Universe.SqlTrace.Tests
             }
         }
 
+        [SetUp]
+        public void SetUp()
+        {
+            Console.WriteLine("Setup");
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            Console.WriteLine("TearDown");
+        }
 
         [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
         public void Test_Discovery(string master)
