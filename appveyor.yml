@@ -53,6 +53,9 @@ before_build:
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
+        "$(Get-Elapsed) Installing SQL Devloper 2017"
+        .\sql-dev-2017.ps1                   2>&1 >$Env:ARTIFACT\sql-dev-2017.log
+
         "$(Get-Elapsed) Installing SQL Express 2017"
         & .\SQL-Express-2017-Updated.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2017-Updated.log
         
@@ -64,6 +67,13 @@ before_build:
         
         "$(Get-Elapsed) Installing SQL Express 2008 R2 SP2 (x86)"
         & .\SQL-Express-2008-R2-SP2-x86.cmd  2>&1 >$Env:ARTIFACT\SQL-Express-2008-R2-SP2-x86.log
+
+        "$(Get-Elapsed) Installing SQL Express 2008 SP3"
+        & .\SQL-Express-2008-SP3-x64.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2008-SP3-x64.log
+
+        "$(Get-Elapsed) Installing SQL Express 2005 SP4"
+        & .\SQL-Express-2005-SP4-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2005-SP4-x86.log
+
         "$(Get-Elapsed) Done. SQL Services are:"
 
         popd
