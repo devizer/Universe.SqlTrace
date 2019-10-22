@@ -7,6 +7,7 @@ platform: Any CPU
 environment:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 init:
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; New-Item -ItemType Directory -Path $Env:ARTIFACT
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
     Set-Service RemoteAccess -StartupType Manual
@@ -38,11 +39,12 @@ before_build:
 
 - ps: | 
         # Install new SQL Servers
+        "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
-        .\SQL-Express-2017-Updated.cmd 
-        .\SQL-Express-2014-SP2-x86.cmd
-        .\SQL-Express-2012-SP3.cmd
-        .\SQL-Express-2008-R2-SP2-x86.cmd
+        & .\SQL-Express-2017-Updated.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2017-Updated.log
+        & .\SQL-Express-2014-SP2-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2014-SP2-x86.log
+        & .\SQL-Express-2012-SP3.cmd         2>&1 >$Env:ARTIFACT\SQL-Express-2012-SP3.log
+        & .\SQL-Express-2008-R2-SP2-x86.cmd  2>&1 >$Env:ARTIFACT\SQL-Express-2008-R2-SP2-x86.log
         popd
 
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
@@ -50,5 +52,7 @@ before_build:
 build_script:
 - ps: | 
       # check connectivity and test Sql Profiler Wrapper against local SQL Servers
-      .\build-and-test.cmd
+      & .\build-and-test.cmd
 
+artifacts:
+  - path: Artifact
