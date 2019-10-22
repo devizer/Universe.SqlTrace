@@ -100,10 +100,13 @@ before_build:
 
 build_script:
 - ps: | 
-      & .\build-and-test.cmd
+      # & .\build-and-test.cmd
+      & .\build-for-appveyor.cmd
 
 test_script:
-# already tested
+# already tested?
+nunit3-console Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe --workers=1 --result=myresults.xml;format=AppVeyor
+
 - ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
 - ps: get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
