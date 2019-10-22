@@ -7,12 +7,12 @@ platform: Any CPU
 init:
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
-function Get-Elapsed
-{
-    if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
-    $time = new-object System.DateTime(0); $elapsed = [System.String]::Concat("[", $time.AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
-    $elapsed
-}
+     function Get-Elapsed
+     {
+         if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
+         $time = new-object System.DateTime(0); $elapsed = [System.String]::Concat("[", $time.AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
+         $elapsed
+     }
 
 - ps: |
     Set-Service RemoteAccess -StartupType Manual
