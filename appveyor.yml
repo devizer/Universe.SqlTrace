@@ -9,8 +9,8 @@ environment:
 init:
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
-   & sc delete "MSSQL`$SQL2016"
-   & sc delete "MSSQL$SQL2016"
+   & cmd /c sc delete "MSSQL`$SQL2016"
+   & cmd /c sc delete "MSSQL$SQL2016"
    get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
 - ps: |
