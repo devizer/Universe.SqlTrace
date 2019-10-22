@@ -96,7 +96,15 @@ before_build:
         if ($Env:Script) { 
             "$(Get-Elapsed) Installing $Env:JOB"
             & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" 
-            "$(Get-Elapsed) Finished SQL Server Installers"
+            "$(Get-Elapsed) Finished SQL Server Installers. Deleting LocalDB"
+            $localdb=(Get-ChildItem -Path "C:\Program Files" -Filter SqlLocalDB.exe -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
+            if ($localdb) { 
+                "$(Get-Elapsed) LocalDB Manager: [$localdb]; 
+                & $localdb info;  
+                & $localdb delete MSSqlLocalDB;  
+                & $localdb info;  
+            }
+        } else {
         }
 
         popd
