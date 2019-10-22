@@ -55,4 +55,4 @@ build_script:
       & .\build-and-test.cmd
 
 artifacts:
-  - path: Artifact
+  - path: C:\Users\appveyor\Artifact
