@@ -37,7 +37,10 @@ before_build:
         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
         & sc delete "MSSQL`$$sqlname"
     }
-    "sc help"; & sc /h
+    "sc help"; 
+    & sc.exe /? 
+    & sc.exe /h
+    & sc.exe /help
     get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
     # cmd /c dir /b /s
 
