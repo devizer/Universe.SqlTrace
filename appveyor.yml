@@ -132,8 +132,9 @@ test_script:
 #- cmd: '"%7zip%" a -t7z -mx=9 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .'
 
 after_test:
-- ps: Stop-Transcript
+- ps: Stop-Transcript; sleep 11
 
+# Error uploading artifact the storage: The underlying connection was closed: An unexpected error occurred on a send.
 artifacts:
   - path: Artifact
 
