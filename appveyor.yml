@@ -16,8 +16,9 @@ environment:
       Local_DB: True
 
     - JOB: "SQL SERVER LocalDB 2017"
-      Script: .\Install-SQL-LocalDB.ps1
+#      Script: .\Install-SQL-LocalDB.ps1
       Local_DB: True
+      image: Visual Studio 2019
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd

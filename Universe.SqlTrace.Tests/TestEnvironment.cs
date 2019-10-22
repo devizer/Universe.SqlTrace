@@ -79,7 +79,7 @@ namespace Universe.SqlTrace.Tests
         public static void SetUp()
         {
             Trace.WriteLine(
-                "Working SQL Server instance is " + MasterConnectionString);
+                "Working SQL Server instance is [" + MasterConnectionString + "]");
 
             using (var con = new SqlConnection(MasterConnectionString))
             {
