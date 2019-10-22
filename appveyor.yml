@@ -18,7 +18,6 @@ environment:
     - JOB: "SQL SERVER LocalDB 2017"
       Script: .\Install-SQL-LocalDB.ps1
       Local_DB: True
-      image: Visual Studio 2019
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
@@ -67,8 +66,10 @@ init:
       Start-Service NetTcpPortSharing
     }
 - ps: | 
+    if ($false) {
         netsh advfirewall firewall add rule name="All ICMP V4" protocol=icmpv4:any,any dir=in action=allow
         netsh advfirewall firewall add rule name="Open Port 1433 (SQL Servers)" dir=in action=allow protocol=TCP localport=1433
+    }
 
 
 before_build:
@@ -105,7 +106,7 @@ before_build:
         } 
         if ($Env:Local_DB -eq $null) {
             $localdb=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
-            "$(Get-Elapsed) LocalDB Manager: [$localdb]"; 
+            "$(Get-Elapsed) Delete SQL LocalDB Server. Manager: [$localdb]"; 
             Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
         }
         popd
