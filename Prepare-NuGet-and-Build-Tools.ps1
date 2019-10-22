@@ -121,7 +121,7 @@ AddVar "MSBUILD_x64_EXE" $msbuild_x64
 $nunit_Runner = join-Path -Path "$packagesDir\NUnit.ConsoleRunner.*" -ChildPath "tools\nunit*-console.exe" -Resolve
 AddVar "NUNIT_RUNNER_EXE" $nunit_Runner
 
-$xunit_Runner = join-Path -Path "$packagesDir\xunit.runner.console.*" -ChildPath "tools\net46*\xunit.console.exe" -Resolve
+$xunit_Runner = join-Path -Path "$packagesDir\xunit.runner.console.*" -ChildPath "tools\net46\xunit.console.exe" -Resolve
 AddVar "XUNIT_RUNNER_EXE" $xunit_Runner
 
 $report_Exe = join-Path -Path "$packagesDir\ReportUnit.*" -ChildPath "tools\ReportUnit*.exe" -Resolve
