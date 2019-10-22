@@ -29,7 +29,7 @@ init:
 
 before_build:
 - ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
-- ps: Start-Transcript "Artifact\Build.log" -Force
+- ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
     # disable preinstalled SQL Servers
@@ -74,7 +74,7 @@ before_build:
         "$(Get-Elapsed) Installing SQL Express 2005 SP4"
         & .\SQL-Express-2005-SP4-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2005-SP4-x86.log
 
-        "$(Get-Elapsed) Done. SQL Services are:"
+        "$(Get-Elapsed) Finished SQL Server Installers"
 
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
@@ -84,6 +84,8 @@ build_script:
       & .\build-and-test.cmd
 
 after_test:
+- ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
+- ps: get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 - ps: Stop-Transcript
 artifacts:
   - path: Artifact
