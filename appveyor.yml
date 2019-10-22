@@ -19,8 +19,8 @@ init:
 
 
 before_build:
-# - appveyor-retry dotnet restore -v Minimal
 - ps: |
+    # disable preinstalled SQL Servers
     $names = @();
     foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
         try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
@@ -37,6 +37,7 @@ before_build:
     cmd /c dir /b /s
 
 - ps: | 
+        # Install new SQL Servers
         pushd SQL-Express; 
         .\SQL-Express-2017-Updated.cmd 
         .\SQL-Express-2014-SP2-x86.cmd
@@ -47,18 +48,7 @@ before_build:
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
 build_script:
-- ps: .\build-and-test.cmd
-# - ps: cd KernelManagementJam.Tests
-# - dotnet --info
-# - dotnet build -c %CONFIGURATION% 
+- ps: | 
+      # check connectivity and test Sql Profiler Wrapper against local SQL Servers
+      .\build-and-test.cmd
 
-after_build:
-# - echo Im AFTER a BUILD. Nothing todo
-test_script:
-# none
-artifacts:
-# - path: artifacts\**\*.*
-cache:
-# - '%USERPROFILE%\.nuget\packages'
-on_finish: # Run the demo to show that it works
-# - dotnet artifacts\ConsoleApplication\ConsoleApplication.dll
