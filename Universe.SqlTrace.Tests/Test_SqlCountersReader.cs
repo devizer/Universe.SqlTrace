@@ -175,7 +175,11 @@ TableName:         {env.TableName}");
                 catch (SqlException e)
                 {
                     bool isDeadLock = e.Errors.OfType<SqlError>().Any(x => x.Number == 1205);
-                    if (isDeadLock) return;
+                    if (isDeadLock)
+                    {
+                        Console.WriteLine("Deadlock successfully caught. " + e.GetExeptionDigest());
+                        return;
+                    }
                     throw;
                 }
             }
