@@ -129,6 +129,4 @@ after_test:
 artifacts:
   - path: Artifact
 
-  - path: '.\**'
-    name: Working-Folder
-    type: zip
+  - path: %APPVEYOR_BUILD_FOLDER%
