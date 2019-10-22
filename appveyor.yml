@@ -131,3 +131,4 @@ artifacts:
 
   - path: '**\**'
     name: Working-Folder
+    type: zip
