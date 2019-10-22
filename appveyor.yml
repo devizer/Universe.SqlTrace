@@ -129,4 +129,4 @@ after_test:
 artifacts:
   - path: Artifact
 
-  - path: %APPVEYOR_BUILD_FOLDER%
+  - path: '%APPVEYOR_BUILD_FOLDER%'
