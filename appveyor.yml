@@ -53,6 +53,9 @@ before_build:
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
+        "$(Get-Elapsed) Installing SQL Devloper 2019 CTP"
+        & .\SQL-2019-CTP3.0.cmd              2>&1 >$Env:ARTIFACT\SQL-2019-CTP.log
+
         "$(Get-Elapsed) Installing SQL Devloper 2017"
         .\sql-dev-2017.ps1                   2>&1 >$Env:ARTIFACT\sql-dev-2017.log
 
