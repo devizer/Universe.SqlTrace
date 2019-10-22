@@ -20,6 +20,7 @@ init:
 
 before_build:
 - ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; New-Item -ItemType Directory -Path $Env:ARTIFACT; "Hi" >Artifact\hi.txt
+- git submodule update --init --recursive
 - ps: |
     # disable preinstalled SQL Servers
     $names = @();
