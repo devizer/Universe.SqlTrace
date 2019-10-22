@@ -51,8 +51,9 @@ before_build:
 
 build_script:
 - ps: | 
-      # check connectivity and test Sql Profiler Wrapper against local SQL Servers
       & .\build-and-test.cmd
 
+after_test:
+- ps: Stop-Transcript
 artifacts:
   - path: Artifact
