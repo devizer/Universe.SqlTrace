@@ -27,7 +27,7 @@ rem   and SQL Client Connectivity SDK.
   /IAcceptSQLServerLicenseTerms /IACCEPTROPENLICENSETERMS ^
   /UpdateEnabled=True ^
   /FEATURES=SQLENGINE,REPLICATION,FullText ^
-  /INSTANCENAME="SQL_2019_CTP30" ^
+  /INSTANCENAME="SQL_2019_RC" ^
   /INSTANCEDIR="%SystemDrive%\SQL" ^
   /INSTALLSHAREDDIR="%SystemDrive%\SQL\x64" ^
   /INSTALLSHAREDWOWDIR="%SystemDrive%\SQL\x86" ^

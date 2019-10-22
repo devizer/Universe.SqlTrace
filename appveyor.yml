@@ -1,4 +1,4 @@
-version: '1.0.{build}'
+version: 'Integration Tests.{build}'
 image:
 - Visual Studio 2017
 # - Visual Studio 2019
@@ -11,9 +11,12 @@ environment:
 
     - JOB: "SQL Server 2005 SP4 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
+
+    - JOB: "SQL Server 2016 (Express)"
+      Script: .\SQL-Express-2016-Updated.cmd
     
     - JOB: "SQL Server 2019 RC (Developer)"
-      Script: .\SQL-2019-CTP3.0.cmd
+      Script: .\SQL-2019-Pre.cmd
 
     - JOB: "SQL Server 2017 (Developer)"
       Script: .\sql-dev-2017.ps1
