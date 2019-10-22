@@ -122,6 +122,7 @@ test_script:
 - nunit3-console Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe --workers=1 --result=myresults.xml;format=AppVeyor
 - ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
 - ps: get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
+- cmd: "%7zip%" a -t7z -mx=9 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
 
 after_test:
 - ps: Stop-Transcript
@@ -129,4 +130,4 @@ after_test:
 artifacts:
   - path: Artifact
 
-  - path: '%APPVEYOR_BUILD_FOLDER%'
+  - path: 'SqlProfiler (AppVeyor Build Folder).7z'
