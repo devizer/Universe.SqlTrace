@@ -99,8 +99,6 @@ before_build:
             "$(Get-Elapsed) Finished SQL Server Installers. Deleting LocalDB"
             $localdb=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
             if ($localdb) {
-                Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
-                # HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions
                 "$(Get-Elapsed) LocalDB Manager: [$localdb]"; 
                 Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
                 # & $localdb info;  
