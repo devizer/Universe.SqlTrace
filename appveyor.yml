@@ -7,6 +7,14 @@ platform: Any CPU
 init:
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
+function Get-Elapsed
+{
+    if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
+    $time = new-object System.DateTime(0); $elapsed = [System.String]::Concat("[", $time.AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
+    $elapsed
+}
+
+- ps: |
     Set-Service RemoteAccess -StartupType Manual
     Start-Service RemoteAccess
     Set-Service NetTcpPortSharing -StartupType Manual
@@ -41,12 +49,21 @@ before_build:
         # Install new SQL Servers
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
-        & .\SQL-Express-2017-Updated.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2017-Updated.log
-        & .\SQL-Express-2014-SP2-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2014-SP2-x86.log
-        & .\SQL-Express-2012-SP3.cmd         2>&1 >$Env:ARTIFACT\SQL-Express-2012-SP3.log
-        & .\SQL-Express-2008-R2-SP2-x86.cmd  2>&1 >$Env:ARTIFACT\SQL-Express-2008-R2-SP2-x86.log
-        popd
 
+        "[$(Get-Elapsed)] Installing SQL Express 2017"
+        & .\SQL-Express-2017-Updated.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2017-Updated.log
+        
+        "[$(Get-Elapsed)] Installing SQL Express 2014 SP2"
+        & .\SQL-Express-2014-SP2-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2014-SP2-x86.log
+        
+        "[$(Get-Elapsed)] Installing SQL Express 2012 SP3"
+        & .\SQL-Express-2012-SP3.cmd         2>&1 >$Env:ARTIFACT\SQL-Express-2012-SP3.log
+        
+        "[$(Get-Elapsed)] Installing SQL Express 2008 R2 SP2 (x86)"
+        & .\SQL-Express-2008-R2-SP2-x86.cmd  2>&1 >$Env:ARTIFACT\SQL-Express-2008-R2-SP2-x86.log
+        "[$(Get-Elapsed)] Done"
+
+        popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
 build_script:
