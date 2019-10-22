@@ -105,6 +105,12 @@ namespace Universe.SqlTrace.Tests
                 }
             }
 
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
+            {
+                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
+            }
+
+
             TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
             using (env)
             {
