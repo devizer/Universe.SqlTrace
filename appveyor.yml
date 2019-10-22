@@ -124,7 +124,7 @@ test_script:
     $Env:TEST_SQL_NET_DURATION_OF_Upload = 42
     $Env:TEST_SQL_NET_DURATION_OF_Download = 42
     foreach($assembly in @("include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll","Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe") {
-        & nunit3-console $assembly --workers=1 --result=myresults.xml;format=AppVeyor
+        & nunit3-console $assembly --workers=1 "--result=myresults.xml;format=AppVeyor"
     }
 
 # - ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
