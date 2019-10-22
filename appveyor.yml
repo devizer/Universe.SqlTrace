@@ -12,7 +12,7 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER LocalDB 2016"
+    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
