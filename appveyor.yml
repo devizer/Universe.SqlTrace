@@ -13,6 +13,11 @@ environment:
   matrix:
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
+      Local_DB: True
+
+    - JOB: "SQL SERVER LocalDB 2017"
+      Script: .\Install-SQL-LocalDB.ps1
+      Local_DB: True
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
@@ -95,19 +100,13 @@ before_build:
         if ($Env:Script) {
             "$(Get-Elapsed) Installing $Env:JOB"
             & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            "$(Get-Elapsed) Finished SQL Server Installers. Deleting LocalDB"
+            "$(Get-Elapsed) Finished SQL Server Installers"
+        } 
+        if ($Env:Local_DB -eq $null) {
             $localdb=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
-            if ($localdb) {
-                "$(Get-Elapsed) LocalDB Manager: [$localdb]"; 
-                Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
-                # & $localdb info;  
-                # & $localdb delete MSSQLLocalDB
-                # "$(Get-Elapsed) Deleted MSSQLLocalDB"
-                # & $localdb info;  
-            }
-        } else {
+            "$(Get-Elapsed) LocalDB Manager: [$localdb]"; 
+            Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
         }
-
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
