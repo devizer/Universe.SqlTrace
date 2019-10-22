@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using Universe.SqlServerJam;
@@ -28,18 +30,19 @@ namespace Universe.SqlTrace.Tests
         [Test]
         public void Local_Instances_Contains_Data()
         {
-            var servers = LocalInstancesDiscovery.Get();
-            StringBuilder dump = new StringBuilder();
-            var stringWriter = new StringWriter(dump);
-            servers.WriteToXml(stringWriter);
-            Trace.WriteLine("FOUND SQL Instances:" + Environment.NewLine + dump);
+            // LocalInstanceInfo servers = LocalInstancesDiscovery.Get();
+            List<SqlServerRef> servers = SqlDiscovery.GetLocalDbAndServerList();
+            // StringBuilder dump = new StringBuilder();
+            // var stringWriter = new StringWriter(dump);
+            // servers.WriteToXml(stringWriter);
+            Console.WriteLine("FOUND SQL Instances:" + string.Join(",", servers.Select(x  => x.Data)));
 
-            Assert.IsTrue(servers.Instances.Count > 0, "SQL Server is required. Either running or stopped");
-            foreach (var i in servers.Instances)
+            Assert.IsTrue(servers.Count > 0, "SQL Server is required. Either running or stopped");
+            foreach (var i in servers)
             {
-                Assert.IsNotNull(i.FileVer, "File version property of instance {0} is required", i);
-                Assert.IsTrue(i.FileVer.Major != 0, "Major file version of instance {0} should be not zero", i);
-                Assert.IsNotNull(i.Name, "Instance should have name");
+                Assert.IsNotNull(i.Version, "File version property of instance {0} is required", i);
+                Assert.IsTrue(i.Version.Major != 0, "Major file version of instance {0} should be not zero", i);
+                Assert.IsNotNull(i.DataSource, "Instance should have name");
             }
         }
 
