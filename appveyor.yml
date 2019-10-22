@@ -10,13 +10,16 @@ init:
      function Get-Elapsed
      {
          if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
-         $time = new-object System.DateTime(0); $elapsed = [System.String]::Concat("[", $time.AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
-         $elapsed
-     }
+         # $time = new-object System.DateTime(0); $elapsed = [System.String]::Concat("[", $time.AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
+         # $elapsed
+         [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
+     }; $_=Get-Elapsed;
 
 - ps: |
+    "$(Get-Elapsed) Configure local Routing"
     Set-Service RemoteAccess -StartupType Manual
     Start-Service RemoteAccess
+    "$(Get-Elapsed) Configure Net TCP Port Sharing"
     Set-Service NetTcpPortSharing -StartupType Manual
     Start-Service NetTcpPortSharing
 - ps: | 
@@ -39,7 +42,7 @@ before_build:
     $info=""; foreach($name in $names) { $info += " [$name]"; } Write-Host "Sql Servers: $info";
     foreach($sqlname in $names) {
         if ($sqlname.Length -eq 0) { continue; }
-        "Disable MSSQL`$$sqlname"
+        "$(Get-Elapsed) Disable MSSQL`$$sqlname"
         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
         & cmd /c sc delete "MSSQL`$$sqlname"
     }
@@ -50,18 +53,18 @@ before_build:
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
-        "[$(Get-Elapsed)] Installing SQL Express 2017"
+        "$(Get-Elapsed) Installing SQL Express 2017"
         & .\SQL-Express-2017-Updated.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2017-Updated.log
         
-        "[$(Get-Elapsed)] Installing SQL Express 2014 SP2"
+        "$(Get-Elapsed) Installing SQL Express 2014 SP2"
         & .\SQL-Express-2014-SP2-x86.cmd     2>&1 >$Env:ARTIFACT\SQL-Express-2014-SP2-x86.log
         
-        "[$(Get-Elapsed)] Installing SQL Express 2012 SP3"
+        "$(Get-Elapsed) Installing SQL Express 2012 SP3"
         & .\SQL-Express-2012-SP3.cmd         2>&1 >$Env:ARTIFACT\SQL-Express-2012-SP3.log
         
-        "[$(Get-Elapsed)] Installing SQL Express 2008 R2 SP2 (x86)"
+        "$(Get-Elapsed) Installing SQL Express 2008 R2 SP2 (x86)"
         & .\SQL-Express-2008-R2-SP2-x86.cmd  2>&1 >$Env:ARTIFACT\SQL-Express-2008-R2-SP2-x86.log
-        "[$(Get-Elapsed)] Done"
+        "$(Get-Elapsed) Done. SQL Services are:"
 
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
