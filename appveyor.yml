@@ -9,7 +9,7 @@ environment:
 
   matrix:
     - JOB: "SQL Server 2019 RC (Developer)"
-      SCRIPT: ".\SQL-2019-CTP3.0.cmd"
+      # SCRIPT: ".\SQL-2019-CTP3.0.cmd"
 
     - JOB: "SQL Server 2017 (Developer)"
       Script: ".\sql-dev-2017.ps1"
