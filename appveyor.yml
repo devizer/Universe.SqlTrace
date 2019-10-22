@@ -19,7 +19,8 @@ init:
 
 
 before_build:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; New-Item -ItemType Directory -Path $Env:ARTIFACT; "Hi" >Artifact\hi.txt
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; New-Item -ItemType Directory -Path $Env:ARTIFACT; # "Hi" >Artifact\hi.txt
+- ps: Start-Transcript "Artifact\Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
     # disable preinstalled SQL Servers
@@ -36,6 +37,7 @@ before_build:
         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
         & sc delete "MSSQL`$$sqlname"
     }
+    "sc help"; & sc /h
     get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
     # cmd /c dir /b /s
 
