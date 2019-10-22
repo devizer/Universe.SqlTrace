@@ -119,23 +119,23 @@ build_script:
 
 test_script:
 # already tested?
-- cmd: |
-    set TEST_SQL_NET_DURATION_OF_Ping=42
-    set TEST_SQL_NET_DURATION_OF_Upload=42
-    set TEST_SQL_NET_DURATION_OF_Download=42
-    nunit3-console include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll --workers=1 --result=myresults.xml;format=AppVeyor
-
-- nunit3-console Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe --workers=1 --result=myresults.xml;format=AppVeyor
+- ps: |
+    $Env:TEST_SQL_NET_DURATION_OF_Ping = 42
+    $Env:TEST_SQL_NET_DURATION_OF_Upload = 42
+    $Env:TEST_SQL_NET_DURATION_OF_Download = 42
+    foreach($assembly in @("include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll","Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe") {
+        & nunit3-console $assembly --workers=1 --result=myresults.xml;format=AppVeyor
+    }
 
 # - ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
 # - ps: get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 #- cmd: '"%7zip%" a -t7z -mx=9 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .'
 
-after_test:
-- ps: Stop-Transcript; sleep 11
+# after_test:
+# - ps: Stop-Transcript; sleep 11
 
 # Error uploading artifact the storage: The underlying connection was closed: An unexpected error occurred on a send.
-artifacts:
-  - path: Artifact
+# artifacts:
+#  - path: Artifact
 
 #  - path: 'SqlProfiler (AppVeyor Build Folder).7z'
