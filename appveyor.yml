@@ -34,9 +34,10 @@ before_build:
         if ($sqlname.Length -eq 0) { continue; }
         "Disable MSSQL`$$sqlname"
         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+        & sc delete "MSSQL`$$sqlname"
     }
     get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
-    cmd /c dir /b /s
+    # cmd /c dir /b /s
 
 - ps: | 
         # Install new SQL Servers
