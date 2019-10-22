@@ -93,17 +93,20 @@ before_build:
         pushd SQL-Express; 
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB.txt"
-        if ($Env:Script) { 
+        if ($Env:Script) {
             "$(Get-Elapsed) Installing $Env:JOB"
-            & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" 
+            & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
             "$(Get-Elapsed) Finished SQL Server Installers. Deleting LocalDB"
             $localdb=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
-            if ($localdb) { 
+            if ($localdb) {
+                Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
+                # HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions
                 "$(Get-Elapsed) LocalDB Manager: [$localdb]"; 
-                & $localdb info;  
-                & $localdb delete MSSQLLocalDB
-                "$(Get-Elapsed) Deleted MSSQLLocalDB"
-                & $localdb info;  
+                Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
+                # & $localdb info;  
+                # & $localdb delete MSSQLLocalDB
+                # "$(Get-Elapsed) Deleted MSSQLLocalDB"
+                # & $localdb info;  
             }
         } else {
         }
