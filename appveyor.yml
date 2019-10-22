@@ -105,8 +105,7 @@ build_script:
 
 test_script:
 # already tested?
-nunit3-console Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe --workers=1 --result=myresults.xml;format=AppVeyor
-
+- nunit3-console Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe --workers=1 --result=myresults.xml;format=AppVeyor
 - ps: cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
 - ps: get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
