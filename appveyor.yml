@@ -14,19 +14,21 @@ init:
      }; $_=Get-Elapsed;
 
 - ps: |
-    "$(Get-Elapsed) Configure local Routing"
-    Set-Service RemoteAccess -StartupType Manual
-    Start-Service RemoteAccess
-    "$(Get-Elapsed) Configure Net TCP Port Sharing"
-    Set-Service NetTcpPortSharing -StartupType Manual
-    Start-Service NetTcpPortSharing
+    if ($false) {
+      "$(Get-Elapsed) Configure local Routing"
+      Set-Service RemoteAccess -StartupType Manual
+      Start-Service RemoteAccess
+      "$(Get-Elapsed) Configure Net TCP Port Sharing"
+      Set-Service NetTcpPortSharing -StartupType Manual
+      Start-Service NetTcpPortSharing
+    }
 - ps: | 
         netsh advfirewall firewall add rule name="All ICMP V4" protocol=icmpv4:any,any dir=in action=allow
         netsh advfirewall firewall add rule name="Open Port 1433 (SQL Servers)" dir=in action=allow protocol=TCP localport=1433
 
 
 before_build:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; New-Item -ItemType Directory -Path $Env:ARTIFACT; # "Hi" >Artifact\hi.txt
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
 - ps: Start-Transcript "Artifact\Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
