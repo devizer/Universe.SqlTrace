@@ -12,6 +12,9 @@ environment:
 
   matrix:
 
+    - JOB: "LocalDB 2016"
+      # Script: .\SQL-Express-2005-SP4-x86.cmd
+
     - JOB: "SQL Server 2005 SP4 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
 
@@ -90,10 +93,12 @@ before_build:
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
-        "$(Get-Elapsed) Installing $Env:JOB"
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB.txt"
-        & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-        "$(Get-Elapsed) Finished SQL Server Installers"
+        if ($Env:Script) { 
+            "$(Get-Elapsed) Installing $Env:JOB"
+            & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" 
+            "$(Get-Elapsed) Finished SQL Server Installers"
+        }
 
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
