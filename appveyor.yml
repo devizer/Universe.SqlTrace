@@ -129,6 +129,6 @@ after_test:
 artifacts:
   - path: Artifact
 
-  - path: '.'
+  - path: '.\**'
     name: Working-Folder
     type: zip
