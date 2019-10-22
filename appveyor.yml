@@ -125,5 +125,9 @@ test_script:
 
 after_test:
 - ps: Stop-Transcript
+
 artifacts:
   - path: Artifact
+
+  - path: '**\**'
+    name: Working-Folder
