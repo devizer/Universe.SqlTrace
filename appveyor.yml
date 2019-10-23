@@ -136,7 +136,8 @@ init:
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 
 install:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; 
+- ps: Say "ARTIFACT folder: $($Env:ARTIFACT)"
 - ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
