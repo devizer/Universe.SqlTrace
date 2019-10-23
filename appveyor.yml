@@ -1,9 +1,9 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
-# - Visual Studio 2013
-# - Visual Studio 2015
+- Visual Studio 2013
+- Visual Studio 2015
 - Visual Studio 2017
-# - Visual Studio 2019
+- Visual Studio 2019
 
 environment:
 
@@ -17,34 +17,34 @@ environment:
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       Local_DB: True
 
-    - JOB: "SQL SERVER LocalDB 2017"
-      Local_DB: True
-      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
-
-    - JOB: "SQL SERVER 2019 RC (Developer)"
-      Script: .\SQL-2019-Pre.cmd
-
-    - JOB: "SQL SERVER 2017 (Developer)"
-      Script: 'powershell -f .\sql-dev-2017.ps1'
-
-    - JOB: "SQL SERVER 2017 (Express)"
-      Script: .\SQL-Express-2017-Updated.cmd
-
-    - JOB: "SQL SERVER 2016 (Express)"
-      Script: .\SQL-Express-2016-Updated.cmd
-    
-    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-      Script: .\SQL-Express-2014-SP2-x86.cmd
-
-    - JOB: "SQL SERVER 2012 SP3 (Express)"
-      Script: .\SQL-Express-2012-SP3.cmd
-
-    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-      Script: .\SQL-Express-2008-R2-SP2-x86.cmd
-
-    - JOB: "SQL SERVER 2008 SP3 (Express)"
-      Script: .\SQL-Express-2008-SP3-x64.cmd
-
+#    - JOB: "SQL SERVER LocalDB 2017"
+#      Local_DB: True
+#      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
+#
+#    - JOB: "SQL SERVER 2019 RC (Developer)"
+#      Script: .\SQL-2019-Pre.cmd
+#
+#    - JOB: "SQL SERVER 2017 (Developer)"
+#      Script: 'powershell -f .\sql-dev-2017.ps1'
+#
+#    - JOB: "SQL SERVER 2017 (Express)"
+#      Script: .\SQL-Express-2017-Updated.cmd
+#
+#    - JOB: "SQL SERVER 2016 (Express)"
+#      Script: .\SQL-Express-2016-Updated.cmd
+#    
+#    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
+#      Script: .\SQL-Express-2014-SP2-x86.cmd
+#
+#    - JOB: "SQL SERVER 2012 SP3 (Express)"
+#      Script: .\SQL-Express-2012-SP3.cmd
+#
+#    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
+#      Script: .\SQL-Express-2008-R2-SP2-x86.cmd
+#
+#    - JOB: "SQL SERVER 2008 SP3 (Express)"
+#      Script: .\SQL-Express-2008-SP3-x64.cmd
+#
 platform: Any CPU
 init:
 - ps: |
@@ -158,17 +158,6 @@ install:
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
-        # hide pre-installed LocalDB for tests with SQL Express/Developer
-        if ($Env:Local_DB -eq $null) {
-            Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
-            Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
-            # Hide-LocalDB-Servers
-            Uninstall-SqlLocalDB 2016
-            Uninstall-SqlLocalDB 2014
-            Uninstall-SqlLocalDB 2016
-            Uninstall-SqlLocalDB 2016
-        }
-
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
             Say "Installing $Env:JOB"
@@ -176,6 +165,18 @@ install:
             Say "Finished SQL Server Installers"
         } 
         
+        # hide pre-installed LocalDB for tests with SQL Express/Developer
+        if ($Env:Local_DB -eq $null) {
+            Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
+            Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
+            # it is imposible to delete LocalDB 2016 On VS 2017 image, but it is ok to delete 2016th LocalDB
+            Uninstall-SqlLocalDB 2016
+            Uninstall-SqlLocalDB 2014
+            Uninstall-SqlLocalDB 2016
+            Uninstall-SqlLocalDB 2016
+            Hide-LocalDB-Servers
+        }
+
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
@@ -224,7 +225,7 @@ test_script:
         Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
 
-    if ($true -or $Env:Script -eq $null) {
+    if ($false -and $Env:Script -eq $null) {
         Say "Logging preinstalled software"
         get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
