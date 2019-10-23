@@ -105,7 +105,7 @@ init:
         $apps = Find-Apps "LocalDB" | ? { $($_.DisplayName -like "*$($version)*") -and ($_.DisplayName -like "*Microsoft*")  }
         if ($apps -and $apps[0]) { 
             # DisplayName, DisplayVersion, PSPath, PSChildName, UninstallString, Guid, MsiUninstallArgs
-            $msi=@($apps)[0]; $msi_args=$msi.MsiUninstallArgs + " /L*v `"Uninstall $($msi.DisplayName).log`""
+            $msi=@($apps)[0]; $msi_args=$msi.MsiUninstallArgs + " /L*v `"$($Env:ARTIFACT)\Uninstall $($msi.DisplayName).log`""
             Say "Deleting MSI Package $($msi.DisplayName) (version [$($msi.DisplayVersion)]) using args: [$msi_args]"
             start-process "msiexec.exe" -arg $msi_args -Wait
         } else {
@@ -136,7 +136,7 @@ init:
 - cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 
 install:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"
 - ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
@@ -153,7 +153,6 @@ install:
 
 - ps: | 
         # Install new SQL Servers
-        Say "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
