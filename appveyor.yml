@@ -204,17 +204,17 @@ test_script:
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
     if ($false) {
-    Say "Program Files (names)"
-    cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
+        Say "Program Files (names)"
+        cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
-    Say "Program Files (files)"
-    Get-ChildItem -Path "C:\Program Files" -recurse -force *> "$Env:ARTIFACT\Program Files (objects).log"
+        Say "Program Files (files)"
+        Get-ChildItem -Path "C:\Program Files" -recurse -force *> "$Env:ARTIFACT\Program Files (objects).log"
 
-    Say "User Profile (names)"
-    cmd /c dir /b /s /ah /as "$Env:USERPROFILE" *> "$Env:ARTIFACT\User Profile (names).log"
+        Say "User Profile (names)"
+        cmd /c dir /b /s /ah /as "$Env:USERPROFILE" *> "$Env:ARTIFACT\User Profile (names).log"
 
-    Say "User Profile (files)"
-    Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
+        Say "User Profile (files)"
+        Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
 
     if ($true -or $Env:Script -eq $null) {
