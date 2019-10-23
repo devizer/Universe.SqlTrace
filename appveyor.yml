@@ -148,8 +148,7 @@ test_script:
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (files).log"
     
     "$(Get-Elapsed) Pack working folder"
-    & "7z" -h
-    & "7z" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
+    & "7z" a -t7z -mx=9 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
     "$(Get-Elapsed) Bye-bye"
 
 after_test:
