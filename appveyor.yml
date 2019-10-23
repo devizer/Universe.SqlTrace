@@ -49,6 +49,13 @@ platform: Any CPU
 init:
 - ps: |
 
+    function Say { param( [string] $message )
+        Write-Host "$(Get-Elapsed) $message" -ForegroundColor Yellow
+        Write-Host "$(Get-Elapsed) $message" -ForegroundColor White
+        Write-Host "$(Get-Elapsed) $message" -ForegroundColor Magenta
+        Write-Host "$(Get-Elapsed) $message" -ForegroundColor Cyan
+    }
+    
     function Get-Elapsed
     {
         if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
@@ -66,7 +73,7 @@ init:
 
     function Disable-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
-            "$(Get-Elapsed) Disable MSSQL`$$sqlname"
+            Say "Disable MSSQL`$$sqlname"
             Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
             Set-Service "MSSQL`$$sqlname" -StartupType Disabled
         }
@@ -74,7 +81,7 @@ init:
 
     function Delete-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
-            "$(Get-Elapsed) Delete MSSQL`$$sqlname"
+            Say "Delete MSSQL`$$sqlname"
             Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
             Set-Service "MSSQL`$$sqlname" -StartupType Disabled
             & cmd /c sc delete "MSSQL`$$sqlname"
@@ -82,7 +89,7 @@ init:
     }
 
     function Hide-LocalDB-Servers {
-        "$(Get-Elapsed) Hide SQL Server LocalDB"; 
+        Say "Hide SQL Server LocalDB"; 
         Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
     }
 
@@ -107,33 +114,33 @@ install:
 - git submodule update --init --recursive
 - ps: |
 
-    "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
+    Say "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
 
-    "$(Get-Elapsed) Disable All pre-installed sql servers"
+    Say "Disable All pre-installed sql servers"
     Disable-SqlServers (Get-Preinstalled-SqlServers)
     
-    "$(Get-Elapsed) Delete All pre-installed sql servers"
+    Say "Delete All pre-installed sql servers"
     Delete-SqlServers (Get-Preinstalled-SqlServers)
     Show-SqlServers
 
 - ps: | 
         # Install new SQL Servers
-        "ARTIFACT folder: $($Env:ARTIFACT)"
+        Say "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
-            "$(Get-Elapsed) Installing $Env:JOB"
+            Say "Installing $Env:JOB"
             Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            "$(Get-Elapsed) Finished SQL Server Installers"
+            Say "Finished SQL Server Installers"
         } 
         
         # hide pre-installed LocalDB for tests with SQL Express/Developer
         if ($Env:Local_DB -eq $null) {
-            "$(Get-Elapsed) Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
+            Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
             Hide-LocalDB-Servers
         }
         popd
@@ -168,25 +175,25 @@ test_script:
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
     if ($false) {
-    "$(Get-Elapsed) Program Files (names)"
+    Say "Program Files (names)"
     cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
-    "$(Get-Elapsed) Program Files (files)"
+    Say "Program Files (files)"
     Get-ChildItem -Path "C:\Program Files" -recurse -force *> "$Env:ARTIFACT\Program Files (objects).log"
 
-    "$(Get-Elapsed) User Profile (names)"
+    Say "User Profile (names)"
     cmd /c dir /b /s /ah /as "$Env:USERPROFILE" *> "$Env:ARTIFACT\User Profile (names).log"
 
-    "$(Get-Elapsed) User Profile (files)"
+    Say "User Profile (files)"
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
 
     if ($Env:Script -eq $null) {
-        "$(Get-Elapsed) Logging preinstalled software"
+        Say "Logging preinstalled software"
         get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
     
-    "$(Get-Elapsed) Pack working folder"
+    Say "Pack working folder"
     & "7z" a -t7z -mx=3 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
     "$(Get-Elapsed) Bye-bye"
 
