@@ -1,9 +1,9 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
+# - Visual Studio 2013
+# - Visual Studio 2015
 - Visual Studio 2017
-
-cache:
-  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
+# - Visual Studio 2019
 
 environment:
 
@@ -139,6 +139,12 @@ install:
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
+### THE END OF TEMPLATE ###
+
+cache:
+  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
+
+
 build_script:
 - ps: | 
       & .\build-for-appveyor.cmd
@@ -161,6 +167,7 @@ test_script:
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
+    if ($false) {
     "$(Get-Elapsed) Program Files (names)"
     cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
@@ -172,9 +179,10 @@ test_script:
 
     "$(Get-Elapsed) User Profile (files)"
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
+    }
     
     "$(Get-Elapsed) Pack working folder"
-    & "7z" a -t7z -mx=2 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
+    & "7z" a -t7z -mx=3 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
     "$(Get-Elapsed) Bye-bye"
 
 after_test:

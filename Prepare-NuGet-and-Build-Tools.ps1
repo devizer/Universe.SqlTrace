@@ -18,7 +18,7 @@ function AddVar { param([string]$var, [string]$value)
   [IO.File]::AppendAllText($report_Cmd, "@set $var=$value`r`n");
   Write-Host "$var=$value" -ForegroundColor Green
   ${Env:$var}=$value
-  [IO.File]::AppendAllText($report_Cmd, "set $var=$value`r`n");
+  # [IO.File]::AppendAllText($report_Cmd, "set $var=$value`r`n");
   # [Environment]::SetEnvironmentVariable($var, $value, "User")
 }
 
