@@ -152,6 +152,7 @@ cache:
 
 build_script:
 - ps: | 
+      Say "RESTORE and BUILD"
       & .\build-for-appveyor.cmd
 
 test_script:
@@ -165,10 +166,13 @@ test_script:
         "Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe"
     )
     foreach($assembly in $assemblies) {
-        & nunit3-console $assembly --workers=1 "--result=$([System.IO.Path]::GetFileNameWithoutExtension($assembly)).xml;format=AppVeyor"
+        $file=[System.IO.Path]::GetFileNameWithoutExtension($assembly)
+        Say "TEST $file"
+        & nunit3-console $assembly --workers=1 "--result=$($file).xml;format=AppVeyor"
     }
 
 - ps: | 
+    Say "Prepare Artifacts"
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
