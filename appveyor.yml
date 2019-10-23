@@ -183,7 +183,7 @@ after_build:
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
-        if ($false -and Find-SqlLocalDB-Exe) {
+        if ($false -and (Find-SqlLocalDB-Exe)) {
             Say "Shutting down MSSqlLocalDB"
             try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i } catch {}
             try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k } catch {}
