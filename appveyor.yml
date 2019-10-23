@@ -1,19 +1,21 @@
-version: 'SqlProfiler Integration Tests #{build}'
+version: 'SqlProfiler API Integration Tests #{build}'
 image:
 - Visual Studio 2017
-# - Visual Studio 2019
 
 cache:
   - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
 
 environment:
 
-  Project: "SQL Server Profiler API for .NET and Core"
+  Project: "SQL Server Profiler API for .NET"
 
   matrix:
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       Local_DB: True
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      Script: .\SQL-Express-2005-SP4-x86.cmd
 
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
@@ -43,40 +45,15 @@ environment:
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       Script: .\SQL-Express-2008-SP3-x64.cmd
 
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: .\SQL-Express-2005-SP4-x86.cmd
-
 platform: Any CPU
 init:
-- cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
 - ps: |
+
      function Get-Elapsed
      {
          if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
          [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
      }; $_=Get-Elapsed;
-
-- ps: |
-    if ($false) {
-      "$(Get-Elapsed) Configure local Routing"
-      Set-Service RemoteAccess -StartupType Manual
-      Start-Service RemoteAccess
-      "$(Get-Elapsed) Configure Net TCP Port Sharing"
-      Set-Service NetTcpPortSharing -StartupType Manual
-      Start-Service NetTcpPortSharing
-    }
-- ps: | 
-    if ($false) {
-        netsh advfirewall firewall add rule name="All ICMP V4" protocol=icmpv4:any,any dir=in action=allow
-        netsh advfirewall firewall add rule name="Open Port 1433 (SQL Servers)" dir=in action=allow protocol=TCP localport=1433
-    }
-
-
-before_build:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
-- ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
-- git submodule update --init --recursive
-- ps: |
 
     function Get-Preinstalled-SqlServers
     {
@@ -84,9 +61,7 @@ before_build:
         foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
             try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
         }
-        [System.Array]::Sort($names);
-        $names = $names | where { "$_".Length -gt 0 }
-        $names
+        $names | sort | where { "$_".Length -gt 0 }
     }
 
     function Disable-SqlServers { param( [array] $names ) 
@@ -106,9 +81,31 @@ before_build:
         }
     }
 
-    function Show-SqlServers {
-        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+    function Hide-LocalDB-Servers {
+        "$(Get-Elapsed) Hide SQL Server LocalDB"; 
+        Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
     }
+
+    # return empty string if SqlLocalDB.exe is not found. always returns latest installed SqlLocalDB.exe
+    function Find-SqlLocalDB-Exe {
+        if ($Global:LocalDbExe -eq $null) {
+            $Global:LocalDbExe=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
+            if ($Global:LocalDbExe) { Write-Host "$(Get-Elapsed) Found SqlLocalDB.exe full path: [$($Global:LocalDbExe)]" } else { Write-Host "$(Get-Elapsed) SqlLocalDB.exe NOT Found" }
+        }
+        "$($Global:LocalDbExe)"
+    }
+
+    function Show-SqlServers {
+        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft State, Name, DisplayName, StartMode
+    }
+
+- cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
+
+install:
+- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
+- ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
+- git submodule update --init --recursive
+- ps: |
 
     "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
@@ -126,22 +123,24 @@ before_build:
         pushd SQL-Express; 
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB.txt"
+
+        # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
             "$(Get-Elapsed) Installing $Env:JOB"
             Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
             "$(Get-Elapsed) Finished SQL Server Installers"
         } 
+        
+        # hide pre-installed LocalDB for tests with SQL Express/Developer
         if ($Env:Local_DB -eq $null) {
-            $localdb=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
-            "$(Get-Elapsed) Delete SQL LocalDB Server. Manager: [$localdb]"; 
-            Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
+            "$(Get-Elapsed) Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
+            Hide-LocalDB-Servers
         }
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
 build_script:
 - ps: | 
-      # & .\build-and-test.cmd
       & .\build-for-appveyor.cmd
 
 test_script:
