@@ -147,8 +147,8 @@ test_script:
     "$(Get-Elapsed) User Profile (files)"
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse *> "$Env:ARTIFACT\User Profile (files).log"
     
-    & "$Env:7zip" -h
-    & "$Env:7zip" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
+    & "7z" -h
+    & "7z" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
     " "
 
 after_test:
