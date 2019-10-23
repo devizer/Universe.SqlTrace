@@ -183,7 +183,7 @@ test_script:
 
     if ($Env:Script -eq $null) {
         "$(Get-Elapsed) Logging preinstalled software"
-        get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState *> "$Env:ARTIFACT\Preintalled Software.log"
+        get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
     
     "$(Get-Elapsed) Pack working folder"
