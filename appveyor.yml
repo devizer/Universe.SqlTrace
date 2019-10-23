@@ -1,8 +1,8 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
 # - Visual Studio 2013
-- Visual Studio 2015
 - Visual Studio 2019
+- Visual Studio 2015
 - Visual Studio 2017
 
 environment:
@@ -162,7 +162,7 @@ before_build:
 - ps: | 
     if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
         try {
-            Say "Upgrading PSReadLine"
+            Say "Upgrading PSReadLine on $($Env:APPVEYOR_BUILD_WORKER_IMAGE)"
             Install-Module PSReadLine -AllowPrerelease -Force
             Say "PSReadLine Upgraded"
         } catch {
@@ -184,8 +184,8 @@ after_build:
 
         if (Find-SqlLocalDB-Exe) {
             Say "Shutting down MSSqlLocalDB"
-            & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i
-            & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k
+            try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i } catch {}
+            try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k } catch {}
         }
 
         # Script for LocalDB 2019 is empty - it is already preinstalled
