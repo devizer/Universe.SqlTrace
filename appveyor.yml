@@ -16,14 +16,14 @@ environment:
       Local_DB: True
 
     - JOB: "SQL SERVER LocalDB 2017"
-      Script: "powershell -f .\Install-SQL-LocalDB.ps1"
+      Script: 'powershell -f .\Install-SQL-LocalDB.ps1'
       Local_DB: True
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
 
     - JOB: "SQL SERVER 2017 (Developer)"
-      Script: "powershell -f .\sql-dev-2017.ps1"
+      Script: 'powershell -f .\sql-dev-2017.ps1'
 
     - JOB: "SQL SERVER 2017 (Express)"
       Script: .\SQL-Express-2017-Updated.cmd
