@@ -1,9 +1,9 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
 # - Visual Studio 2013
+- Visual Studio 2015
 - Visual Studio 2019
 - Visual Studio 2017
-- Visual Studio 2015
 
 environment:
 
@@ -11,15 +11,15 @@ environment:
 
   matrix:
 
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      Script: .\SQL-2019-Pre.cmd
+
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       Local_DB: True
 
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
       Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
-
-    - JOB: "SQL SERVER 2019 RC (Developer)"
-      Script: .\SQL-2019-Pre.cmd
 
     - JOB: "SQL SERVER 2017 (Developer)"
       Script: 'powershell -f .\sql-dev-2017.ps1'
@@ -192,7 +192,8 @@ after_build:
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
             Say "Installing $Env:JOB"
-            Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
+            # Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
+            & $Env:Script 
             Say "Finished SQL Server Installers"
         } 
         

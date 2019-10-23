@@ -1,0 +1,735 @@
+[00:00:00] Build started
+[00:00:00] 
+[00:00:00] function Say { param( [string] $message )
+[00:00:00]     Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Magenta
+[00:00:00]     Write-Host "$message" -ForegroundColor Yellow
+[00:00:00] }
+[00:00:00] 
+[00:00:00] function Get-Elapsed
+[00:00:00] {
+[00:00:00]     if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
+[00:00:00]     [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
+[00:00:00] }; $_=Get-Elapsed;
+[00:00:00] 
+[00:00:00] function Get-Preinstalled-SqlServers
+[00:00:00] {
+[00:00:00]     $names = @();
+[00:00:00]     foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
+[00:00:00]         try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
+[00:00:00]     }
+[00:00:00]     $names | sort | where { "$_".Length -gt 0 }
+[00:00:00] }
+[00:00:00] 
+[00:00:00] function Disable-SqlServers { param( [array] $names ) 
+[00:00:00]     foreach($sqlname in $names) {
+[00:00:00]         Say "Disable MSSQL`$$sqlname"
+[00:00:00]         Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
+[00:00:00]         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+[00:00:00]     }
+[00:00:00] }
+[00:00:00] 
+[00:00:00] function Delete-SqlServers { param( [array] $names ) 
+[00:00:00]     foreach($sqlname in $names) {
+[00:00:00]         Say "Delete MSSQL`$$sqlname"
+[00:00:00]         Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
+[00:00:00]         Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+[00:00:00]         & cmd /c sc delete "MSSQL`$$sqlname"
+[00:00:00]     }
+[00:00:00] }
+[00:00:00] 
+[00:00:00] function Hide-LocalDB-Servers {
+[00:00:00]     Say "Hide SQL Server LocalDB"; 
+[00:00:00]     Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
+[00:00:00] }
+[00:00:00] 
+[00:00:00] # return empty string if SqlLocalDB.exe is not found. always returns latest installed SqlLocalDB.exe
+[00:00:00] function Find-SqlLocalDB-Exe {
+[00:00:00]     if ($Global:LocalDbExe -eq $null) {
+[00:00:00]         $Global:LocalDbExe=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
+[00:00:00]         if ($Global:LocalDbExe) { Write-Host "$(Get-Elapsed) Found SqlLocalDB.exe full path: [$($Global:LocalDbExe)]" } else { Write-Host "$(Get-Elapsed) SqlLocalDB.exe NOT Found" }
+[00:00:00]     }
+[00:00:00]     "$($Global:LocalDbExe)"
+[00:00:00] }
+[00:00:00] 
+[00:00:00] # Does not work propery without reboot - logs report that unsunstall successful, but
+[00:00:00] function Uninstall-SqlLocalDB { param([string] $version)
+[00:00:00]     Say "Deleting LocalDB $version"
+[00:00:00]     $apps = Find-Apps "LocalDB" | ? { $($_.DisplayName -like "*$($version)*") -and ($_.DisplayName -like "*Microsoft*")  }
+[00:00:00]     if ($apps -and $apps[0]) { 
+[00:00:00]         # DisplayName, DisplayVersion, PSPath, PSChildName, UninstallString, Guid, MsiUninstallArgs
+[00:00:00]         $msi=@($apps)[0]; $msi_args=$msi.MsiUninstallArgs + " /L*v `"$($Env:ARTIFACT)\Uninstall $($msi.DisplayName).log`""
+[00:00:00]         Say "Deleting MSI Package $($msi.DisplayName) (version [$($msi.DisplayVersion)]) using args: [$msi_args]"
+[00:00:00]         start-process "msiexec.exe" -arg $msi_args -Wait
+[00:00:00]     } else {
+[00:00:00]         Say "LocalDB $version is not found"
+[00:00:00]     }
+[00:00:00] }
+[00:00:00] 
+[00:00:00] # https://stackoverflow.com/questions/113542/how-can-i-uninstall-an-application-using-powershell
+[00:00:00] function Find-Apps { param([string] $pattern)
+[00:00:00]     $apps = @();
+[00:00:00]     $path32="HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+[00:00:00]     $path64="HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+[00:00:00]     foreach($path in @($path64, $path32)) {
+[00:00:00]         $u = gci $path | foreach { gp $_.PSPath } | ? { $_ -like "*$($pattern)*" }
+[00:00:00]         if ($u.Length -gt 0) { $apps += $u }
+[00:00:00]     }
+[00:00:00]     $apps |
+[00:00:00]         foreach { $_ | Add-Member Guid $_.PSChildName; $_ } |
+[00:00:00]         foreach { $_.DisplayName = "$($_.DisplayName)".Trim(); $_ } |
+[00:00:00]         foreach { $_ | Add-Member MsiUninstallArgs ("/X " + ($_.UninstallString -Replace "msiexec.exe","" -Replace "/I","" -Replace "/X","" ).ToString().Trim() + " /qn"); $_ }
+[00:00:00] }
+[00:00:00] 
+[00:00:00] function Show-SqlServers {
+[00:00:00]     get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft State, Name, DisplayName, StartMode
+[00:00:00] }
+[00:00:00] 
+[00:00:00] bash -c 'time echo "Hello from BASH $(bash --version)"'
+[00:00:00] Hello from BASH GNU bash, version 4.4.19(2)-release (x86_64-pc-msys)
+[00:00:00] Copyright (C) 2016 Free Software Foundation, Inc.
+[00:00:00] License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+[00:00:00] 
+[00:00:00] This is free software; you are free to change and redistribute it.
+[00:00:00] There is NO WARRANTY, to the extent permitted by law.
+[00:00:00] 
+[00:00:00] real	0m0.029s
+[00:00:00] user	0m0.000s
+[00:00:00] sys	0m0.046s
+[00:00:00] git clone -q --branch=master https://github.com/devizer/Universe.SqlTrace.git C:\projects\universe-sqltrace
+[00:00:01] git checkout -qf 3e677a51d9ec738304eb99a6bdc12f8e550f39d3
+[00:00:17] Running Install scripts
+[00:00:17] $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null;
+[00:00:17] Say "ARTIFACT folder: $($Env:ARTIFACT)"
+[00:00:17] [00:00:16] ARTIFACT folder: C:\projects\universe-sqltrace\Artifact
+[00:00:17] Start-Transcript "Artifact\Detailed-Build.log" -Force
+[00:00:17] Transcript started, output file is Artifact\Detailed-Build.log
+[00:00:17] git submodule update --init --recursive
+[00:00:17] Submodule 'include/Universe.SqlServerJam' (https://github.com/devizer/Universe.SqlServerJam) registered for path 'include/Universe.SqlServerJam'
+[00:00:18] Cloning into 'C:/projects/universe-sqltrace/include/Universe.SqlServerJam'...
+[00:00:18] Submodule path 'include/Universe.SqlServerJam': checked out 'b0755f739f33df41c0430cadddf530c8735f2f59'
+[00:00:19] 
+[00:00:19] Say "Pre-installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
+[00:00:19] Show-SqlServers
+[00:00:19] 
+[00:00:19] Say "Disable All pre-installed sql servers"
+[00:00:19] Disable-SqlServers (Get-Preinstalled-SqlServers)
+[00:00:19] 
+[00:00:19] Say "Delete All pre-installed sql servers"
+[00:00:19] Delete-SqlServers (Get-Preinstalled-SqlServers)
+[00:00:19] Show-SqlServers
+[00:00:19] 
+[00:00:19] [00:00:18] Pre-installed Sql Servers: SQL2008R2SP2, SQL2012SP1, SQL2014, SQL2016, SQL2017
+[00:00:19] 
+[00:00:19] State   Name                         DisplayName                                         StartMode
+[00:00:19] -----   ----                         -----------                                         ---------
+[00:00:19] Stopped MySQL57                      MySQL57                                             Manual   
+[00:00:19] Stopped postgresql-x64-10            postgresql-x64-10 - PostgreSQL Server 10            Manual   
+[00:00:19] Stopped postgresql-x64-11            postgresql-x64-11 - PostgreSQL Server 11            Manual   
+[00:00:19] Stopped postgresql-x64-9.3           postgresql-x64-9.3 - PostgreSQL Server 9.3          Manual   
+[00:00:19] Stopped postgresql-x64-9.4           postgresql-x64-9.4 - PostgreSQL Server 9.4          Manual   
+[00:00:19] Stopped postgresql-x64-9.5           postgresql-x64-9.5 - PostgreSQL Server 9.5          Manual   
+[00:00:19] Stopped postgresql-x64-9.6           postgresql-x64-9.6 - PostgreSQL Server 9.6          Manual   
+[00:00:19] Stopped MSSQLServerADHelper100       SQL Active Directory Helper Service                 Disabled 
+[00:00:19] Stopped MSSQLFDLauncher$SQL2008R2SP2 SQL Full-text Filter Daemon Launcher (SQL2008R2SP2) Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2012SP1   SQL Full-text Filter Daemon Launcher (SQL2012SP1)   Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2014      SQL Full-text Filter Daemon Launcher (SQL2014)      Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2016      SQL Full-text Filter Daemon Launcher (SQL2016)      Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2017      SQL Full-text Filter Daemon Launcher (SQL2017)      Manual   
+[00:00:19] Stopped MSSQL$SQL2008R2SP2           SQL Server (SQL2008R2SP2)                           Manual   
+[00:00:19] Stopped MSSQL$SQL2012SP1             SQL Server (SQL2012SP1)                             Manual   
+[00:00:19] Stopped MSSQL$SQL2014                SQL Server (SQL2014)                                Manual   
+[00:00:19] Stopped MSSQL$SQL2016                SQL Server (SQL2016)                                Manual   
+[00:00:19] Stopped MSSQL$SQL2017                SQL Server (SQL2017)                                Manual   
+[00:00:19] Stopped SQLAgent$SQL2008R2SP2        SQL Server Agent (SQL2008R2SP2)                     Disabled 
+[00:00:19] Stopped SQLAgent$SQL2012SP1          SQL Server Agent (SQL2012SP1)                       Disabled 
+[00:00:19] Stopped SQLAgent$SQL2014             SQL Server Agent (SQL2014)                          Disabled 
+[00:00:19] Stopped SQLAgent$SQL2016             SQL Server Agent (SQL2016)                          Disabled 
+[00:00:19] Stopped SQLAgent$SQL2017             SQL Server Agent (SQL2017)                          Manual   
+[00:00:19] Stopped MSOLAP$SQL2016               SQL Server Analysis Services (SQL2016)              Manual   
+[00:00:19] Stopped MSOLAP$SQL2017               SQL Server Analysis Services (SQL2017)              Manual   
+[00:00:19] Stopped SSASTELEMETRY$SQL2016        SQL Server Analysis Services CEIP (SQL2016)         Manual   
+[00:00:19] Stopped SSASTELEMETRY$SQL2017        SQL Server Analysis Services CEIP (SQL2017)         Manual   
+[00:00:19] Stopped SQLBrowser                   SQL Server Browser                                  Manual   
+[00:00:19] Stopped SQLTELEMETRY$SQL2016         SQL Server CEIP service (SQL2016)                   Manual   
+[00:00:19] Stopped SQLTELEMETRY$SQL2017         SQL Server CEIP service (SQL2017)                   Manual   
+[00:00:19] Stopped SQLServerReportingServices   SQL Server Reporting Services                       Manual   
+[00:00:19] Stopped ReportServer$SQL2008R2SP2    SQL Server Reporting Services (SQL2008R2SP2)        Manual   
+[00:00:19] Stopped ReportServer$SQL2012SP1      SQL Server Reporting Services (SQL2012SP1)          Manual   
+[00:00:19] Stopped ReportServer$SQL2014         SQL Server Reporting Services (SQL2014)             Manual   
+[00:00:19] Stopped ReportServer$SQL2016         SQL Server Reporting Services (SQL2016)             Manual   
+[00:00:19] Stopped SQLWriter                    SQL Server VSS Writer                               Manual   
+[00:00:19] 
+[00:00:19] 
+[00:00:19] [00:00:18] Disable All pre-installed sql servers
+[00:00:19] [00:00:18] Disable MSSQL$SQL2008R2SP2
+[00:00:19] [00:00:18] Disable MSSQL$SQL2012SP1
+[00:00:19] [00:00:18] Disable MSSQL$SQL2014
+[00:00:19] [00:00:18] Disable MSSQL$SQL2016
+[00:00:19] [00:00:18] Disable MSSQL$SQL2017
+[00:00:19] [00:00:18] Delete All pre-installed sql servers
+[00:00:19] [00:00:18] Delete MSSQL$SQL2008R2SP2
+[00:00:19] [SC] DeleteService SUCCESS
+[00:00:19] [00:00:18] Delete MSSQL$SQL2012SP1
+[00:00:19] [SC] DeleteService SUCCESS
+[00:00:19] [00:00:19] Delete MSSQL$SQL2014
+[00:00:19] [SC] DeleteService SUCCESS
+[00:00:19] [00:00:19] Delete MSSQL$SQL2016
+[00:00:19] [SC] DeleteService SUCCESS
+[00:00:19] [00:00:19] Delete MSSQL$SQL2017
+[00:00:19] [SC] DeleteService SUCCESS
+[00:00:19] 
+[00:00:19] State   Name                         DisplayName                                         StartMode
+[00:00:19] -----   ----                         -----------                                         ---------
+[00:00:19] Stopped MySQL57                      MySQL57                                             Manual   
+[00:00:19] Stopped postgresql-x64-10            postgresql-x64-10 - PostgreSQL Server 10            Manual   
+[00:00:19] Stopped postgresql-x64-11            postgresql-x64-11 - PostgreSQL Server 11            Manual   
+[00:00:19] Stopped postgresql-x64-9.3           postgresql-x64-9.3 - PostgreSQL Server 9.3          Manual   
+[00:00:19] Stopped postgresql-x64-9.4           postgresql-x64-9.4 - PostgreSQL Server 9.4          Manual   
+[00:00:19] Stopped postgresql-x64-9.5           postgresql-x64-9.5 - PostgreSQL Server 9.5          Manual   
+[00:00:19] Stopped postgresql-x64-9.6           postgresql-x64-9.6 - PostgreSQL Server 9.6          Manual   
+[00:00:19] Stopped MSSQLServerADHelper100       SQL Active Directory Helper Service                 Disabled 
+[00:00:19] Stopped MSSQLFDLauncher$SQL2008R2SP2 SQL Full-text Filter Daemon Launcher (SQL2008R2SP2) Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2012SP1   SQL Full-text Filter Daemon Launcher (SQL2012SP1)   Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2014      SQL Full-text Filter Daemon Launcher (SQL2014)      Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2016      SQL Full-text Filter Daemon Launcher (SQL2016)      Manual   
+[00:00:19] Stopped MSSQLFDLauncher$SQL2017      SQL Full-text Filter Daemon Launcher (SQL2017)      Manual   
+[00:00:19] Stopped SQLAgent$SQL2008R2SP2        SQL Server Agent (SQL2008R2SP2)                     Disabled 
+[00:00:19] Stopped SQLAgent$SQL2012SP1          SQL Server Agent (SQL2012SP1)                       Disabled 
+[00:00:19] Stopped SQLAgent$SQL2014             SQL Server Agent (SQL2014)                          Disabled 
+[00:00:19] Stopped SQLAgent$SQL2016             SQL Server Agent (SQL2016)                          Disabled 
+[00:00:19] Stopped SQLAgent$SQL2017             SQL Server Agent (SQL2017)                          Manual   
+[00:00:19] Stopped MSOLAP$SQL2016               SQL Server Analysis Services (SQL2016)              Manual   
+[00:00:19] Stopped MSOLAP$SQL2017               SQL Server Analysis Services (SQL2017)              Manual   
+[00:00:19] Stopped SSASTELEMETRY$SQL2016        SQL Server Analysis Services CEIP (SQL2016)         Manual   
+[00:00:19] Stopped SSASTELEMETRY$SQL2017        SQL Server Analysis Services CEIP (SQL2017)         Manual   
+[00:00:19] Stopped SQLBrowser                   SQL Server Browser                                  Manual   
+[00:00:19] Stopped SQLTELEMETRY$SQL2016         SQL Server CEIP service (SQL2016)                   Manual   
+[00:00:19] Stopped SQLTELEMETRY$SQL2017         SQL Server CEIP service (SQL2017)                   Manual   
+[00:00:19] Stopped SQLServerReportingServices   SQL Server Reporting Services                       Manual   
+[00:00:19] Stopped ReportServer$SQL2008R2SP2    SQL Server Reporting Services (SQL2008R2SP2)        Manual   
+[00:00:19] Stopped ReportServer$SQL2012SP1      SQL Server Reporting Services (SQL2012SP1)          Manual   
+[00:00:19] Stopped ReportServer$SQL2014         SQL Server Reporting Services (SQL2014)             Manual   
+[00:00:19] Stopped ReportServer$SQL2016         SQL Server Reporting Services (SQL2016)             Manual   
+[00:00:19] Stopped SQLWriter                    SQL Server VSS Writer                               Manual   
+[00:00:19] 
+[00:00:19] 
+[00:00:19] if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
+[00:00:19]     try {
+[00:00:19]         Say "Upgrading PSReadLine on $($Env:APPVEYOR_BUILD_WORKER_IMAGE)"
+[00:00:19]         Install-Module PSReadLine -AllowPrerelease -Force
+[00:00:19]         Say "PSReadLine Upgraded"
+[00:00:19]     } catch {
+[00:00:19]         Say "PSReadLine Upgrade Failed. $($_.Exception.GetType().Name) $($_.Exception.Message)"
+[00:00:19]     }
+[00:00:19] }
+[00:00:19] 
+[00:00:19] Say "RESTORE and BUILD"
+[00:00:19] & .\build-for-appveyor.cmd
+[00:00:19] 
+[00:00:19] [00:00:19] RESTORE and BUILD
+[00:00:19] 
+[00:00:19] C:\projects\universe-sqltrace>type Prepare-NuGet-And-build-tools.ps1   | powershell -c - 
+[00:00:20] Build Tools Folder: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp
+[00:00:20] Create DIR: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp
+[00:00:20] Caching 'https://dist.nuget.org/win-x86-commandline/v4.1.0/nuget.exe' as
+[00:00:20]         [C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-4.1.0.exe]
+[00:00:20] Create DIR: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp
+[00:00:20] Caching 'https://dist.nuget.org/win-x86-commandline/v3.4.4/nuget.exe' as
+[00:00:20]         [C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-3.4.4.exe]
+[00:00:20] Create DIR: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp
+[00:00:20] Caching 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' as
+[00:00:20]         [C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe]
+[00:00:21] Create DIR: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials
+[00:00:21] Caching 'https://raw.githubusercontent.com/devizer/glist/master/Essentials/Essentials.7z.exe' as
+[00:00:21]         [C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials\Essentials.7z.exe]
+[00:00:22] SFX Essentials\Essentials.7z.exe: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials\Essentials.7z.exe
+[00:00:22] Caching nuget package [vswhere]
+[00:00:25] Caching nuget package [ReportUnit]
+[00:00:28] Caching nuget package [NUnit.ConsoleRunner]
+[00:00:30] Caching nuget package [NUnit.Extension.NUnitV2Driver]
+[00:00:32] Caching nuget package [NUnit.Extension.NUnitV2ResultWriter]
+[00:00:35] Caching nuget package [xunit.runner.console]
+[00:00:37] Caching nuget package [xunit]
+[00:00:41] Caching nuget package [JetBrains.dotCover.CommandLineTools]
+[00:00:48] vswhere: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\vswhere.2.7.1\tools\vswhere.exe
+[00:00:48] ESSENTIALS_PATH=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials
+[00:00:48] NUGET_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe
+[00:00:48] VSWHERE_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\vswhere.2.7.1\tools\vswhere.exe
+[00:00:48] VS_PATH=
+[00:00:48] MSBUILD_EXE=msbuild.exe
+[00:00:48] MSBUILD_x86_EXE=
+[00:00:48] MSBUILD_x64_EXE=
+[00:00:48] NUNIT_RUNNER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe
+[00:00:48] XUNIT_RUNNER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\xunit.runner.console.2.4.1\tools\net46\xunit.console.exe
+[00:00:48] REPORT_UNIT_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\ReportUnit.1.2.1\tools\ReportUnit.exe
+[00:00:48] DOTCOVER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\JetBrains.dotCover.CommandLineTools.2019.2.3\tools\dotCover.exe
+[00:00:48] 
+[00:00:48] C:\projects\universe-sqltrace>call ~local-build-tools.cmd 
+[00:00:48] 
+[00:00:48] C:\projects\universe-sqltrace>"C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe" restore 
+[00:00:48] MSBuild auto-detection: using msbuild version '14.0.25420.1 built by: D14REL' from 'C:\Program Files (x86)\MSBuild\14.0\Bin'.
+[00:00:52] Restoring NuGet package Dapper.1.50.5.
+[00:00:52] Restoring NuGet package NUnit.3.10.1.
+[00:00:53]   GET https://www.nuget.org/api/v2/Packages(Id='Dapper',Version='1.50.5')
+[00:00:53]   GET https://www.nuget.org/api/v2/Packages(Id='NUnit',Version='3.10.1')
+[00:00:53]   OK https://www.nuget.org/api/v2/Packages(Id='NUnit',Version='3.10.1') 86ms
+[00:00:53]   OK https://www.nuget.org/api/v2/Packages(Id='Dapper',Version='1.50.5') 126ms
+[00:00:53]   GET https://www.nuget.org/api/v2/package/NUnit/3.10.1
+[00:00:53]   GET https://www.nuget.org/api/v2/package/Dapper/1.50.5
+[00:00:54]   OK https://www.nuget.org/api/v2/package/Dapper/1.50.5 94ms
+[00:00:54]   OK https://www.nuget.org/api/v2/package/NUnit/3.10.1 119ms
+[00:00:54] Installing NUnit 3.10.1.
+[00:00:54] Installing Dapper 1.50.5.
+[00:00:54] Adding package 'Dapper.1.50.5' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:54] Added package 'Dapper.1.50.5' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:54] Restoring NuGet package NUnit.ConsoleRunner.3.8.0.
+[00:00:54]   GET https://www.nuget.org/api/v2/Packages(Id='NUnit.ConsoleRunner',Version='3.8.0')
+[00:00:54] Adding package 'NUnit.3.10.1' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:54] Added package 'NUnit.3.10.1' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:54] Restoring NuGet package NUnit3TestAdapter.3.10.0.
+[00:00:54]   GET https://www.nuget.org/api/v2/Packages(Id='NUnit3TestAdapter',Version='3.10.0')
+[00:00:54]   OK https://www.nuget.org/api/v2/Packages(Id='NUnit3TestAdapter',Version='3.10.0') 94ms
+[00:00:54]   GET https://www.nuget.org/api/v2/package/NUnit3TestAdapter/3.10.0
+[00:00:55]   OK https://www.nuget.org/api/v2/package/NUnit3TestAdapter/3.10.0 56ms
+[00:00:55] Installing NUnit3TestAdapter 3.10.0.
+[00:00:55] Adding package 'NUnit3TestAdapter.3.10.0' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] Added package 'NUnit3TestAdapter.3.10.0' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] Restoring NuGet package Dapper.1.50.2.
+[00:00:55]   GET https://www.nuget.org/api/v2/Packages(Id='Dapper',Version='1.50.2')
+[00:00:55]   OK https://www.nuget.org/api/v2/Packages(Id='Dapper',Version='1.50.2') 82ms
+[00:00:55]   GET https://www.nuget.org/api/v2/package/Dapper/1.50.2
+[00:00:55]   OK https://www.nuget.org/api/v2/Packages(Id='NUnit.ConsoleRunner',Version='3.8.0') 715ms
+[00:00:55]   GET https://www.nuget.org/api/v2/package/NUnit.ConsoleRunner/3.8.0
+[00:00:55]   OK https://www.nuget.org/api/v2/package/Dapper/1.50.2 54ms
+[00:00:55] Installing Dapper 1.50.2.
+[00:00:55]   OK https://www.nuget.org/api/v2/package/NUnit.ConsoleRunner/3.8.0 60ms
+[00:00:55] Installing NUnit.ConsoleRunner 3.8.0.
+[00:00:55] Adding package 'Dapper.1.50.2' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] Added package 'Dapper.1.50.2' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] Adding package 'NUnit.ConsoleRunner.3.8.0' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] Added package 'NUnit.ConsoleRunner.3.8.0' to folder 'C:\projects\universe-sqltrace\packages'
+[00:00:55] 
+[00:00:55] NuGet Config files used:
+[00:00:55]     C:\Users\appveyor\AppData\Roaming\NuGet\NuGet.Config
+[00:00:55] 
+[00:00:55] Feeds used:
+[00:00:55]     C:\Users\appveyor\.nuget\packages\
+[00:00:55]     https://www.nuget.org/api/v2
+[00:00:55] 
+[00:00:55] Installed:
+[00:00:55]     5 package(s) to packages.config projects
+[00:00:55] 
+[00:00:55] C:\projects\universe-sqltrace>pushd include\Universe.SqlServerJam\src 
+[00:00:55] 
+[00:00:55] C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src>"C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe" restore 
+[00:00:56] MSBuild auto-detection: using msbuild version '14.0.25420.1 built by: D14REL' from 'C:\Program Files (x86)\MSBuild\14.0\Bin'.
+[00:00:58] Restoring NuGet package NUnit.3.10.1.
+[00:00:58] Restoring NuGet package Dapper.1.50.2.
+[00:00:58] Adding package 'NUnit.3.10.1' to folder 'C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\packages'
+[00:00:58] Adding package 'Dapper.1.50.2' to folder 'C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\packages'
+[00:00:58] Added package 'Dapper.1.50.2' to folder 'C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\packages'
+[00:00:58] Added package 'NUnit.3.10.1' to folder 'C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\packages'
+[00:00:59] 
+[00:00:59] NuGet Config files used:
+[00:00:59]     C:\Users\appveyor\AppData\Roaming\NuGet\NuGet.Config
+[00:00:59] 
+[00:00:59] Feeds used:
+[00:00:59]     C:\Users\appveyor\.nuget\packages\
+[00:00:59]     https://www.nuget.org/api/v2
+[00:00:59] 
+[00:00:59] Installed:
+[00:00:59]     2 package(s) to packages.config projects
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src>popd
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>call build-only.cmd 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>call set-version.cmd 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>set SqlTrace_Version=1.4.4 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>set PKG_VERSION=1.4.4 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>echo [assembly: System.Reflection.AssemblyVersion("1.4.4.0")]       1>Universe.SqlTrace\Properties\AssemblyVersion.cs 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>echo [assembly: System.Reflection.AssemblyFileVersion("1.4.4.0")]   1>>Universe.SqlTrace\Properties\AssemblyVersion.cs 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>rem *** BUILD *** 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>type Prepare-NuGet-And-build-tools.ps1   | powershell -c - 
+[00:00:59] Build Tools Folder: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp
+[00:00:59] NuGet-4.1.0.exe already present: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-4.1.0.exe
+[00:00:59] NuGet-3.4.4.exe already present: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-3.4.4.exe
+[00:00:59] NuGet-latest.exe already present: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe
+[00:00:59] Essentials\Essentials.7z.exe already present: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials\Essentials.7z.exe
+[00:00:59] SFX Essentials\Essentials.7z.exe: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials\Essentials.7z.exe
+[00:00:59] Package vswhere already cached
+[00:00:59] Package ReportUnit already cached
+[00:00:59] Package NUnit.ConsoleRunner already cached
+[00:00:59] Package NUnit.Extension.NUnitV2Driver already cached
+[00:00:59] Package NUnit.Extension.NUnitV2ResultWriter already cached
+[00:00:59] Package xunit.runner.console already cached
+[00:00:59] Package xunit already cached
+[00:00:59] Package JetBrains.dotCover.CommandLineTools already cached
+[00:00:59] vswhere: C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\vswhere.2.7.1\tools\vswhere.exe
+[00:00:59] ESSENTIALS_PATH=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\Essentials
+[00:00:59] NUGET_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe
+[00:00:59] VSWHERE_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\vswhere.2.7.1\tools\vswhere.exe
+[00:00:59] VS_PATH=
+[00:00:59] MSBUILD_EXE=msbuild.exe
+[00:00:59] MSBUILD_x86_EXE=
+[00:00:59] MSBUILD_x64_EXE=
+[00:00:59] NUNIT_RUNNER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe
+[00:00:59] XUNIT_RUNNER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\xunit.runner.console.2.4.1\tools\net46\xunit.console.exe
+[00:00:59] REPORT_UNIT_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\ReportUnit.1.2.1\tools\ReportUnit.exe
+[00:00:59] DOTCOVER_EXE=C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\packages\JetBrains.dotCover.CommandLineTools.2019.2.3\tools\dotCover.exe
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>call ~local-build-tools.cmd 
+[00:00:59] 
+[00:00:59] C:\projects\universe-sqltrace>"C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp\NuGet-latest.exe" restore 
+[00:01:00] MSBuild auto-detection: using msbuild version '14.0.25420.1 built by: D14REL' from 'C:\Program Files (x86)\MSBuild\14.0\Bin'.
+[00:01:03] All packages listed in packages.config are already installed.
+[00:01:03] 
+[00:01:03] C:\projects\universe-sqltrace>"msbuild.exe" Universe.SqlTrace.sln /t:Rebuild /v:m /p:Configuration=Debug 
+[00:01:03] Microsoft (R) Build Engine version 14.0.25420.1
+[00:01:03] Copyright (C) Microsoft Corporation. All rights reserved.
+[00:01:03] 
+[00:01:07]   Universe.SqlTrace -> C:\projects\universe-sqltrace\Universe.SqlTrace\bin\Debug\Universe.SqlTrace.dll
+[00:01:08] SqlServiceExtentions.cs(41,13): warning CS0162: Unreachable code detected [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:08] DatabaseOptionsManagement.cs(242,17): warning CS0162: Unreachable code detected [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:08] SqlSpeedMeasurement.cs(12,31): warning CS0169: The field 'SqlSpeedMeasurement._IsLocal' is never used [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:08]   Universe.SqlServerJam -> C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\bin\Debug\Universe.SqlServerJam.dll
+[00:01:08] StressController.cs(19,18): warning CS0219: The variable 'totalCounter' is assigned but its value is never used [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:08] TestEnvironment.cs(38,34): warning CS0168: The variable 'ex' is declared but never used [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:08] Test_SqlCountersReader.cs(62,29): warning CS0618: 'SqlParameterCollection.Add(string, object)' is obsolete: 'Add(String parameterName, Object value) has been deprecated.  Use AddWithValue(String parameterName, Object value).  http://go.microsoft.com/fwlink/?linkid=14202' [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:08] TraceDecorator.cs(10,38): warning CS0649: Field 'TraceDecorator.Work' is never assigned to, and will always have its default value null [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:08] TraceDecorator.cs(11,36): warning CS0649: Field 'TraceDecorator.ConnectionFactory' is never assigned to, and will always have its default value null [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:08]   Universe.SqlTrace.Tests -> C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe
+[00:01:08]   Universe.SqlServerJam.Tests -> C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Debug\Universe.SqlServerJam.Tests.dll
+[00:01:08] 
+[00:01:08] C:\projects\universe-sqltrace>"msbuild.exe" Universe.SqlTrace.sln /t:Rebuild /v:m /p:Configuration=Release 
+[00:01:09] Microsoft (R) Build Engine version 14.0.25420.1
+[00:01:09] Copyright (C) Microsoft Corporation. All rights reserved.
+[00:01:09] 
+[00:01:11]   Universe.SqlTrace -> C:\projects\universe-sqltrace\Universe.SqlTrace\bin\Release\Universe.SqlTrace.dll
+[00:01:11] SqlServiceExtentions.cs(41,13): warning CS0162: Unreachable code detected [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:11] DatabaseOptionsManagement.cs(242,17): warning CS0162: Unreachable code detected [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:11] SqlSpeedMeasurement.cs(12,31): warning CS0169: The field 'SqlSpeedMeasurement._IsLocal' is never used [C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj]
+[00:01:11]   Universe.SqlServerJam -> C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam\bin\Release\Universe.SqlServerJam.dll
+[00:01:12] Test_SqlCountersReader.cs(62,29): warning CS0618: 'SqlParameterCollection.Add(string, object)' is obsolete: 'Add(String parameterName, Object value) has been deprecated.  Use AddWithValue(String parameterName, Object value).  http://go.microsoft.com/fwlink/?linkid=14202' [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:12] StressController.cs(19,18): warning CS0219: The variable 'totalCounter' is assigned but its value is never used [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:12] TestEnvironment.cs(38,34): warning CS0168: The variable 'ex' is declared but never used [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:12] TraceDecorator.cs(10,38): warning CS0649: Field 'TraceDecorator.Work' is never assigned to, and will always have its default value null [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:12] TraceDecorator.cs(11,36): warning CS0649: Field 'TraceDecorator.ConnectionFactory' is never assigned to, and will always have its default value null [C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj]
+[00:01:12]   Universe.SqlTrace.Tests -> C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\bin\Release\Universe.SqlTrace.Tests.exe
+[00:01:12]   Universe.SqlServerJam.Tests -> C:\projects\universe-sqltrace\include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll
+[00:01:12] # Install new SQL Servers
+[00:01:12] pushd SQL-Express; 
+[00:01:12] 
+[00:01:12] "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
+[00:01:12] 
+[00:01:12] if ($false -and (Find-SqlLocalDB-Exe)) {
+[00:01:12]     Say "Shutting down MSSqlLocalDB"
+[00:01:12]     try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i } catch {}
+[00:01:12]     try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k } catch {}
+[00:01:12] }
+[00:01:12] 
+[00:01:12] # Script for LocalDB 2019 is empty - it is already preinstalled
+[00:01:12] if ($Env:Script) {
+[00:01:12]     Say "Installing $Env:JOB"
+[00:01:12]     Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
+[00:01:12]     Say "Finished SQL Server Installers"
+[00:01:12] } 
+[00:01:12] 
+[00:01:12] # hide pre-installed LocalDB for tests with SQL Express/Developer
+[00:01:12] if ($Env:Local_DB -eq $null) {
+[00:01:12]     Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
+[00:01:12]     Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
+[00:01:12]     # it is imposible to delete LocalDB 2016 On VS 2017 image, but it is ok to delete 2016th LocalDB
+[00:01:12]     # Uninstall-SqlLocalDB 2016
+[00:01:12]     # Uninstall-SqlLocalDB 2014
+[00:01:12]     # Uninstall-SqlLocalDB 2016
+[00:01:12]     # Uninstall-SqlLocalDB 2016
+[00:01:12]     Hide-LocalDB-Servers
+[00:01:12] }
+[00:01:12] 
+[00:01:12] popd
+[00:01:12] get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+[00:01:12] 
+[00:01:12] [00:01:11] Installing SQL SERVER 2019 RC (Developer)
+[00:02:11] [00:02:11] Finished SQL Server Installers
+[00:02:13] 
+[00:02:13] DisplayName                               DisplayVersion Guid                                   MsiUninstallArgs                             
+[00:02:13] -----------                               -------------- ----                                   ----------------                             
+[00:02:13] Microsoft SQL Server 2014 Express LocalDB 12.1.4100.1    {52EBC484-44A1-4DC5-824A-0A503735ABD8} /X {52EBC484-44A1-4DC5-824A-0A503735ABD8} /qn
+[00:02:13] Microsoft SQL Server 2012 Express LocalDB 11.1.3000.0    {6C026A91-640F-4A23-8B68-05D589CC6F18} /X {6C026A91-640F-4A23-8B68-05D589CC6F18} /qn
+[00:02:13] Microsoft SQL Server 2016 LocalDB         13.1.4474.0    {AA35E539-6AB5-416A-BE1F-37A5855F2D21} /X {AA35E539-6AB5-416A-BE1F-37A5855F2D21} /qn
+[00:02:13] 
+[00:02:13] 
+[00:02:16] [00:02:16] Found SqlLocalDB.exe full path: [C:\Program Files\Microsoft SQL Server\130\Tools\Binn\SqlLocalDB.exe]
+[00:02:16] [00:02:16] Pre-installed SqlLocalDB.exe: C:\Program Files\Microsoft SQL Server\130\Tools\Binn\SqlLocalDB.exe
+[00:02:16] [00:02:16] Hide SQL Server LocalDB
+[00:02:16] 
+[00:02:16] Name                         DisplayName                                         StartMode State  
+[00:02:16] ----                         -----------                                         --------- -----  
+[00:02:16] MySQL57                      MySQL57                                             Manual    Stopped
+[00:02:16] postgresql-x64-10            postgresql-x64-10 - PostgreSQL Server 10            Manual    Stopped
+[00:02:16] postgresql-x64-11            postgresql-x64-11 - PostgreSQL Server 11            Manual    Stopped
+[00:02:16] postgresql-x64-9.3           postgresql-x64-9.3 - PostgreSQL Server 9.3          Manual    Stopped
+[00:02:16] postgresql-x64-9.4           postgresql-x64-9.4 - PostgreSQL Server 9.4          Manual    Stopped
+[00:02:16] postgresql-x64-9.5           postgresql-x64-9.5 - PostgreSQL Server 9.5          Manual    Stopped
+[00:02:16] postgresql-x64-9.6           postgresql-x64-9.6 - PostgreSQL Server 9.6          Manual    Stopped
+[00:02:16] MSSQLServerADHelper100       SQL Active Directory Helper Service                 Disabled  Stopped
+[00:02:16] MSSQLFDLauncher$SQL2008R2SP2 SQL Full-text Filter Daemon Launcher (SQL2008R2SP2) Manual    Stopped
+[00:02:16] MSSQLFDLauncher$SQL2012SP1   SQL Full-text Filter Daemon Launcher (SQL2012SP1)   Manual    Stopped
+[00:02:16] MSSQLFDLauncher$SQL2014      SQL Full-text Filter Daemon Launcher (SQL2014)      Manual    Stopped
+[00:02:16] MSSQLFDLauncher$SQL2016      SQL Full-text Filter Daemon Launcher (SQL2016)      Manual    Stopped
+[00:02:16] MSSQLFDLauncher$SQL2017      SQL Full-text Filter Daemon Launcher (SQL2017)      Manual    Stopped
+[00:02:16] SQLAgent$SQL2008R2SP2        SQL Server Agent (SQL2008R2SP2)                     Disabled  Stopped
+[00:02:16] SQLAgent$SQL2012SP1          SQL Server Agent (SQL2012SP1)                       Disabled  Stopped
+[00:02:16] SQLAgent$SQL2014             SQL Server Agent (SQL2014)                          Disabled  Stopped
+[00:02:16] SQLAgent$SQL2016             SQL Server Agent (SQL2016)                          Disabled  Stopped
+[00:02:16] SQLAgent$SQL2017             SQL Server Agent (SQL2017)                          Manual    Stopped
+[00:02:16] MSOLAP$SQL2016               SQL Server Analysis Services (SQL2016)              Manual    Stopped
+[00:02:16] MSOLAP$SQL2017               SQL Server Analysis Services (SQL2017)              Manual    Stopped
+[00:02:16] SSASTELEMETRY$SQL2016        SQL Server Analysis Services CEIP (SQL2016)         Manual    Stopped
+[00:02:16] SSASTELEMETRY$SQL2017        SQL Server Analysis Services CEIP (SQL2017)         Manual    Stopped
+[00:02:16] SQLBrowser                   SQL Server Browser                                  Manual    Stopped
+[00:02:16] SQLTELEMETRY$SQL2016         SQL Server CEIP service (SQL2016)                   Manual    Stopped
+[00:02:16] SQLTELEMETRY$SQL2017         SQL Server CEIP service (SQL2017)                   Manual    Stopped
+[00:02:16] SQLServerReportingServices   SQL Server Reporting Services                       Manual    Stopped
+[00:02:16] ReportServer$SQL2008R2SP2    SQL Server Reporting Services (SQL2008R2SP2)        Manual    Stopped
+[00:02:16] ReportServer$SQL2012SP1      SQL Server Reporting Services (SQL2012SP1)          Manual    Stopped
+[00:02:16] ReportServer$SQL2014         SQL Server Reporting Services (SQL2014)             Manual    Stopped
+[00:02:16] ReportServer$SQL2016         SQL Server Reporting Services (SQL2016)             Manual    Stopped
+[00:02:16] SQLWriter                    SQL Server VSS Writer                               Manual    Stopped
+[00:02:16] 
+[00:02:16] 
+[00:02:16] $Env:TEST_SQL_NET_DURATION_OF_Ping = 42
+[00:02:16] $Env:TEST_SQL_NET_DURATION_OF_Upload = 42
+[00:02:16] $Env:TEST_SQL_NET_DURATION_OF_Download = 42
+[00:02:16] $assemblies = @(
+[00:02:16]     "include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll",
+[00:02:16]     "Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe"
+[00:02:16] )
+[00:02:16] foreach($assembly in $assemblies) {
+[00:02:16]     $file=[System.IO.Path]::GetFileNameWithoutExtension($assembly)
+[00:02:16]     Say "TEST $file"
+[00:02:16]     & nunit3-console $assembly --workers=1 "--result=$($file).xml;format=AppVeyor"
+[00:02:16] }
+[00:02:16] 
+[00:02:17] [00:02:16] TEST Universe.SqlServerJam.Tests
+[00:02:17] NUnit Console Runner 3.7.0 
+[00:02:17] Copyright (c) 2017 Charlie Poole, Rob Prouse
+[00:02:17] 
+[00:02:17] Runtime Environment
+[00:02:17]    OS Version: Microsoft Windows NT 6.3.9600.0
+[00:02:17]   CLR Version: 4.0.30319.42000
+[00:02:17] 
+[00:02:17] Test Files
+[00:02:17]     include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\bin\Release\Universe.SqlServerJam.Tests.dll
+[00:02:17] 
+[00:02:18] => Universe.SqlServerJam.Tests.Full_Featured_Demo
+[00:02:18] [NUnit3Logs.Bind] Process: nunit-agent
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._1_Find_Local_Servers
+[00:02:19] Found 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.02 secs <-----------> 33 Mb <--------x
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._2_Start_Local_Services
+[00:02:19] Check services status 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.00 secs <-----------> 33 Mb <--------x
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._3_Exam_Servers
+[00:02:19] Exam 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] Done:
+[00:02:19] 
+[00:02:19] Alive Servers: 0. SysAdmins Permissions: 0.
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.00 secs <-----------> 34 Mb <--------x
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._4_Meashure_Ping
+[00:02:19] Ping 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] Ping Report (milliseconds)
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.00 secs <-----------> 34 Mb <--------x
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._5_Meashure_Upload_Speed
+[00:02:19] Upload speed test of 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] Upload speed Report (KBytes per second)
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.04 secs <-----------> 35 Mb <--------x
+[00:02:19] 
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo._6_Meashure_Download_Speed
+[00:02:19] Download speed test of 0 sql servers:
+[00:02:19] 
+[00:02:19] 
+[00:02:19] Download speed Report (KB per second)
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.00 secs <-----------> 35 Mb <--------x
+[00:02:19] 
+[00:02:19] => Universe.SqlServerJam.Tests.Full_Featured_Demo.Test_Debug
+[00:02:19] 
+[00:02:19] 
+[00:02:19] x--------> 00:00.00 secs <-----------> 35 Mb <--------x
+[00:02:19] 
+[00:02:19] 
+[00:02:19] Run Settings
+[00:02:19]     DisposeRunners: True
+[00:02:19]     WorkDirectory: C:\projects\universe-sqltrace
+[00:02:19]     NumberOfTestWorkers: 1
+[00:02:19]     ImageRuntimeVersion: 4.0.30319
+[00:02:19]     ImageTargetFrameworkName: .NETFramework,Version=v4.0
+[00:02:19]     ImageRequiresX86: False
+[00:02:19]     ImageRequiresDefaultAppDomainAssemblyResolver: False
+[00:02:19] 
+[00:02:19] Test Run Summary
+[00:02:19]   Overall result: Passed
+[00:02:19]   Test Count: 7, Passed: 7, Failed: 0, Warnings: 0, Inconclusive: 0, Skipped: 0
+[00:02:19]   Start time: 2019-10-23 17:37:20Z
+[00:02:19]     End time: 2019-10-23 17:37:23Z
+[00:02:19]     Duration: 2.112 seconds
+[00:02:19] 
+[00:02:19] Results (AppVeyor) saved as Universe.SqlServerJam.Tests.xml
+[00:02:19] [00:02:19] TEST Universe.SqlTrace.Tests
+[00:02:19] NUnit Console Runner 3.7.0 
+[00:02:19] Copyright (c) 2017 Charlie Poole, Rob Prouse
+[00:02:19] 
+[00:02:19] Runtime Environment
+[00:02:19]    OS Version: Microsoft Windows NT 6.3.9600.0
+[00:02:19]   CLR Version: 4.0.30319.42000
+[00:02:19] 
+[00:02:19] Test Files
+[00:02:19]     Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe
+[00:02:19] 
+[00:02:21] => Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Local_Instances_Contains_Data
+[00:02:21] Setup
+[00:02:21] FOUND SQL Instances:
+[00:02:21] TearDown
+[00:02:21] => Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Local_Instances_Get
+[00:02:21] Setup
+[00:02:21] TearDown
+[00:02:21] => Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Local_Instances_GetFull
+[00:02:21] Setup
+[00:02:21] TearDown
+[00:02:21] => Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Test_Explicit_Discovery
+[00:02:21] Setup
+[00:02:21] TearDown
+[00:02:21] 
+[00:02:21] Errors, Failures and Warnings
+[00:02:21] 
+[00:02:21] 1) Failed : Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Local_Instances_Contains_Data
+[00:02:21]   SQL Server is required. Either running or stopped
+[00:02:21]   Expected: True
+[00:02:21]   But was:  False
+[00:02:21]    at Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Local_Instances_Contains_Data() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Test_Local_Instances_Discovery.cs:line 41
+[00:02:21] 
+[00:02:21] 2) Invalid : Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Test_Discovery
+[00:02:21] System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21]    at System.RuntimeMethodHandle.InvokeMethod(Object target, Object[] arguments, Signature sig, Boolean constructor)
+[00:02:21]    at System.Reflection.RuntimeMethodInfo.UnsafeInvokeInternal(Object obj, Object[] parameters, Object[] arguments)
+[00:02:21]    at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+[00:02:21]    at NUnit.Framework.TestCaseSourceAttribute.GetTestCaseSource(IMethodInfo method) in C:\src\nunit\nunit\src\NUnitFramework\framework\Attributes\TestCaseSourceAttribute.cs:line 277
+[00:02:21]    at NUnit.Framework.TestCaseSourceAttribute.GetTestCasesFor(IMethodInfo method) in C:\src\nunit\nunit\src\NUnitFramework\framework\Attributes\TestCaseSourceAttribute.cs:line 173
+[00:02:21] --ArgumentOutOfRangeException
+[00:02:21]    at System.Linq.ParallelEnumerable.WithDegreeOfParallelism[TSource](ParallelQuery`1 source, Int32 degreeOfParallelism)
+[00:02:21]    at Universe.SqlTrace.Tests.MyServers.GetSqlServers() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\MyServers.cs:line 22
+[00:02:21] 
+[00:02:21] 3) Error : Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Test_Explicit_Discovery
+[00:02:21] System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21]    at System.Linq.ParallelEnumerable.WithDegreeOfParallelism[TSource](ParallelQuery`1 source, Int32 degreeOfParallelism)
+[00:02:21]    at Universe.SqlTrace.Tests.MyServers.GetSqlServers() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\MyServers.cs:line 22
+[00:02:21]    at Universe.SqlTrace.Tests.Test_Local_Instances_Discovery.Test_Explicit_Discovery() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Test_Local_Instances_Discovery.cs:line 76
+[00:02:21] 
+[00:02:21] 4) TearDown Error : Universe.SqlTrace.Tests.Test_SqlCountersReader
+[00:02:21] System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] TearDown : System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment.Initialize()
+[00:02:21]    at Universe.SqlTrace.Tests.Test_SqlCountersReader.TestFixtureSetUp() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Test_SqlCountersReader.cs:line 25
+[00:02:21] --ArgumentOutOfRangeException
+[00:02:21]    at System.Linq.ParallelEnumerable.WithDegreeOfParallelism[TSource](ParallelQuery`1 source, Int32 degreeOfParallelism)
+[00:02:21]    at Universe.SqlTrace.Tests.MyServers.GetSqlServers() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\MyServers.cs:line 22
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment.Initialize() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\TestEnvironment.cs:line 19
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment..cctor() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\TestEnvironment.cs:line 13
+[00:02:21] --TearDown
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment.TearDown()
+[00:02:21]    at Universe.SqlTrace.Tests.Test_SqlCountersReader.TestFixtureTearDown() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\Test_SqlCountersReader.cs:line 305
+[00:02:21] --ArgumentOutOfRangeException
+[00:02:21]    at System.Linq.ParallelEnumerable.WithDegreeOfParallelism[TSource](ParallelQuery`1 source, Int32 degreeOfParallelism)
+[00:02:21]    at Universe.SqlTrace.Tests.MyServers.GetSqlServers() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\MyServers.cs:line 22
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment.Initialize() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\TestEnvironment.cs:line 19
+[00:02:21]    at Universe.SqlTrace.Tests.TestEnvironment..cctor() in C:\projects\universe-sqltrace\Universe.SqlTrace.Tests\TestEnvironment.cs:line 13
+[00:02:21] 
+[00:02:21] 5) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.RaiseDeadLock1205
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] 6) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.Single_SqlBatch_Is_Captured
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] 7) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.Single_StoredProcedure_Is_Captured
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] 8) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.Test_Empty_Session
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] 9) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.Test_Sandbox
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] 10) Error : Universe.SqlTrace.Tests.Test_SqlCountersReader.Test_Sp_Reset_Connection
+[00:02:21] OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Universe.SqlTrace.Tests.TestEnvironment' threw an exception.
+[00:02:21]   ----> System.ArgumentOutOfRangeException : Specified argument was out of the range of valid values.
+[00:02:21] Parameter name: degreeOfParallelism
+[00:02:21] 
+[00:02:21] Run Settings
+[00:02:21]     DisposeRunners: True
+[00:02:21]     WorkDirectory: C:\projects\universe-sqltrace
+[00:02:21]     NumberOfTestWorkers: 1
+[00:02:21]     ImageRuntimeVersion: 4.0.30319
+[00:02:21]     ImageTargetFrameworkName: .NETFramework,Version=v4.5.1
+[00:02:21]     ImageRequiresX86: False
+[00:02:21]     ImageRequiresDefaultAppDomainAssemblyResolver: False
+[00:02:21] 
+[00:02:21] Test Run Summary
+[00:02:21]   Overall result: Failed
+[00:02:21]   Test Count: 11, Passed: 2, Failed: 9, Warnings: 0, Inconclusive: 0, Skipped: 0
+[00:02:21]     Failed Tests - Failures: 1, Errors: 7, Invalid: 1
+[00:02:21]   Start time: 2019-10-23 17:37:23Z
+[00:02:21]     End time: 2019-10-23 17:37:24Z
+[00:02:21]     Duration: 1.310 seconds
+[00:02:21] 
+[00:02:21] Results (AppVeyor) saved as Universe.SqlTrace.Tests.xml
+[00:02:21] Command exited with code 9
