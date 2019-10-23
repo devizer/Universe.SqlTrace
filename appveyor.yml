@@ -180,6 +180,12 @@ after_build:
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
+        if (Find-SqlLocalDB-Exe) {
+            Say "Shutting down MSSqlLocalDB"
+            & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i
+            & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k
+        }
+
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
             Say "Installing $Env:JOB"
