@@ -158,4 +158,4 @@ after_test:
 artifacts:
  - path: Artifact
 
-#  - path: 'SqlProfiler (AppVeyor Build Folder).7z'
+ - path: 'SqlProfiler (AppVeyor Build Folder).7z'
