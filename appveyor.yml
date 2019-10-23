@@ -160,7 +160,7 @@ test_script:
         "Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe"
     )
     foreach($assembly in $assemblies) {
-        & nunit3-console $assembly --workers=1 "--result=$([System.IO.Path]::GetFileNameWithoutExtension($assembly));format=AppVeyor"
+        & nunit3-console $assembly --workers=1 "--result=$([System.IO.Path]::GetFileNameWithoutExtension($assembly)).xml;format=AppVeyor"
     }
 
 - ps: | 
