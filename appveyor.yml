@@ -2,8 +2,8 @@ version: 'SqlProfiler API Integration Tests #{build}'
 image:
 # - Visual Studio 2013
 - Visual Studio 2019
-- Visual Studio 2015
 - Visual Studio 2017
+- Visual Studio 2015
 
 environment:
 
@@ -11,40 +11,40 @@ environment:
 
   matrix:
 
-#    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-#      Script: .\SQL-Express-2005-SP4-x86.cmd
-
-#    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-#      Local_DB: True
+    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
+      Local_DB: True
 
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
       Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
-#
-#    - JOB: "SQL SERVER 2019 RC (Developer)"
-#      Script: .\SQL-2019-Pre.cmd
-#
-#    - JOB: "SQL SERVER 2017 (Developer)"
-#      Script: 'powershell -f .\sql-dev-2017.ps1'
-#
-#    - JOB: "SQL SERVER 2017 (Express)"
-#      Script: .\SQL-Express-2017-Updated.cmd
-#
+
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      Script: .\SQL-2019-Pre.cmd
+
+    - JOB: "SQL SERVER 2017 (Developer)"
+      Script: 'powershell -f .\sql-dev-2017.ps1'
+
+    - JOB: "SQL SERVER 2017 (Express)"
+      Script: .\SQL-Express-2017-Updated.cmd
+
     - JOB: "SQL SERVER 2016 (Express)"
       Script: .\SQL-Express-2016-Updated.cmd
-#    
-#    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-#      Script: .\SQL-Express-2014-SP2-x86.cmd
-#
-#    - JOB: "SQL SERVER 2012 SP3 (Express)"
-#      Script: .\SQL-Express-2012-SP3.cmd
-#
-#    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-#      Script: .\SQL-Express-2008-R2-SP2-x86.cmd
-#
-#    - JOB: "SQL SERVER 2008 SP3 (Express)"
-#      Script: .\SQL-Express-2008-SP3-x64.cmd
-#
+    
+    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
+      Script: .\SQL-Express-2014-SP2-x86.cmd
+
+    - JOB: "SQL SERVER 2012 SP3 (Express)"
+      Script: .\SQL-Express-2012-SP3.cmd
+
+    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
+      Script: .\SQL-Express-2008-R2-SP2-x86.cmd
+
+    - JOB: "SQL SERVER 2008 SP3 (Express)"
+      Script: .\SQL-Express-2008-SP3-x64.cmd
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      Script: .\SQL-Express-2005-SP4-x86.cmd
+
 platform: Any CPU
 init:
 - ps: |
@@ -100,6 +100,7 @@ init:
         "$($Global:LocalDbExe)"
     }
 
+    # Does not work propery without reboot - logs report that unsunstall successful, but
     function Uninstall-SqlLocalDB { param([string] $version)
         Say "Deleting LocalDB $version"
         $apps = Find-Apps "LocalDB" | ? { $($_.DisplayName -like "*$($version)*") -and ($_.DisplayName -like "*Microsoft*")  }
@@ -182,7 +183,7 @@ after_build:
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
-        if (Find-SqlLocalDB-Exe) {
+        if ($false -and Find-SqlLocalDB-Exe) {
             Say "Shutting down MSSqlLocalDB"
             try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i } catch {}
             try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k } catch {}
@@ -200,10 +201,10 @@ after_build:
             Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
             Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
             # it is imposible to delete LocalDB 2016 On VS 2017 image, but it is ok to delete 2016th LocalDB
-            Uninstall-SqlLocalDB 2016
-            Uninstall-SqlLocalDB 2014
-            Uninstall-SqlLocalDB 2016
-            Uninstall-SqlLocalDB 2016
+            # Uninstall-SqlLocalDB 2016
+            # Uninstall-SqlLocalDB 2014
+            # Uninstall-SqlLocalDB 2016
+            # Uninstall-SqlLocalDB 2016
             Hide-LocalDB-Servers
         }
 
@@ -245,7 +246,7 @@ test_script:
         Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
 
-    if ($false -and $Env:Script -eq $null) {
+    if ($Env:Script -eq $null) {
         Say "Logging preinstalled software"
         get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
