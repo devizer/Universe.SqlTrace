@@ -139,13 +139,13 @@ test_script:
     cmd /c dir /b /s "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
     "$(Get-Elapsed) Program Files (files)"
-    Get-ChildItem -Path "C:\Program Files" -recurse *> "$Env:ARTIFACT\Program Files (files).log"
+    Get-ChildItem -Path "C:\Program Files" -recurse -force *> "$Env:ARTIFACT\Program Files (files).log"
 
     "$(Get-Elapsed) User Profile (names)"
     cmd /c dir /b /s "$Env:USERPROFILE" *> "$Env:ARTIFACT\User Profile (names).log"
 
     "$(Get-Elapsed) User Profile (files)"
-    Get-ChildItem -Path "$Env:USERPROFILE" -recurse *> "$Env:ARTIFACT\User Profile (files).log"
+    Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (files).log"
     
     "$(Get-Elapsed) Pack working folder"
     & "7z" -h
