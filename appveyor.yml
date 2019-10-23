@@ -99,7 +99,7 @@ before_build:
 
     function Delete-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
-            "$(Get-Elapsed) Disable MSSQL`$$sqlname"
+            "$(Get-Elapsed) Delete MSSQL`$$sqlname"
             Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
             Set-Service "MSSQL`$$sqlname" -StartupType Disabled
             & cmd /c sc delete "MSSQL`$$sqlname"
@@ -113,13 +113,12 @@ before_build:
     "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
 
-    $sqlservers=Get-Preinstalled-SqlServers
     "$(Get-Elapsed) Disable All pre-installed sql servers"
-    Disable-SqlServers $sqlservers
+    Disable-SqlServers (Get-Preinstalled-SqlServers)
     Show-SqlServers
     
-    "$(Get-Elapsed) Disable All pre-installed sql servers"
-    Delete-SqlServers $sqlservers
+    "$(Get-Elapsed) Delete All pre-installed sql servers"
+    Delete-SqlServers (Get-Preinstalled-SqlServers)
     Show-SqlServers
 
 - ps: | 
