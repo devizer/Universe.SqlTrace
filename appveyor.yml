@@ -134,7 +134,8 @@ test_script:
 - ps: | 
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
-    cmd /c dir /b /s "c:\program files" *> "$Env:ARTIFACT\Program Files (content).log"
+    cmd /c dir /b /s "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
+    Get-ChildItem -Path "C:\Program Files" -recurse *> "$Env:ARTIFACT\Program Files (files).log"
     # & "$Env:7zip" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
 
 after_test:
