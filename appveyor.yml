@@ -49,8 +49,6 @@ platform: Any CPU
 init:
 - ps: |
 
-    Install-Module PSReadLine -AllowPrerelease -Force
-
     function Say { param( [string] $message )
         Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Magenta
         Write-Host "$message" -ForegroundColor Yellow
@@ -159,6 +157,16 @@ install:
 
 cache:
   - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
+
+before_build:
+- ps: | 
+    try {
+        Say "Upgrading PSReadLine"
+        Install-Module PSReadLine -AllowPrerelease -Force
+        Say "PSReadLine Upgraded"
+    } catch {
+        Say "PSReadLine Upgrade Failed. $($_.Exception.GetType().Name) $($_.Exception.Message)"
+    }
 
 build_script:
 - ps: | 
