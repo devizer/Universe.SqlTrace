@@ -14,7 +14,8 @@ namespace Universe.SqlTrace.Tests
         {
 
             List<SqlServerRef> all = SqlDiscovery.GetLocalDbAndServerList();
-            ThreadPool.GetMinThreads(out var prevWorkers, out var prevPorts);
+            int prevWorkers, prevPorts;
+            ThreadPool.GetMinThreads(out prevWorkers, out prevPorts);
             var workers = Math.Max(prevWorkers, all.Count + 1);
             ThreadPool.SetMinThreads(workers, prevPorts);
 
