@@ -164,6 +164,7 @@ install:
             Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
             # Hide-LocalDB-Servers
             Uninstall-SqlLocalDB 2016
+            Uninstall-SqlLocalDB 2014
         }
 
         # Script for LocalDB 2019 is empty - it is already preinstalled
