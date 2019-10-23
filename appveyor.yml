@@ -103,7 +103,7 @@ init:
     function Uninstall-SqlLocalDB { param([string] $version)
         Say "Deleting LocalDB $version"
         $apps = Find-Apps LocalDB | ? { $_.DisplayName -like $version -and $_.DisplayName -like "Microsoft" }
-        if ($apps.Length -gr 0) { 
+        if ($apps.Length -gt 0) { 
             # DisplayName, DisplayVersion, PSPath, PSChildName, UninstallString, Guid, MsiUninstallArgs
             $msi=$apps[0]; $msi_args=$msi.MsiUninstallArgs + "/L*v `"Uninstall $($msi.DesplayName).log`""
             Say "Deleting MSI Package $($msi.DesplayName) (Version [$($msi.DesplayName)]) using args: `"$msi_args`""
