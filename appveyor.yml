@@ -160,7 +160,7 @@ test_script:
         "Universe.SqlTrace.Tests\bin\Debug\Universe.SqlTrace.Tests.exe"
     )
     foreach($assembly in $assemblies) {
-        & nunit3-console $assembly --workers=1 "--result=myresults.xml;format=AppVeyor"
+        & nunit3-console $assembly --workers=1 "--result=$([System.IO.Path]::GetFileNameWithoutExtension($assembly));format=AppVeyor"
     }
 
 - ps: | 
@@ -183,7 +183,7 @@ test_script:
 
     if ($Script -eq $null) {
         "$(Get-Elapsed) Logging preinstalled software"
-        get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState *> "$Env:ARTIFACT\Preintalled software.log"
+        get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState *> "$Env:ARTIFACT\Preintalled Software.log"
     }
     
     "$(Get-Elapsed) Pack working folder"
