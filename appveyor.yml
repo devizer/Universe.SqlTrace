@@ -160,12 +160,14 @@ cache:
 
 before_build:
 - ps: | 
-    try {
-        Say "Upgrading PSReadLine"
-        Install-Module PSReadLine -AllowPrerelease -Force
-        Say "PSReadLine Upgraded"
-    } catch {
-        Say "PSReadLine Upgrade Failed. $($_.Exception.GetType().Name) $($_.Exception.Message)"
+    if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
+        try {
+            Say "Upgrading PSReadLine"
+            Install-Module PSReadLine -AllowPrerelease -Force
+            Say "PSReadLine Upgraded"
+        } catch {
+            Say "PSReadLine Upgrade Failed. $($_.Exception.GetType().Name) $($_.Exception.Message)"
+        }
     }
 
 build_script:
