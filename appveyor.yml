@@ -152,6 +152,18 @@ install:
     Delete-SqlServers (Get-Preinstalled-SqlServers)
     Show-SqlServers
 
+
+### THE END OF TEMPLATE ###
+
+cache:
+  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
+
+build_script:
+- ps: | 
+      Say "RESTORE and BUILD"
+      & .\build-for-appveyor.cmd
+
+after_build:
 - ps: | 
         # Install new SQL Servers
         pushd SQL-Express; 
@@ -179,16 +191,6 @@ install:
 
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
-
-### THE END OF TEMPLATE ###
-
-cache:
-  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
-
-build_script:
-- ps: | 
-      Say "RESTORE and BUILD"
-      & .\build-for-appveyor.cmd
 
 test_script:
 # already tested?
