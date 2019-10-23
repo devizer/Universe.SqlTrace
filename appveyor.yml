@@ -149,6 +149,7 @@ test_script:
     
     & "$Env:7zip" -h
     & "$Env:7zip" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
+    " "
 
 after_test:
 - ps: Stop-Transcript;
