@@ -85,7 +85,7 @@ before_build:
             try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
         }
         [System.Array]::Sort($names);
-        $names = $names | where { $_ -ne "" }
+        $names = $names | where { "$_".Length -gt 0 }
         $names
     }
 
@@ -113,12 +113,13 @@ before_build:
     "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
 
+    $sqlservers=Get-Preinstalled-SqlServers
     "$(Get-Elapsed) Disable All pre-installed sql servers"
-    Disable-SqlServers Get-Preinstalled-SqlServers
+    Disable-SqlServers $sqlservers
     Show-SqlServers
     
     "$(Get-Elapsed) Disable All pre-installed sql servers"
-    Delete-SqlServers Get-Preinstalled-SqlServers
+    Delete-SqlServers $sqlservers
     Show-SqlServers
 
 - ps: | 
