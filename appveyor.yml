@@ -134,8 +134,18 @@ test_script:
 - ps: | 
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
+
+    "$(Get-Elapsed) Program Files (names)"
     cmd /c dir /b /s "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
+
+    "$(Get-Elapsed) Program Files (files)"
     Get-ChildItem -Path "C:\Program Files" -recurse *> "$Env:ARTIFACT\Program Files (files).log"
+
+    "$(Get-Elapsed) User Profile (names)"
+    cmd /c dir /b /s "$Env:USERPROFILE" *> "$Env:ARTIFACT\User Profile (names).log"
+
+    "$(Get-Elapsed) User Profile (files)"
+    Get-ChildItem -Path "$Env:USERPROFILE" -recurse *> "$Env:ARTIFACT\User Profile (files).log"
     # & "$Env:7zip" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
 
 after_test:
