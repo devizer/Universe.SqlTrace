@@ -180,6 +180,11 @@ test_script:
     "$(Get-Elapsed) User Profile (files)"
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
+
+    if ($Script -eq $null) {
+        "$(Get-Elapsed) Logging preinstalled software"
+        get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState *> "$Env:ARTIFACT\Preintalled software.log"
+    }
     
     "$(Get-Elapsed) Pack working folder"
     & "7z" a -t7z -mx=3 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
