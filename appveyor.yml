@@ -4,7 +4,7 @@ image:
 # - Visual Studio 2019
 
 cache:
-  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> appveyor.yml'
+  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
 
 environment:
 
