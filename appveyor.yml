@@ -16,8 +16,8 @@ environment:
       Local_DB: True
 
     - JOB: "SQL SERVER LocalDB 2017"
-      Script: 'powershell -f .\Install-SQL-LocalDB.ps1'
       Local_DB: True
+      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; ls C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log'
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
