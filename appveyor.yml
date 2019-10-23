@@ -165,6 +165,8 @@ install:
             # Hide-LocalDB-Servers
             Uninstall-SqlLocalDB 2016
             Uninstall-SqlLocalDB 2014
+            Uninstall-SqlLocalDB 2016
+            Uninstall-SqlLocalDB 2016
         }
 
         # Script for LocalDB 2019 is empty - it is already preinstalled
