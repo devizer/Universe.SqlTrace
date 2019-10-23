@@ -50,8 +50,8 @@ init:
 - ps: |
 
     function Say { param( [string] $message )
-        Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Yellow
-        Write-Host "$message" -ForegroundColor Magenta # Yellow
+        Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Magenta
+        Write-Host "$message" -ForegroundColor Yellow
     }
     
     function Get-Elapsed
