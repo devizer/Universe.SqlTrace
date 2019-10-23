@@ -49,6 +49,8 @@ platform: Any CPU
 init:
 - ps: |
 
+    Install-Module PSReadLine -AllowPrerelease -Force
+
     function Say { param( [string] $message )
         Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Magenta
         Write-Host "$message" -ForegroundColor Yellow
