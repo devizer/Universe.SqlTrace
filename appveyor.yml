@@ -2,8 +2,8 @@ version: 'SqlProfiler API Integration Tests #{build}'
 image:
 - Visual Studio 2013
 - Visual Studio 2015
-- Visual Studio 2017
 - Visual Studio 2019
+- Visual Studio 2017
 
 environment:
 
@@ -11,15 +11,15 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: .\SQL-Express-2005-SP4-x86.cmd
+#    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+#      Script: .\SQL-Express-2005-SP4-x86.cmd
 
-    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      Local_DB: True
-
-#    - JOB: "SQL SERVER LocalDB 2017"
+#    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
 #      Local_DB: True
-#      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
+
+    - JOB: "SQL SERVER LocalDB 2017"
+      Local_DB: True
+      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
 #
 #    - JOB: "SQL SERVER 2019 RC (Developer)"
 #      Script: .\SQL-2019-Pre.cmd
@@ -30,8 +30,8 @@ environment:
 #    - JOB: "SQL SERVER 2017 (Express)"
 #      Script: .\SQL-Express-2017-Updated.cmd
 #
-#    - JOB: "SQL SERVER 2016 (Express)"
-#      Script: .\SQL-Express-2016-Updated.cmd
+    - JOB: "SQL SERVER 2016 (Express)"
+      Script: .\SQL-Express-2016-Updated.cmd
 #    
 #    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
 #      Script: .\SQL-Express-2014-SP2-x86.cmd
