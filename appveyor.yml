@@ -89,7 +89,7 @@ before_build:
         $names
     }
 
-    function Disable-SqlServers { param( [string] $names ) 
+    function Disable-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
             "$(Get-Elapsed) Disable MSSQL`$$sqlname"
             Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
@@ -97,7 +97,7 @@ before_build:
         }
     }
 
-    function Delete-SqlServers { param( [string] $names ) 
+    function Delete-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
             "$(Get-Elapsed) Disable MSSQL`$$sqlname"
             Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
