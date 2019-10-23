@@ -127,7 +127,6 @@ init:
             foreach { $_ | Add-Member MsiUninstallArgs ("/X " + ($_.UninstallString -Replace "msiexec.exe","" -Replace "/I","" -Replace "/X","" ).ToString().Trim() + " /qn"); $_ }
     }
 
-
     function Show-SqlServers {
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft State, Name, DisplayName, StartMode
     }
@@ -178,7 +177,6 @@ install:
 cache:
   - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
 
-
 build_script:
 - ps: | 
       Say "RESTORE and BUILD"
@@ -219,7 +217,7 @@ test_script:
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
     }
 
-    if ($Env:Script -eq $null) {
+    if ($true -or $Env:Script -eq $null) {
         Say "Logging preinstalled software"
         get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
