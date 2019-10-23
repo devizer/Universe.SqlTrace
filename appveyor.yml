@@ -77,21 +77,49 @@ before_build:
 - ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
-    # disable preinstalled SQL Servers
-    $names = @();
-    foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
-        try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
+
+    function Get-Preinstalled-SqlServers
+    {
+        $names = @();
+        foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
+            try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
+        }
+        [System.Array]::Sort($names);
+        $names = $names | where { $_ -ne "" }
+        $names
     }
 
-    [System.Array]::Sort($names);
-    $info=""; foreach($name in $names) { $info += " [$name]"; } Write-Host "Sql Servers: $info";
-    foreach($sqlname in $names) {
-        if ($sqlname.Length -eq 0) { continue; }
-        "$(Get-Elapsed) Disable MSSQL`$$sqlname"
-        Set-Service "MSSQL`$$sqlname" -StartupType Disabled
-        & cmd /c sc delete "MSSQL`$$sqlname"
+    function Disable-SqlServers { param( [string] $names ) 
+        foreach($sqlname in $names) {
+            "$(Get-Elapsed) Disable MSSQL`$$sqlname"
+            Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
+            Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+        }
     }
-    get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+
+    function Delete-SqlServers { param( [string] $names ) 
+        foreach($sqlname in $names) {
+            "$(Get-Elapsed) Disable MSSQL`$$sqlname"
+            Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
+            Set-Service "MSSQL`$$sqlname" -StartupType Disabled
+            & cmd /c sc delete "MSSQL`$$sqlname"
+        }
+    }
+
+    function Show-SqlServers {
+        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+    }
+
+    "Pre Installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
+    Show-SqlServers
+
+    "$(Get-Elapsed) Disable All pre-installed sql servers"
+    Disable-SqlServers (Get-Preinstalled-SqlServers)
+    Show-SqlServers
+    
+    "$(Get-Elapsed) Disable All pre-installed sql servers"
+    Delete-SqlServers (Get-Preinstalled-SqlServers)
+    Show-SqlServers
 
 - ps: | 
         # Install new SQL Servers
