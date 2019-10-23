@@ -158,13 +158,6 @@ install:
 
         "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
-        # Script for LocalDB 2019 is empty - it is already preinstalled
-        if ($Env:Script) {
-            Say "Installing $Env:JOB"
-            Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            Say "Finished SQL Server Installers"
-        } 
-        
         # hide pre-installed LocalDB for tests with SQL Express/Developer
         if ($Env:Local_DB -eq $null) {
             Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
@@ -172,6 +165,14 @@ install:
             # Hide-LocalDB-Servers
             Uninstall-SqlLocalDB 2016
         }
+
+        # Script for LocalDB 2019 is empty - it is already preinstalled
+        if ($Env:Script) {
+            Say "Installing $Env:JOB"
+            Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
+            Say "Finished SQL Server Installers"
+        } 
+        
         popd
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
 
