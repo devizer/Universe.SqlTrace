@@ -115,7 +115,6 @@ before_build:
 
     "$(Get-Elapsed) Disable All pre-installed sql servers"
     Disable-SqlServers (Get-Preinstalled-SqlServers)
-    Show-SqlServers
     
     "$(Get-Elapsed) Delete All pre-installed sql servers"
     Delete-SqlServers (Get-Preinstalled-SqlServers)
