@@ -122,7 +122,7 @@ install:
         "ARTIFACT folder: $($Env:ARTIFACT)"
         pushd SQL-Express; 
 
-        "$Env:Script" > "$Env:ARTIFACT\$Env:JOB.txt"
+        "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
 
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
