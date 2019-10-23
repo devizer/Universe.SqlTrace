@@ -4,7 +4,7 @@ image:
 # - Visual Studio 2019
 
 cache:
-  - 'C:\Users\appveyor\AppData\Local\temp\build-tools-online.temp'
+  - %USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> appveyor.yml
 
 environment:
 
@@ -147,9 +147,10 @@ test_script:
     "$(Get-Elapsed) User Profile (files)"
     Get-ChildItem -Path "$Env:USERPROFILE" -recurse *> "$Env:ARTIFACT\User Profile (files).log"
     
+    "$(Get-Elapsed) Pack working folder"
     & "7z" -h
     & "7z" a -t7z -mx=1 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
-    " "
+    "$(Get-Elapsed) Bye-bye"
 
 after_test:
 - ps: Stop-Transcript;
