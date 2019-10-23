@@ -84,10 +84,10 @@ namespace Universe.SqlTrace.Tests
                 con.Open();
 
                 var sql = "Create Database [" + DB + "]";
-                bool isLocalDB2017 = con.Manage().IsLocalDB /*&& con.Manage().ShortServerVersion.Major >= 14*/;
-                if (isLocalDB2017)
+                bool isLocalDb = con.Manage().IsLocalDB;
+                if (isLocalDb)
                 {
-                    // Bug on appveyor for newly installed LocalDB
+                    // Bug on appveyor for newly installed LocalDB:
                     // CREATE FILE encountered operating system error 5(Access is denied.) while attempting to open or create the physical file 'C:\Users\appveyorUNITEST_9cca1fb18d654287be3d5662ed5800ac.mdf'.
                     string fileName = Path.Combine(Environment.GetEnvironmentVariable("USERPROFILE"), $"{DB}.mdf");
                     sql = $"Create Database [{DB}] On (Name = {DB}_dat, FileName = '{fileName}')";
