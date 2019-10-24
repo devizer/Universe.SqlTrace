@@ -62,7 +62,8 @@ init:
 
     $win_10_release_id = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
     $win_10_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
-    Say "$($win_10_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSBersion)]"
+    Say "$($win_10_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
+    Get-WMIObject win32_operatingsystem | fl *
 
     function Get-Preinstalled-SqlServers
     {
