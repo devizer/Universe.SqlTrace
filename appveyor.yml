@@ -1,6 +1,5 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
-# - Visual Studio 2013
 - Visual Studio 2015
 - Visual Studio 2017
 - Visual Studio 2019
@@ -45,8 +44,11 @@ environment:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
 
+# 3 SQL Servers are not supported on the "Visual Studio 2015" image
 matrix:
   exclude:
+    - JOB: "SQL SERVER LocalDB 2017"
+      image: "Visual Studio 2015"
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       image: "Visual Studio 2015"
