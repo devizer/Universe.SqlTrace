@@ -238,13 +238,7 @@ test_script:
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
-    Say "Store All The Logs"
-    pushd c:\
-    $files=(Get-ChildItem -Path "C:\" -recurse -force -file -Include "*.log" 2> "$Env:ARTIFACT\Access Denied.txt")
-    @($files) | % { $_.FullName } | sort -unique | % { $_.substring(3) } | Out-File "$Env:ARTIFACT\log-files.list" utf8
-    7z a -t7z -mx=3 -ms=on -spf "$Env:ARTIFACT\All The Logs.7z" "@$($Env:ARTIFACT)\log-files.list"
-    popd
-    
+    powershell -f Info\Store-Logs-2.ps1
     
     # Optional logs and files
     if ($false) {
