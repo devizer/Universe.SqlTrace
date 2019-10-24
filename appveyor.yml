@@ -238,15 +238,23 @@ test_script:
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
+    Say "Store All The Logs"
+    $files=(Get-ChildItem -Path "C:\" -recurse -force -file -Include "*.log" *> "$Env:ARTIFACT\Access Denied.txt")
+    @($files) | Select FullName | sort -unique | Out-File "log-files.list" utf8
+    7z a "$Env:ARTIFACT\All The Logs.txt" "@log-files.list"
+    
+    
     # Optional logs and files
-    if ($true -or $false) {
+    if ($false) {
 
+        <#
         @("Users", "Program Files", "Program Files (x86)", "ProgramData", "SQL", "Windows") | % {
             if (Test-Path "C:\$($_)") {
                 Say "Exists: C:\$($_). Looking for *.log(s)"
                 Get-ChildItem -Path "C:\$($_)" -recurse -force -Include "*.log" *> "$Env:ARTIFACT\Logs from $($_).log"
             }
         }
+        #>
 
         Say "Program Files (names)"
         cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
