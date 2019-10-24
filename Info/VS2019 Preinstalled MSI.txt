@@ -1,0 +1,596 @@
+﻿
+Version         Name                                                                          Vendor                                  InstallState IdentifyingNumber                     
+-------         ----                                                                          ------                                  ------------ -----------------                     
+3.11.2318       WiX Toolset v3.11 Core                                                        .NET Foundation                                    5 {766AD270-A684-43D6-AF9A-74165C9B5796}
+3.11.2318       WiX Toolset v3.11 Managed SDK                                                 .NET Foundation                                    5 {8741DFD5-F995-431E-B216-B2795489CD32}
+3.11.2318       WiX Toolset v3.11 Native 2010 SDK                                             .NET Foundation                                    5 {A68173CF-C68F-4878-A1A1-3AD0A286D38A}
+3.11.2318       WiX Toolset v3.11 Native 2012 SDK                                             .NET Foundation                                    5 {4BE5F965-07C0-429C-95F4-B4F318308992}
+3.11.2318       WiX Toolset v3.11 Native 2013 SDK                                             .NET Foundation                                    5 {C2D03307-22FC-4E0A-80B5-6C7C76EAA3F7}
+3.11.2318       WiX Toolset v3.11 Native 2015 SDK                                             .NET Foundation                                    5 {0A433F1C-9502-46C4-81A1-FE04B1EC6D7E}
+3.11.2318       WiX Toolset v3.11 Native 2017 SDK                                             .NET Foundation                                    5 {E065026D-88AD-4568-9C97-E28DD376507A}
+3.11.2318       WiX Toolset v3.11 X64                                                         .NET Foundation                                    5 {AA06E868-267F-47FB-86BC-D3D62305D7F4}
+1.16.258        AWS Command Line Interface                                                    Amazon Web Services Developer Relations            5 {22F8B6FD-7DE8-4BD2-B8C3-21C1000C72A1}
+1.8.17          Subversion                                                                    CollabNet                                          5 {5A8BA143-C9F1-4ED5-A3ED-6C19974A099B}
+77.0.3865.120   Google Chrome                                                                 Google LLC                                         5 {6A6D3422-8127-3867-A83C-56B555636ECA}
+3.15.1          CMake                                                                         Kitware                                            5 {5D21CF7B-5208-4704-9E4F-BD0C7B1337BD}
+4.1.1           Mercurial 4.1.1 (x64)                                                         Matt Mackall and others                            5 {9590468B-7D73-4A9A-816A-947485BE44C8}
+10.1.16299.15   Application Verifier x64 External Package                                     Microsoft                                          5 {D9908CED-5ABB-FEE9-FC84-743F4D38637C}
+10.1.17134.12   Application Verifier x64 External Package                                     Microsoft                                          5 {62CB44B2-8007-DBB2-1CBA-5CB7309EB3C3}
+10.1.17763.132  Application Verifier x64 External Package                                     Microsoft                                          5 {B27BC1FC-8474-9E32-73C2-6F7CD58AD1E3}
+10.1.18362.1    Application Verifier x64 External Package                                     Microsoft                                          5 {10CA1677-8F02-3131-F25C-780BAB52E468}
+8.100.26936     Application Verifier x64 External Package                                     Microsoft                                          5 {77F3D72C-465F-BD51-890E-CC3914B1365F}
+10.1.17763.1    Imaging Tools Support                                                         Microsoft                                          5 {A8D1FB0D-D923-75CE-F7CF-5C6C498C2038}
+10.1.18362.1    Kits Configuration Installer                                                  Microsoft                                          5 {63AAA877-5536-9481-2385-28A082100D78}
+8.100.25984     Kits Configuration Installer                                                  Microsoft                                          5 {B74E65FD-CC47-41C5-4B89-791A3F61942D}
+0.1.7116.41799  Microsoft SQL Server Reporting Services                                       Microsoft                                          5 {C859D1CE-B243-4280-A965-0F5EE89D3976}
+16.0.0.2845608  Microsoft TestPlatform SDK Local Feed                                         Microsoft                                          5 {D04C8E3E-659E-4B61-8AE6-CD0DA496A4F2}
+15.9.11         Microsoft UniversalWindowsPlatform SDK                                        Microsoft                                          5 {111EA02F-B08D-42ED-ADA5-E2A4B58815E5}
+16.0.28329      Microsoft Windows Communication Foundation Diagnostic Pack for x86            Microsoft                                          5 {FE825C68-D0CC-3FC8-9C03-64DAC75D90A7}
+16.0.28329      Microsoft Workflow Debugger v1.0 for amd64                                    Microsoft                                          5 {6CCDB628-F4C8-3091-A76A-731A8A97868D}
+16.0.28329      Microsoft Workflow Debugger v1.0 for x86                                      Microsoft                                          5 {02805F9F-3A14-3EE7-B6A2-1F5D6E946572}
+16.0.28329      Microsoft Workflow Diagnostic Pack for x64                                    Microsoft                                          5 {517F40B3-0DF1-3CEA-8E38-E3E515DACE4F}
+10.1.17763.1    Minimal WLPC Content                                                          Microsoft                                          5 {17C7E38C-CDE7-6CC8-532B-FCBAF133F1CE}
+10.1.18362.1    Minimal WLPC Content                                                          Microsoft                                          5 {5A12DC60-4F2E-5F1F-B7DD-1B957C2620D3}
+10.1.18362.1    OEM Test Certificates                                                         Microsoft                                          5 {DB789F11-7F0F-C7F8-AF6F-357C44090C38}
+8.100.26936     WPT Redistributables                                                          Microsoft                                          5 {64F3FB9A-9250-B2D6-00B4-50BE0358AEE8}
+8.100.26936     WPTx64                                                                        Microsoft                                          5 {BFF81CB5-E8C7-4184-FBB4-74ADFBC6CCCB}
+15.0.1300.359   Active Directory Authentication Library for SQL Server                        Microsoft Corporation                              5 {6BF11ECE-3CE8-4FBA-991A-1F55AA6BE5BF}
+14.0.1000.169   Browser for SQL Server 2017                                                   Microsoft Corporation                              5 {CF8EEB96-E7E7-4EF7-A0A1-559F09953156}
+4.8.03928       ClickOnce Bootstrapper Package for Microsoft .NET Framework                   Microsoft Corporation                              5 {5FD1DF50-FBB1-4888-8F8F-4ECDC78909C4}
+16.1.28901      DiagnosticsHub_CollectionService                                              Microsoft Corporation                              5 {1F3C3AAC-9F7A-47DA-A082-0ACE770041BE}
+6.2.0.0         Entity Framework 6.2.0 Tools  for Visual Studio 2019                          Microsoft Corporation                              5 {C4105EB5-5C16-40C4-93DF-66DE6584D26E}
+16.3.29110      icecap_collection_neutral                                                     Microsoft Corporation                              5 {7BB0BF1D-3021-45DC-912E-9DAB74F486C0}
+16.3.29110      icecap_collection_x64                                                         Microsoft Corporation                              5 {0B880F5C-ECD4-4FC6-81A7-46C40ECA0B8C}
+16.3.29110      icecap_collectionresources                                                    Microsoft Corporation                              5 {AA259EEE-7819-4440-A995-F5E156BD988C}
+16.1.28829      icecap_collectionresourcesx64                                                 Microsoft Corporation                              5 {112C7251-6110-40E3-8FE7-7D0F53D96995}
+10.0.03203      IIS 10.0 Express                                                              Microsoft Corporation                              5 {643F2A3F-960C-4914-BD67-9490B4484108}
+15.0.18198.01   IntelliTraceProfilerProxy                                                     Microsoft Corporation                              5 {7D94CF67-6666-4111-B027-D7AB7F189F70}
+15.0.18198.01   IntelliTraceProfilerProxy                                                     Microsoft Corporation                              5 {1C92D642-AD8C-4319-8E7B-5D6AA55F430B}
+3.0.0.014277    Microsoft .NET Core 3.0 Templates (x64)                                       Microsoft Corporation                              5 {54FEB781-093A-48CF-A1BA-F6AD55A0B3FF}
+24.0.28113      Microsoft .NET Core AppHost Pack - 3.0.0 (x64)                                Microsoft Corporation                              5 {79591F8C-1015-49B4-90FA-232D80F6C7D0}
+24.0.28113      Microsoft .NET Core Host - 3.0.0 (x64)                                        Microsoft Corporation                              5 {73F8C23D-8F4A-42E4-AC06-135159FFF9DB}
+24.0.28113      Microsoft .NET Core Host FX Resolver - 3.0.0 (x64)                            Microsoft Corporation                              5 {39D048A5-5033-450F-9CF0-F01D1DC79074}
+24.0.28113      Microsoft .NET Core Host FX Resolver - 3.0.0 (x86)                            Microsoft Corporation                              5 {5D013CC2-8410-4653-9B57-8DD58E5BE992}
+24.0.28113      Microsoft .NET Core Runtime - 3.0.0 (x64)                                     Microsoft Corporation                              5 {462BDDD8-AB95-4861-AB6E-01CC6BD91057}
+24.0.28113      Microsoft .NET Core Runtime - 3.0.0 (x86)                                     Microsoft Corporation                              5 {0E4B5B4F-2583-4181-AB9D-B2132144298D}
+12.0.14277      Microsoft .NET Core SDK 3.0.100 (x64)                                         Microsoft Corporation                              5 {2594A057-CD99-4023-8F19-9D8513EE5446}
+3.0.100.014277  Microsoft .NET Core SDK 3.0.100 (x64) from Visual Studio                      Microsoft Corporation                              5 {C52DB3F0-440B-4A83-B795-B1180D70BBFF}
+24.0.28113      Microsoft .NET Core Targeting Pack - 3.0.0 (x64)                              Microsoft Corporation                              5 {99107782-C38E-442A-B764-337C5A75E4E6}
+1.0.0.0         Microsoft .NET CoreRuntime For CoreCon                                        Microsoft Corporation                              5 {48A8F171-52F2-372B-8414-EA50617708BE}
+1.1.27004.0     Microsoft .NET CoreRuntime SDK                                                Microsoft Corporation                              5 {12702494-9E6A-3F5E-9441-2B7D258A639B}
+4.0.30319       Microsoft .NET Framework 4 Multi-Targeting Pack                               Microsoft Corporation                              5 {CFEF48A8-BFB8-3EAC-8BA5-DE4F8AA267CE}
+4.5.50710       Microsoft .NET Framework 4.5 Multi-Targeting Pack                             Microsoft Corporation                              5 {56E962F0-4FB0-3C67-88DB-9EAA6EEFC493}
+4.5.50932       Microsoft .NET Framework 4.5.1 Multi-Targeting Pack                           Microsoft Corporation                              5 {6A0C6700-EA93-372C-8871-DCCF13D160A4}
+4.5.51641       Microsoft .NET Framework 4.5.1 SDK                                            Microsoft Corporation                              5 {19A5926D-66E1-46FC-854D-163AA10A52D3}
+4.5.51651       Microsoft .NET Framework 4.5.2 Multi-Targeting Pack                           Microsoft Corporation                              5 {19E8AE59-4D4A-3534-B567-6CC08FA4102E}
+4.6.00081       Microsoft .NET Framework 4.6 Targeting Pack                                   Microsoft Corporation                              5 {2CC6A4A7-AAC2-46C9-9DBB-3727B5954F65}
+4.6.01055       Microsoft .NET Framework 4.6.1 SDK                                            Microsoft Corporation                              5 {2F0ECC80-B9E4-4485-8083-CD32F22ABD92}
+4.6.01055       Microsoft .NET Framework 4.6.1 Targeting Pack                                 Microsoft Corporation                              5 {8BC3EEC9-090F-4C53-A8DA-1BEC913040F9}
+4.6.01055       Microsoft .NET Framework 4.6.1 Targeting Pack (ENU)                           Microsoft Corporation                              5 {8EEB28EE-5141-411C-9CF0-9952264FE4AF}
+4.6.01590       Microsoft .NET Framework 4.6.2 SDK                                            Microsoft Corporation                              5 {5F01B3C4-9BEC-465D-9C68-BB97D381FFAD}
+4.6.01590       Microsoft .NET Framework 4.6.2 Targeting Pack                                 Microsoft Corporation                              5 {A18D4C2A-07A8-40E4-9797-DD324E6EA4FC}
+4.6.01590       Microsoft .NET Framework 4.6.2 Targeting Pack (ENU)                           Microsoft Corporation                              5 {C80951BD-6904-474F-BBC5-03A6C777F37C}
+4.7.02053       Microsoft .NET Framework 4.7 SDK                                              Microsoft Corporation                              5 {3428E9C1-638B-4410-BC11-EDB2B8ECFE3B}
+4.7.02053       Microsoft .NET Framework 4.7 Targeting Pack                                   Microsoft Corporation                              5 {EC073C7E-990D-4BB1-BFA9-45C6704E3571}
+4.7.02053       Microsoft .NET Framework 4.7 Targeting Pack (ENU)                             Microsoft Corporation                              5 {829CB0F4-AB51-4DB7-8CA2-1C93CCC36D5E}
+4.7.02558       Microsoft .NET Framework 4.7.1 Doc Redirected Targeting Pack (ENU)            Microsoft Corporation                              5 {8F5A2690-2EBD-4017-B995-C522C9204312}
+4.7.02558       Microsoft .NET Framework 4.7.1 SDK                                            Microsoft Corporation                              5 {B9DCCDB9-FCE9-48AD-B534-A7AD270BD52B}
+4.7.02558       Microsoft .NET Framework 4.7.1 Targeting Pack                                 Microsoft Corporation                              5 {5686C5E9-A3B3-451E-A2EA-4C246CDE5CC9}
+4.7.02558       Microsoft .NET Framework 4.7.1 Targeting Pack (ENU)                           Microsoft Corporation                              5 {ABE94A82-C89E-4ACA-8B30-41E0C6165A23}
+4.7.03081       Microsoft .NET Framework 4.7.2 SDK                                            Microsoft Corporation                              5 {F42C96C1-746B-442A-B58C-9F0FD5F3AB8A}
+4.7.03062       Microsoft .NET Framework 4.7.2 Targeting Pack                                 Microsoft Corporation                              5 {1784A8CD-F7FE-47E2-A87D-1F31E7242D0D}
+4.7.03062       Microsoft .NET Framework 4.7.2 Targeting Pack (ENU)                           Microsoft Corporation                              5 {B517DBD3-B542-4FC8-9957-FFB2C3E65D1D}
+4.8.03928       Microsoft .NET Framework 4.8 SDK                                              Microsoft Corporation                              5 {949C0535-171C-480F-9CF4-D25C9E60FE88}
+4.8.03761       Microsoft .NET Framework 4.8 Targeting Pack                                   Microsoft Corporation                              5 {BAAF5851-0759-422D-A1E9-90061B597188}
+4.8.03761       Microsoft .NET Framework 4.8 Targeting Pack (ENU)                             Microsoft Corporation                              5 {A4EA9EE5-7CFF-4C5F-B159-B9B4E5D2BDE2}
+4.8.03761       Microsoft .NET Framework Cumulative Intellisense Pack for Visual Studio (ENU) Microsoft Corporation                              5 {C33E412F-4981-4953-825C-9DEA45ABEC01}
+15.0.24211.06   Microsoft .NET Native SDK                                                     Microsoft Corporation                              5 {A527D13C-CB86-3604-BFDC-68F585895663}
+24.0.28113      Microsoft .NET Standard Targeting Pack - 2.1.0 (x64)                          Microsoft Corporation                              5 {A7036CFB-B403-4598-85FF-D397ABB88173}
+3.0.0.0         Microsoft ASP.NET Core 3.0.0 Shared Framework (x64)                           Microsoft Corporation                              5 {DD400CCB-B287-36CE-B998-65DF0F320F75}
+3.0.0.0         Microsoft ASP.NET Core 3.0.0 Shared Framework (x86)                           Microsoft Corporation                              5 {BE73E5B2-40EE-38E2-BEF0-47BB29715E40}
+3.0.0.0         Microsoft ASP.NET Core 3.0.0 Targeting Pack (x64)                             Microsoft Corporation                              5 {4117FAE7-4986-3C5D-A75E-46B2CF759C81}
+12.2.18292.0    Microsoft ASP.NET Core Module for IIS Express                                 Microsoft Corporation                              5 {FAFEE5E3-E00A-4CE8-B495-8F66A5FAB236}
+13.0.19213.0    Microsoft ASP.NET Core Module V2 for IIS Express                              Microsoft Corporation                              5 {C021A3B1-2F02-4BAC-8696-674CD81C26C5}
+16.3.285.24939  Microsoft ASP.NET Diagnostic Pack for Visual Studio                           Microsoft Corporation                              5 {4FCD3F75-4A6B-317D-95DF-EE55999BFA35}
+1.0.20910.0     Microsoft ASP.NET Web Tools Packages 16.0 - ENU                               Microsoft Corporation                              5 {110D76A4-84DA-31EB-B109-9F8D98759ABC}
+2.9.8899.26     Microsoft Azure Authoring Tools - v2.9.6                                      Microsoft Corporation                              5 {EDADFA19-7F96-4075-A4AB-2209910626C5}
+2.0.74          Microsoft Azure CLI                                                           Microsoft Corporation                              5 {E7DE32BB-C553-4162-957A-B8B628FEFF60}
+2.9.8899.26     Microsoft Azure Compute Emulator - v2.9.6                                     Microsoft Corporation                              5 {1657ABEE-7D56-416A-B7E0-A89CC5AAD0F7}
+3.0.0127.060    Microsoft Azure Libraries for .NET – v2.9                                     Microsoft Corporation                              5 {C5C91AA6-3E83-430E-8B7A-6B790083F28D}
+5.7.0.18831     Microsoft Azure PowerShell - April 2018                                       Microsoft Corporation                              5 {3BA7CAA9-97BA-4528-B7E1-B640910BB149}
+5.10.19227.2113 Microsoft Azure Storage Emulator - v5.10                                      Microsoft Corporation                              5 {41AC2282-F083-4495-8306-2D6ABC7D5CA2}
+15.0.1300.359   Microsoft Command Line Utilities 15 for SQL Server                            Microsoft Corporation                              5 {41C0DB18-1790-465E-B0DD-D9CAA35CACBE}
+15.0.847.30     Microsoft Exchange Web Services Managed API 2.1                               Microsoft Corporation                              5 {24CA683D-8174-4EBF-AD4D-3F2DD7814716}
+4.74.8702       Microsoft HTML Help Workshop Package                                          Microsoft Corporation                              5 {9D5D6514-5927-42F1-92CF-D9A81D31F83D}
+15.0.51105      Microsoft NetStandard SDK                                                     Microsoft Corporation                              5 {737FDDA7-B944-4CB5-92D9-3D56373BD301}
+14.0.1000.169   Microsoft ODBC Driver 13 for SQL Server                                       Microsoft Corporation                              5 {76CF9EF4-ABA0-484E-8042-12B99499AF5F}
+17.2.0.1        Microsoft ODBC Driver 17 for SQL Server                                       Microsoft Corporation                              5 {8D98AC2C-FC5C-440D-A2D3-6C9655F957D8}
+16.0.28329.73   Microsoft Portable Library Multi-Targeting Pack                               Microsoft Corporation                              5 {B772198D-90AC-3150-9691-F840205A8CDE}
+16.0.28329.73   Microsoft Portable Library Multi-Targeting Pack Language Pack - enu           Microsoft Corporation                              5 {784047C5-BB07-355E-BEAB-E7044E6F32A8}
+11.3.6540.0     Microsoft SQL Server 2012 Native Client                                       Microsoft Corporation                              5 {4D2C56FF-7F36-4B49-A97A-24F0522D41D7}
+13.1.4001.0     Microsoft SQL Server 2016 LocalDB                                             Microsoft Corporation                              5 {9097BF1A-13A0-4A4A-A1F8-473E2A669863}
+14.0.1000.169   Microsoft SQL Server 2017 RsFx Driver                                         Microsoft Corporation                              5 {7123D29F-9197-4686-A619-C7E8EA289718}
+14.0.1000.169   Microsoft SQL Server 2017 Setup (English)                                     Microsoft Corporation                              5 {405252DC-ADF7-4BC8-95F5-F89DE513DD62}
+14.0.1000.169   Microsoft SQL Server 2017 T-SQL Language Service                              Microsoft Corporation                              5 {C8A51693-98B9-4AB1-91B8-9A1B86729D5F}
+14.0.3015.40    Microsoft System CLR Types for SQL Server 2017                                Microsoft Corporation                              5 {AC92C896-149B-4254-80CF-D1FC8BF4E831}
+15.0.1200.24    Microsoft System CLR Types for SQL Server 2019 CTP2.2                         Microsoft Corporation                              5 {725CC962-98BD-42C7-87D8-51C680FB1779}
+15.0.1200.24    Microsoft System CLR Types for SQL Server 2019 CTP2.2                         Microsoft Corporation                              5 {8D7CE3B0-5379-46FE-9F4B-A65D9F4CC1F1}
+9.0.30729       Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.17                  Microsoft Corporation                              5 {8220EEFE-38CD-377E-8595-13398D740ACE}
+9.0.30729       Microsoft Visual C++ 2008 Redistributable - x86 9.0.30729.17                  Microsoft Corporation                              5 {9A25302D-30C0-39D9-BD6F-21E6EC160475}
+10.0.40219      Microsoft Visual C++ 2010  x64 Redistributable - 10.0.40219                   Microsoft Corporation                              5 {1D8E6291-B0D5-35EC-8441-6616F567A0F7}
+10.0.40219      Microsoft Visual C++ 2010  x86 Redistributable - 10.0.40219                   Microsoft Corporation                              5 {F0C3E5D1-1ADE-321E-8167-68EF0DE699A5}
+12.0.40660      Microsoft Visual C++ 2013 x64 Additional Runtime - 12.0.40660                 Microsoft Corporation                              5 {5740BD44-B58D-321A-AFC0-6D3D4556DD6C}
+12.0.40660      Microsoft Visual C++ 2013 x64 Minimum Runtime - 12.0.40660                    Microsoft Corporation                              5 {CB0836EC-B072-368D-82B2-D3470BF95707}
+12.0.40660      Microsoft Visual C++ 2013 x86 Additional Runtime - 12.0.40660                 Microsoft Corporation                              5 {7DAD0258-515C-3DD4-8964-BD714199E0F7}
+12.0.40660      Microsoft Visual C++ 2013 x86 Minimum Runtime - 12.0.40660                    Microsoft Corporation                              5 {E30D8B21-D82D-3211-82CC-0F0A5D1495E8}
+14.23.27820     Microsoft Visual C++ 2019 X64 Additional Runtime - 14.23.27820                Microsoft Corporation                              5 {9CA7111B-263D-45DE-B898-61FAD30B3237}
+14.23.27820     Microsoft Visual C++ 2019 X64 Debug Runtime - 14.23.27820                     Microsoft Corporation                              5 {05360E8D-2964-400C-8C25-1921B7F5CA49}
+14.23.27820     Microsoft Visual C++ 2019 X64 Minimum Runtime - 14.23.27820                   Microsoft Corporation                              5 {A94EC1B2-932B-49D7-8AF2-4FBD29FF314B}
+14.23.27820     Microsoft Visual C++ 2019 X86 Additional Runtime - 14.23.27820                Microsoft Corporation                              5 {86BE78D9-65A1-4E69-86F8-C1F5281F8553}
+14.23.27820     Microsoft Visual C++ 2019 X86 Debug Runtime - 14.23.27820                     Microsoft Corporation                              5 {9A4726E2-D6D1-46F9-80BC-A0E033EE8E88}
+14.23.27820     Microsoft Visual C++ 2019 X86 Minimum Runtime - 14.23.27820                   Microsoft Corporation                              5 {00AC3934-26B4-406E-807C-1692AC7329EC}
+10.0.50908      Microsoft Visual Studio 2010 Tools for Office Runtime (x64)                   Microsoft Corporation                              5 {9495AEB4-AB97-39DE-8C42-806EEF75ECA7}
+2.3.2200.14893  Microsoft Visual Studio Setup Configuration                                   Microsoft Corporation                              5 {EECD89A4-F3F0-47BE-ACCF-ADFFCF2E1769}
+14.0.1000.169   Microsoft VSS Writer for SQL Server 2017                                      Microsoft Corporation                              5 {20B328C9-C6BB-434A-928A-00F05CD820B8}
+10.0.2606       Microsoft Web Deploy 4.0                                                      Microsoft Corporation                              5 {BBCDB523-F5B7-4E53-A911-C85191E3BDF0}
+5.0.50430.0     Microsoft Web Platform Installer 5.0                                          Microsoft Corporation                              5 {4D84C195-86F0-4B34-8FDE-4A17EB41306A}
+24.0.28113      Microsoft Windows Desktop Runtime - 3.0.0 (x64)                               Microsoft Corporation                              5 {A68A4AC6-B290-44CD-9ED1-F57C844F1973}
+24.0.28113      Microsoft Windows Desktop Runtime - 3.0.0 (x86)                               Microsoft Corporation                              5 {3906E74A-335B-41DE-BD74-5E72D56E9A02}
+24.0.28113      Microsoft Windows Desktop Targeting Pack - 3.0.0 (x64)                        Microsoft Corporation                              5 {2F73ED2D-BE1A-4BB4-BEAC-3FF49D8FF81E}
+10.1.16299.15   MSI Development Tools                                                         Microsoft Corporation                              5 {973CACA2-E018-065B-0580-F2784802E299}
+10.1.17134.12   MSI Development Tools                                                         Microsoft Corporation                              5 {1E406B46-65F4-91CE-65DA-DB66D5443B68}
+10.1.17763.132  MSI Development Tools                                                         Microsoft Corporation                              5 {6C961B30-A670-8A05-3BFE-3947E84DD4E4}
+10.1.18362.1    MSI Development Tools                                                         Microsoft Corporation                              5 {DB4DB790-64DD-1902-4BF2-833B3B6DBCA1}
+8.100.26898     MSI Development Tools                                                         Microsoft Corporation                              5 {CF3A1CA6-5E5E-B4BD-6CF1-363056816CA2}
+2.5.5631        Open XML SDK 2.5 for Microsoft Office                                         Microsoft Corporation                              5 {3EA16E23-14D2-466A-8268-D7CD40DC46B6}
+6.2.0.0         PowerShell 6-x64                                                              Microsoft Corporation                              5 {69C0AFAD-2B31-4906-BDD3-8016DAAD82BC}
+10.1.18362.1    SDK ARM Additions                                                             Microsoft Corporation                              5 {73681F86-CD86-4208-572F-959B45430B04}
+10.1.18362.1    SDK ARM Redistributables                                                      Microsoft Corporation                              5 {67EE3804-9642-62BA-EBF1-B1561FB4ECBE}
+8.100.26936     SDK Debuggers                                                                 Microsoft Corporation                              5 {9274C832-3D8A-A294-FDE8-8B9272357098}
+10.1.18362.1    SDK Debuggers ARM                                                             Microsoft Corporation                              5 {82E6BEFF-C8FB-1B97-3026-15C48C8FF960}
+15.0.26501      sptools_Microsoft.VisualStudio.OfficeDeveloperTools.Msi                       Microsoft Corporation                              5 {72BA31CD-9667-422B-A8A4-65C248E06222}
+16.0.28030      sptools_Microsoft.VisualStudio.Vsto.Msi                                       Microsoft Corporation                              5 {F8AA44A5-5B1F-4802-9B7B-3B6373AC51FB}
+16.0.28030      sptools_Microsoft.VisualStudio.Vsto.Msi.Resources                             Microsoft Corporation                              5 {3CF6EEAF-072E-47EB-8065-B628379449D3}
+16.0.28030      sptools_Microsoft.VisualStudio.Vsto.Msi.x64                                   Microsoft Corporation                              5 {D629D35F-A26E-4CF7-A512-3C890257A790}
+14.0.1000.169   SQL Server 2017 Batch Parser                                                  Microsoft Corporation                              5 {2C6E8311-28BD-4615-9545-6E39E8E83A4B}
+14.0.1000.169   SQL Server 2017 Common Files                                                  Microsoft Corporation                              5 {9D1C0509-D490-4E9E-ACF5-A73E5C53742D}
+14.0.1000.169   SQL Server 2017 Common Files                                                  Microsoft Corporation                              5 {B777C4C0-A1CD-4AB9-99B1-AD5FBED6F8E5}
+14.0.1000.169   SQL Server 2017 Connection Info                                               Microsoft Corporation                              5 {A9A443F5-56E1-4FC6-937C-5F481345A843}
+14.0.1000.169   SQL Server 2017 Connection Info                                               Microsoft Corporation                              5 {89A7644F-E056-4EC1-BFDE-9D1A531D6855}
+14.0.1000.169   SQL Server 2017 Database Engine Services                                      Microsoft Corporation                              5 {28EEF6BA-A23A-42D2-86BA-A6BEE723B969}
+14.0.1000.169   SQL Server 2017 Database Engine Services                                      Microsoft Corporation                              5 {DED314CA-0EFE-4593-9D66-EF75E5289A4C}
+14.0.1000.169   SQL Server 2017 Database Engine Shared                                        Microsoft Corporation                              5 {0E22DBB4-691B-400C-B52D-8DFE8EC421AA}
+14.0.1000.169   SQL Server 2017 Database Engine Shared                                        Microsoft Corporation                              5 {793F1C1E-5C83-4E33-A29B-6EAA7C1E791C}
+14.0.1000.169   SQL Server 2017 DMF                                                           Microsoft Corporation                              5 {D7D28BBF-3B0E-43F0-A457-331F1CD9E9EB}
+14.0.1000.169   SQL Server 2017 DMF                                                           Microsoft Corporation                              5 {B9998A13-5563-496C-B95E-597FFC70B670}
+14.0.1000.169   SQL Server 2017 Full text search                                              Microsoft Corporation                              5 {C37AD300-12CF-4911-9019-A05D66055EB4}
+14.0.1000.169   SQL Server 2017 Shared Management Objects                                     Microsoft Corporation                              5 {6CBBF624-696C-499E-948D-ADBAFFA2F548}
+14.0.1000.169   SQL Server 2017 Shared Management Objects                                     Microsoft Corporation                              5 {10855B1A-F7F2-4D8A-A725-9287C73BED5A}
+14.0.1000.169   SQL Server 2017 Shared Management Objects Extensions                          Microsoft Corporation                              5 {C6D92730-3EC0-47B1-8F6C-6F5635D1EFAC}
+14.0.1000.169   SQL Server 2017 Shared Management Objects Extensions                          Microsoft Corporation                              5 {8C515C22-BE07-4908-985C-0AA9349E1ED4}
+14.0.1000.169   SQL Server 2017 SQL Diagnostics                                               Microsoft Corporation                              5 {DFA6A906-3024-49DE-87AD-750EAED2FA49}
+14.0.1000.169   SQL Server 2017 XEvent                                                        Microsoft Corporation                              5 {12D2DB8D-80FF-4152-8F51-EDB3BD3C6976}
+14.0.1000.169   SQL Server 2017 XEvent                                                        Microsoft Corporation                              5 {AA2A015C-C210-413B-95F6-BF9D3CDD6E0D}
+3.6.2.0         TypeScript SDK                                                                Microsoft Corporation                              5 {7C8CE25B-A2FA-4BE3-8543-D8124349C074}
+10.0.26624      Universal CRT Extension SDK                                                   Microsoft Corporation                              5 {1FBCBC17-4527-2340-0832-B1D49C41FF67}
+10.1.16299.15   Universal CRT Extension SDK                                                   Microsoft Corporation                              5 {A5FA2886-1925-133F-0D41-B9A8ECEA0A2D}
+10.1.17134.12   Universal CRT Extension SDK                                                   Microsoft Corporation                              5 {18ABFDF6-23D9-87E6-015E-FFE3C7F153D5}
+10.1.17763.132  Universal CRT Extension SDK                                                   Microsoft Corporation                              5 {7D225043-6CC5-7B56-11DD-AFF90E4C1C0C}
+10.1.18362.1    Universal CRT Extension SDK                                                   Microsoft Corporation                              5 {13952D7A-B7B3-F4F8-5F29-5CD18E8168B7}
+10.0.26624      Universal CRT Headers Libraries and Sources                                   Microsoft Corporation                              5 {8BFBEC30-33CC-13B4-849F-3B036F27466A}
+10.1.16299.15   Universal CRT Headers Libraries and Sources                                   Microsoft Corporation                              5 {B739B4C5-EEEC-8E70-0276-38C4779AF398}
+10.1.17134.12   Universal CRT Headers Libraries and Sources                                   Microsoft Corporation                              5 {0D6B41AF-D117-8944-A059-3F9346A896C5}
+10.1.17763.132  Universal CRT Headers Libraries and Sources                                   Microsoft Corporation                              5 {CB19DBA2-C210-5646-9522-695A1317CD34}
+10.1.18362.1    Universal CRT Headers Libraries and Sources                                   Microsoft Corporation                              5 {74CBC330-ED16-31B9-E8BE-0C6A8E67DE32}
+10.1.17134.12   Universal CRT Redistributable                                                 Microsoft Corporation                              5 {B6273353-8B54-1F89-1A16-5940925104CE}
+10.1.17763.132  Universal CRT Redistributable                                                 Microsoft Corporation                              5 {5F577A45-3C65-352B-061D-D6A57F05402C}
+10.1.18362.1    Universal CRT Redistributable                                                 Microsoft Corporation                              5 {847D4DAF-0182-265B-324F-406462E8A90D}
+10.1.18362.1    Universal CRT Tools x64                                                       Microsoft Corporation                              5 {54FE4D23-11A2-F1C4-76E9-79C8FB40A4A1}
+10.1.18362.1    Universal CRT Tools x86                                                       Microsoft Corporation                              5 {9F7B0D96-881D-8850-C303-43F3A08E6902}
+10.1.16299.15   Universal General MIDI DLS Extension SDK                                      Microsoft Corporation                              5 {D261CEA1-AB8D-9CFA-4407-BCEFC78661AC}
+10.1.17134.12   Universal General MIDI DLS Extension SDK                                      Microsoft Corporation                              5 {775886B8-DEE1-CB20-8A94-FC09FA54ECF6}
+10.1.17763.132  Universal General MIDI DLS Extension SDK                                      Microsoft Corporation                              5 {CE83D0BD-418A-F3D1-D6CE-687E96D1EBD0}
+10.1.18362.1    Universal General MIDI DLS Extension SDK                                      Microsoft Corporation                              5 {6F54BF87-2EE6-FA6D-431D-33A665992D49}
+14.23.27820     vcpp_crt.redist.clickonce                                                     Microsoft Corporation                              5 {ECBF7F4D-CD2F-4B70-9060-A2C69AD26F9E}
+14.0.24245      Visual C++ Compiler/Tools Premium ARM Base Package                            Microsoft Corporation                              5 {56266E70-B324-3330-98D2-BFA664841046}
+14.0.24245      Visual C++ Compiler/Tools Premium ARM Base Resource Package                   Microsoft Corporation                              5 {2EB9CF2F-04C3-3911-A192-24300BC7F093}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 ARM Cross Package                       Microsoft Corporation                              5 {1F7B90D5-2941-3F29-89AE-BFB1EFD4D1A6}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 ARM Cross Resource Package              Microsoft Corporation                              5 {09DBF58C-F222-3791-930C-713AAACFC93E}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 Base Package                            Microsoft Corporation                              5 {8EB03048-C530-3894-8DC3-083735BBE6E3}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 Base Resource Package                   Microsoft Corporation                              5 {60901D1D-0196-3E03-8198-C10670ED9B07}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 Native Package                          Microsoft Corporation                              5 {569AFF57-41DC-392C-9A57-8EE778805666}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 Native Resource Package                 Microsoft Corporation                              5 {E6D19410-9287-30D1-AB8A-0964DAADCC52}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 X86 Cross Package                       Microsoft Corporation                              5 {1DAE1717-361C-3B47-B105-1F738A4A0855}
+14.0.24245      Visual C++ Compiler/Tools Premium X64 X86 Cross Resource Package              Microsoft Corporation                              5 {5AA8A49F-8480-38F4-88B7-BD7A754EF01B}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 ARM Cross Package                       Microsoft Corporation                              5 {F121EC1D-E58F-3E19-A05A-3B9097CF87BC}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 ARM Cross Resource Package              Microsoft Corporation                              5 {45FFF0CC-C5B6-36B9-8DC7-57570310A9E0}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 Base Package                            Microsoft Corporation                              5 {4A3D7B49-9BBB-3FEE-B336-F8DB40E08D99}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 Base Resource Package                   Microsoft Corporation                              5 {CB53C63A-2CAF-3EA1-A116-8492226B0192}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 Native Package                          Microsoft Corporation                              5 {2A929B62-2CDC-3A40-9BF4-1B4BD8F79C37}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 Native Resource Package                 Microsoft Corporation                              5 {8C96C34E-EB38-3BFA-8502-3644B3506AAE}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 X64 Cross Package                       Microsoft Corporation                              5 {9F3B1FB1-C936-3CDE-8E79-9826B4479AFC}
+14.0.24245      Visual C++ Compiler/Tools Premium X86 X64 Cross Resource Package              Microsoft Corporation                              5 {5A924147-6373-3D79-8D65-4466C27D93C8}
+14.0.24245      Visual C++ Compiler/Tools X64 ARM Cross Package                               Microsoft Corporation                              5 {B5BA067F-8C5F-3FEF-9F65-9EDBED343D59}
+14.0.24245      Visual C++ Compiler/Tools X64 ARM Cross Resource Package                      Microsoft Corporation                              5 {98FE39AF-6D10-3B2E-802D-7106EBD6E3EE}
+14.0.24245      Visual C++ Compiler/Tools X64 Base Package                                    Microsoft Corporation                              5 {C516F8C2-2CB5-34A1-A2B9-FA1618159B80}
+14.0.24245      Visual C++ Compiler/Tools X64 Base Resource Package                           Microsoft Corporation                              5 {19168B50-FF3A-3AAE-A8D9-DA6938F11A08}
+14.0.24245      Visual C++ Compiler/Tools X64 Native Package                                  Microsoft Corporation                              5 {6281F14E-4C87-34C9-BE06-ADE566335494}
+14.0.24245      Visual C++ Compiler/Tools X64 Native Resource Package                         Microsoft Corporation                              5 {48BDFD97-580C-3778-BBFB-09B15B905D15}
+14.0.24245      Visual C++ Compiler/Tools X64 X86 Cross Package                               Microsoft Corporation                              5 {A3DE9461-8843-3FEC-A87E-1705F95DA24C}
+14.0.24245      Visual C++ Compiler/Tools X64 X86 Cross Resource Package                      Microsoft Corporation                              5 {5B984979-3030-303F-80F5-15047FE9C5A6}
+14.0.24245      Visual C++ Compiler/Tools X86 ARM Cross Package                               Microsoft Corporation                              5 {6CC3CF78-C94F-3DDA-8E7E-903F423667C8}
+14.0.24245      Visual C++ Compiler/Tools X86 ARM Cross Resource Package                      Microsoft Corporation                              5 {02956FDE-ED10-3FB8-B5A6-3949304E2EB3}
+14.0.24245      Visual C++ Compiler/Tools X86 Base Package                                    Microsoft Corporation                              5 {BB2C27F3-F2F6-359E-BDAC-89CC7BB0E0C6}
+14.0.24245      Visual C++ Compiler/Tools X86 Base Package                                    Microsoft Corporation                              5 {AB215C12-F83D-3B7C-BDB6-1F4997E9CBEC}
+14.0.24245      Visual C++ Compiler/Tools X86 Base Resource Package                           Microsoft Corporation                              5 {85A1F39A-BAA6-3515-AEE0-875EB7AB85C4}
+14.0.24245      Visual C++ Compiler/Tools X86 Native Package                                  Microsoft Corporation                              5 {B9088875-FB69-3610-9BE9-FD561D0ED12F}
+14.0.24245      Visual C++ Compiler/Tools X86 Native Resource Package                         Microsoft Corporation                              5 {AF26C214-4B42-3F00-BAA5-14C223F83774}
+14.0.24245      Visual C++ Compiler/Tools X86 X64 Cross Package                               Microsoft Corporation                              5 {090773DF-C292-3469-95D0-786EED617975}
+14.0.24245      Visual C++ Compiler/Tools X86 X64 Cross Resource Package                      Microsoft Corporation                              5 {3C5C6955-8A79-3470-97B9-0BB085B4B583}
+14.0.24245      Visual C++ CRT Headers Package                                                Microsoft Corporation                              5 {F485D86A-9520-3127-B879-861A9315C734}
+14.0.24245      Visual C++ Extra Files                                                        Microsoft Corporation                              5 {5A621212-0030-3D59-A6B4-C6073FC34D35}
+14.0.24245      Visual C++ Extra Resource Files                                               Microsoft Corporation                              5 {5CC5CD07-7B5A-36C7-861A-F6DCAA765058}
+14.0.24245      Visual C++ Library ATL ARM Package                                            Microsoft Corporation                              5 {4CE1A0F6-C9A4-3091-B32C-7537C771E7BA}
+14.0.24245      Visual C++ Library ATL Headers Package                                        Microsoft Corporation                              5 {73B520F1-30B7-36AB-82B3-17921AD14BC1}
+14.0.24245      Visual C++ Library ATL Source Package                                         Microsoft Corporation                              5 {EBAED43D-9668-37E0-85D1-554BDAD904FF}
+14.0.24245      Visual C++ Library ATL X64 Package                                            Microsoft Corporation                              5 {079A84BA-C39E-3B22-AF8A-03428EC8E548}
+14.0.24245      Visual C++ Library ATL X86 Package                                            Microsoft Corporation                              5 {C4149D70-315C-3FAF-A52F-C14CED3B08C3}
+14.23.28105     Visual C++ Library CRT Appx Package                                           Microsoft Corporation                              5 {C6EDFF96-479D-4F86-80E3-5B6563AD6F41}
+14.23.28105     Visual C++ Library CRT Appx Package                                           Microsoft Corporation                              5 {315B3A8F-853D-49EE-A1EC-B77EBD93C8F2}
+14.23.28105     Visual C++ Library CRT Appx Resource Package                                  Microsoft Corporation                              5 {81A37E30-F1CC-4153-8EFF-368D0804021E}
+14.0.24245      Visual C++ Library CRT ARM Desktop Package                                    Microsoft Corporation                              5 {34301E21-55C2-3869-B2BD-7774AAD961D4}
+14.0.24245      Visual C++ Library CRT ARM OneCore For Desktop Package                        Microsoft Corporation                              5 {58A57B55-3D26-3CE8-B93C-C05A3121B37C}
+14.0.24245      Visual C++ Library CRT ARM Redist Package                                     Microsoft Corporation                              5 {6280D208-32DD-343C-AA5D-96948BBFD192}
+14.0.24245      Visual C++ Library CRT ARM Store Package                                      Microsoft Corporation                              5 {5C4FA353-903F-3E4D-9889-AF51BDDBA04F}
+14.23.28105     Visual C++ Library CRT ARM64 Appx Package                                     Microsoft Corporation                              5 {7B95FCBE-B2D5-48A8-9BD0-ECFC75193DF9}
+14.23.28105     Visual C++ Library CRT Desktop Appx Package                                   Microsoft Corporation                              5 {D15B5435-5325-4266-8E81-BD2208ED6E3A}
+14.23.28105     Visual C++ Library CRT Desktop Appx Package                                   Microsoft Corporation                              5 {80E898F2-5824-4660-95DF-F5C7196919D5}
+14.23.28105     Visual C++ Library CRT Desktop Appx Package                                   Microsoft Corporation                              5 {DE3D9FA7-9714-4349-9352-44E9442CA769}
+14.0.24245      Visual C++ Library CRT Redist Resource Package                                Microsoft Corporation                              5 {2A8C3E6E-1886-395B-B8CB-6C284C4FD98F}
+14.0.24245      Visual C++ Library CRT Source Package                                         Microsoft Corporation                              5 {50F6A46D-5057-3B9F-830E-6D65992C9476}
+14.0.24245      Visual C++ Library CRT X64 Desktop Package                                    Microsoft Corporation                              5 {8FF1352C-8065-33FF-ACEC-5DC63CC61C50}
+14.0.24245      Visual C++ Library CRT X64 OneCore For Desktop Package                        Microsoft Corporation                              5 {C64C3369-079C-3593-ADB2-29ACE37190F5}
+14.0.24245      Visual C++ Library CRT X64 Redist Package                                     Microsoft Corporation                              5 {A08953DC-4AF5-3226-A5C2-01D71D93B779}
+14.0.24245      Visual C++ Library CRT X64 Store Package                                      Microsoft Corporation                              5 {DBFF25CD-445F-3DD4-AB01-8E4EAA29CD55}
+14.0.24245      Visual C++ Library CRT X86 Desktop Package                                    Microsoft Corporation                              5 {73E8B68A-EC28-3E4B-9261-4297CF8260A1}
+14.0.24245      Visual C++ Library CRT X86 OneCore For Desktop Package                        Microsoft Corporation                              5 {3D47596B-B021-3BEB-8FC9-51E57D2263CD}
+14.0.24245      Visual C++ Library CRT X86 Redist Package                                     Microsoft Corporation                              5 {5238308D-5A6E-36D9-8BE7-F6F34063C56C}
+14.0.24245      Visual C++ Library CRT X86 Store Package                                      Microsoft Corporation                              5 {B5C5882E-0060-34F4-B19F-4ACD1B037195}
+14.0.24245      Visual C++ Library MFC Headers Package                                        Microsoft Corporation                              5 {DF9C4935-9E42-3336-9EBB-E1570A9621FD}
+14.0.24245      Visual C++ Library MFC MBCS Package                                           Microsoft Corporation                              5 {79CF692D-D00D-3808-9F6E-67D810922FD2}
+14.0.24245      Visual C++ Library MFC Source Package                                         Microsoft Corporation                              5 {CBDEEF39-F4DA-3138-9CEC-F03DA8D151F5}
+14.0.24245      Visual C++ Library MFC X64 Package                                            Microsoft Corporation                              5 {037F4772-E2AA-3E67-86D0-EC9C307005D8}
+14.0.24245      Visual C++ Library MFC X86 Package                                            Microsoft Corporation                              5 {6D0D8C04-B552-33A9-9285-80E8C7E5A4B1}
+14.0.24245      Visual C++ Library PGO ARM Package                                            Microsoft Corporation                              5 {5BD557D7-7248-3765-9751-0FDE8874F4AC}
+14.0.24245      Visual C++ Library PGO Headers Package                                        Microsoft Corporation                              5 {108DBF15-C367-3B7A-8CE3-92538E81D931}
+14.0.24245      Visual C++ Library PGO X64 Package                                            Microsoft Corporation                              5 {690FC6D8-CC59-30ED-A18C-96B18F0197C2}
+14.0.24245      Visual C++ Library PGO X86 Package                                            Microsoft Corporation                              5 {A4994564-5078-3AFD-B328-3CA4D6911F93}
+14.0.24245      Visual C++ Library PGO X86 Package                                            Microsoft Corporation                              5 {9D208B75-0B38-36E8-89DB-75865C303816}
+14.0.24245      Visual C++ MSBuild ARM Package                                                Microsoft Corporation                              5 {3CA38164-88D4-3917-8CE9-EDCF29BB1304}
+14.0.24245      Visual C++ MSBuild Base Package                                               Microsoft Corporation                              5 {538C3C38-D36F-3E07-8818-37EFB1DA5F89}
+14.0.24245      Visual C++ MSBuild Base Resource Package                                      Microsoft Corporation                              5 {1B14572B-F1D8-31BE-88A5-FAE2E1E01AC0}
+14.0.24245      Visual C++ MSBuild X64 Package                                                Microsoft Corporation                              5 {1EA3ED05-795A-37C8-9B00-D341A43E93D1}
+14.0.24245      Visual C++ MSBuild X86 Package                                                Microsoft Corporation                              5 {3A791F21-A9DE-3806-B187-A228CA09F744}
+16.0.98.0       VS Immersive Activate Helper                                                  Microsoft Corporation                              5 {78500789-0EBE-4490-BE43-F9EF8250BF42}
+16.0.98.0       VS JIT Debugger                                                               Microsoft Corporation                              5 {4137D3AB-5B44-4AC9-83A4-5273F2E2547E}
+16.0.98.0       VS Script Debugging Common                                                    Microsoft Corporation                              5 {D8B26CBD-15D2-440B-BCBD-5616D74EFC7D}
+16.0.98.0       VS WCF Debugging                                                              Microsoft Corporation                              5 {C8268C4E-2A67-4845-9F8B-E76296F802BB}
+16.0.28329      vs_BlendMsi                                                                   Microsoft Corporation                              5 {B5E3A3E1-1529-4D5A-9E95-34971FA07825}
+16.0.28329      vs_clickoncebootstrappermsi                                                   Microsoft Corporation                              5 {BAF91847-0A64-405E-98EC-A0BA6FB4BC4E}
+16.0.28329      vs_clickoncebootstrappermsires                                                Microsoft Corporation                              5 {271F1F42-B547-4498-825F-590DBB1774F7}
+16.0.28329      vs_clickoncesigntoolmsi                                                       Microsoft Corporation                              5 {30D97A69-3C0F-4552-9A72-60E591B210C7}
+16.3.29311      vs_communitymsi                                                               Microsoft Corporation                              5 {D19BAD98-BFDD-4C70-B66C-EE75F851B9BC}
+16.0.28329      vs_communitymsires                                                            Microsoft Corporation                              5 {95E79BBC-97FD-4FEB-91B5-CC0231324812}
+16.0.28329      vs_devenvmsi                                                                  Microsoft Corporation                              5 {AD0C92A4-1514-4BC1-A723-A272A8343924}
+16.3.29209      vs_filehandler_amd64                                                          Microsoft Corporation                              5 {DBA97C17-13F0-407B-8BC4-0C2E01A298A5}
+16.3.29209      vs_filehandler_x86                                                            Microsoft Corporation                              5 {AD3B73B9-D5C8-4FF9-AB73-7A1DC39F3E02}
+16.3.29209      vs_FileTracker_Singleton                                                      Microsoft Corporation                              5 {692A0FB3-E6A2-4D41-AC03-4136B4312DC0}
+16.0.28329      vs_Graphics_Singletonx64                                                      Microsoft Corporation                              5 {414FA594-3AD9-4093-BFE3-91ABF25410BF}
+16.0.28329      vs_Graphics_Singletonx86                                                      Microsoft Corporation                              5 {814ABD58-E503-4A7F-8C53-0F1A2E4686EE}
+16.2.28917      vs_minshellinteropmsi                                                         Microsoft Corporation                              5 {27B16914-BC5D-4018-8074-071262A27F6D}
+16.3.29230      vs_minshellmsi                                                                Microsoft Corporation                              5 {6B065DCD-E730-4FCE-905D-2B3F30A91110}
+16.0.28329      vs_minshellmsires                                                             Microsoft Corporation                              5 {EC04CD66-C03A-470D-B0D2-4BBC87F6382D}
+16.0.28329      vs_SQLClickOnceBootstrappermsi                                                Microsoft Corporation                              5 {92B3118C-3214-4BFA-89A0-5FF5EDFA2AEA}
+16.0.28329      vs_tipsmsi                                                                    Microsoft Corporation                              5 {E208E682-50EE-4F2F-9860-C91B906B8A03}
+10.1.16299.15   WinAppDeploy                                                                  Microsoft Corporation                              5 {9690D51C-4435-1C20-7819-66CCAB0F03F9}
+10.1.17134.12   WinAppDeploy                                                                  Microsoft Corporation                              5 {5AD4A604-B476-1578-2A20-6B02FC6258BE}
+10.1.17763.132  WinAppDeploy                                                                  Microsoft Corporation                              5 {716AE8F2-1BE3-7657-DF6B-F23DEEC75AF9}
+10.1.18362.1    WinAppDeploy                                                                  Microsoft Corporation                              5 {8E3AE0EF-D067-700C-BDB4-10D5552155DC}
+10.1.18362.1    Windows 7 WDK Headers and Libs                                                Microsoft Corporation                              5 {6E10A7E2-7D2A-3BCF-4C43-33A7CCDDD0A1}
+10.1.18362.1    Windows 8 WDK Headers and Libs                                                Microsoft Corporation                              5 {35003616-5933-0AD0-A047-A1DE0C70D511}
+10.1.18362.1    Windows 8.1 WDK Headers and Libs                                              Microsoft Corporation                              5 {B7057D97-4F43-B3C9-FA78-801436E6BEF8}
+10.1.18362.1    Windows App Certification Kit Native Components                               Microsoft Corporation                              5 {21F4DE3E-CE64-584E-BD74-2D1765EB39DE}
+10.1.18362.1    Windows App Certification Kit SupportedApiList x86                            Microsoft Corporation                              5 {5C3F08FC-E0D4-6C94-90EF-72DE63DDA885}
+10.1.18362.1    Windows App Certification Kit x64                                             Microsoft Corporation                              5 {15E06EC7-2755-BD07-45AD-98DF1679A6BE}
+10.1.18362.1    Windows Debugging WDK Integration                                             Microsoft Corporation                              5 {2BEB86A0-D9D7-9E4E-14F9-8AAC78E32C2E}
+10.1.16299.15   Windows Desktop Extension SDK                                                 Microsoft Corporation                              5 {8358B2F8-FEE0-7FBA-14E5-AC84A7E61552}
+10.1.17134.12   Windows Desktop Extension SDK                                                 Microsoft Corporation                              5 {66CEB5CD-2D62-66EA-8969-BDC63E71D7B6}
+10.1.17763.132  Windows Desktop Extension SDK                                                 Microsoft Corporation                              5 {EC74C9E5-A88F-D4DF-1DD0-FA42FFBB298D}
+10.1.18362.1    Windows Desktop Extension SDK                                                 Microsoft Corporation                              5 {B4A7994D-DBA1-8B4D-621A-03EE52CF838A}
+10.1.16299.15   Windows Desktop Extension SDK Contracts                                       Microsoft Corporation                              5 {44B8DFA4-495D-9972-F663-557B1BC0CB71}
+10.1.17134.12   Windows Desktop Extension SDK Contracts                                       Microsoft Corporation                              5 {C12887C1-91E2-4C05-5D06-7DC02AE4A627}
+10.1.17763.132  Windows Desktop Extension SDK Contracts                                       Microsoft Corporation                              5 {942262C5-DA88-830D-7140-C5BCC896DD60}
+10.1.18362.1    Windows Desktop Extension SDK Contracts                                       Microsoft Corporation                              5 {39EDCC7D-7B63-5D99-C053-C8CDF02DC5ED}
+10.1.18362.1    Windows Driver Framework ARM Headers and Libs                                 Microsoft Corporation                              5 {FD007481-C0CE-96D7-4FD0-9542BB500F72}
+10.1.18362.1    Windows Driver Framework Headers and Libs                                     Microsoft Corporation                              5 {A87863A0-38C9-D5B6-18A9-E5FE7CA9C98D}
+10.1.18362.1    Windows Driver Kit                                                            Microsoft Corporation                              5 {13F5C7B7-5DEC-FDDD-7D9E-484F598D0FBB}
+10.1.18362.1    Windows Driver Kit ARM Additions                                              Microsoft Corporation                              5 {23DC3807-AE36-719F-D719-86511F28E597}
+10.1.18362.1    Windows Driver Kit ARM Binaries                                               Microsoft Corporation                              5 {01ACF1FD-4B94-FBB3-B6F6-F90C6CCB4817}
+10.1.17763.1    Windows Driver Kit ARM Headers and Libs                                       Microsoft Corporation                              5 {FE2BD8E9-363F-5EE7-C158-FBC5C3AE762D}
+10.1.18362.1    Windows Driver Kit ARM Headers and Libs                                       Microsoft Corporation                              5 {B4C01117-D97E-4C6D-6A81-F2584157B505}
+10.1.17763.1    Windows Driver Kit Binaries                                                   Microsoft Corporation                              5 {1426D610-565A-9CD4-888C-330FFAFC9C2A}
+10.1.18362.1    Windows Driver Kit Binaries                                                   Microsoft Corporation                              5 {88A11365-6BC7-3663-5370-6BCD17158615}
+10.1.18362.1    Windows Driver Kit Downlevel Dev14 Content                                    Microsoft Corporation                              5 {7D7CE3A7-9EED-BA5B-1571-0EEA773A6E3A}
+10.1.17763.1    Windows Driver Kit Headers and Libs                                           Microsoft Corporation                              5 {B7275F57-ED36-08D7-3264-BA974600375F}
+10.1.18362.1    Windows Driver Kit Headers and Libs                                           Microsoft Corporation                              5 {B59FB971-A9CA-C601-2FE6-A1CDF860B30B}
+10.1.17763.1    Windows Driver Kit Root Dev15 Content                                         Microsoft Corporation                              5 {FD8A4555-0CFF-8664-D165-41E03AF32C97}
+10.1.18362.1    Windows Driver Kit Root Dev16 Content                                         Microsoft Corporation                              5 {9D9E1786-FC23-78AD-5351-AF8F1871F22C}
+10.1.17763.1    Windows Driver Kit SxS Content                                                Microsoft Corporation                              5 {76D2FBF4-C816-56B3-E6AC-1ACA69142AAA}
+10.1.18362.1    Windows Driver Kit SxS Content                                                Microsoft Corporation                              5 {A35C7895-A2FA-FB9D-1AB8-44117097C43E}
+10.1.17763.1    Windows Driver Kit Visual Studio Dev15 Content                                Microsoft Corporation                              5 {C394A2C0-E0C8-3F46-98BC-E93E50C92505}
+10.1.18362.1    Windows Driver Kit Visual Studio Dev16 Content                                Microsoft Corporation                              5 {B831F2B5-D62B-9CED-611F-5F623E13DEA8}
+14.0.24245      Windows Espc Package                                                          Microsoft Corporation                              5 {EC3E674C-14B1-3B19-9C16-2FD337A2D827}
+14.0.24245      Windows Espc Package                                                          Microsoft Corporation                              5 {5E505498-1876-3C63-807F-EA1DE9259CBC}
+10.1.16299.15   Windows IoT Extension SDK                                                     Microsoft Corporation                              5 {5899CA05-6772-95EC-4261-A09E5EE0FBF2}
+10.1.17134.12   Windows IoT Extension SDK                                                     Microsoft Corporation                              5 {046D36A5-1ADC-E573-1078-5C8602994B1F}
+10.1.17763.132  Windows IoT Extension SDK                                                     Microsoft Corporation                              5 {110B5402-97D4-DDA2-7B42-665D8325A44F}
+10.1.18362.1    Windows IoT Extension SDK                                                     Microsoft Corporation                              5 {9DA29C3D-9E36-AC22-59C8-FFCF413DC068}
+10.1.16299.15   Windows IoT Extension SDK Contracts                                           Microsoft Corporation                              5 {58BC56B7-DCB8-EE66-AA40-2EAE7E2EB0F2}
+10.1.17134.12   Windows IoT Extension SDK Contracts                                           Microsoft Corporation                              5 {D49DF187-7968-A39D-CF62-EBE13CAE9068}
+10.1.17763.132  Windows IoT Extension SDK Contracts                                           Microsoft Corporation                              5 {AC8F20B3-36BB-DE22-CA37-43BC967B3F47}
+10.1.18362.1    Windows IoT Extension SDK Contracts                                           Microsoft Corporation                              5 {3CEE8EB6-538E-DDA2-51A5-842ECE6CE1E8}
+10.1.16299.15   Windows IP Over USB                                                           Microsoft Corporation                              5 {8CBFAC58-3058-B2AD-10E2-9E2A859B554B}
+10.1.15254.1    Windows Mobile Connectivity Tools 10.0.15254.0 - Desktop x86                  Microsoft Corporation                              5 {833F02C5-2C39-49F6-BD64-91D351081274}
+10.1.16299.15   Windows Mobile Extension SDK                                                  Microsoft Corporation                              5 {93BEE599-02CB-18E1-744E-D95724E81157}
+10.1.17134.12   Windows Mobile Extension SDK                                                  Microsoft Corporation                              5 {50C05B8C-47A8-FD93-B84E-6AAA99732700}
+10.1.17763.132  Windows Mobile Extension SDK                                                  Microsoft Corporation                              5 {B38CF8FF-C0D9-B11D-6484-B95A81C72DDC}
+10.1.18362.1    Windows Mobile Extension SDK                                                  Microsoft Corporation                              5 {30AD20A4-1FFF-2632-4555-EFAF9D8A32CD}
+10.1.16299.15   Windows Mobile Extension SDK Contracts                                        Microsoft Corporation                              5 {D7A6AB64-9E5C-E5E2-5438-655F7D36475D}
+10.1.17134.12   Windows Mobile Extension SDK Contracts                                        Microsoft Corporation                              5 {9AC65F8A-4F7F-A9FC-222F-CC43ED464041}
+10.1.17763.132  Windows Mobile Extension SDK Contracts                                        Microsoft Corporation                              5 {6FF4EDB8-56EA-640C-47CA-54C845F7D273}
+10.1.18362.1    Windows Mobile Extension SDK Contracts                                        Microsoft Corporation                              5 {154EEEB2-18D9-4FD5-EDE1-6D0B318FAC53}
+16.0.29230      Windows Phone SDK 8.0 Assemblies for Visual Studio 2019                       Microsoft Corporation                              5 {53F5DF52-0A55-32CC-BE71-CFF4561AD5FA}
+10.1.18362.1    Windows SDK                                                                   Microsoft Corporation                              5 {3A98BFB1-16A6-576B-FFC8-7FEF26B40DBA}
+10.1.0.0        Windows SDK AddOn                                                             Microsoft Corporation                              5 {E6F877A1-2F65-4BF0-87B6-A4071B7663D3}
+10.1.16299.15   Windows SDK ARM Desktop Tools                                                 Microsoft Corporation                              5 {CBACB843-4AEF-D40C-B9BE-CCA402D2B980}
+10.1.17134.12   Windows SDK ARM Desktop Tools                                                 Microsoft Corporation                              5 {445D4B64-9E1D-C610-50B5-BAF5B11D7E70}
+10.1.17763.132  Windows SDK ARM Desktop Tools                                                 Microsoft Corporation                              5 {EA15DC17-4379-6850-16FA-D6527641A8DD}
+10.1.18362.1    Windows SDK ARM Desktop Tools                                                 Microsoft Corporation                              5 {20C00582-BD18-B599-CF98-61011567D747}
+10.1.17763.1    Windows SDK ARM Headers Libs Metadata                                         Microsoft Corporation                              5 {CD25AB93-B9FE-0AD1-7B92-5B5DE9B15C0B}
+10.1.18362.1    Windows SDK ARM Headers Libs Metadata                                         Microsoft Corporation                              5 {6202F898-BC40-0279-9194-DF506F925EA0}
+10.1.16299.15   Windows SDK Desktop Headers arm                                               Microsoft Corporation                              5 {CD480276-2E5A-3FE0-D40C-D7C55617F98B}
+10.1.17134.12   Windows SDK Desktop Headers arm                                               Microsoft Corporation                              5 {83707B3E-47D2-4839-D1CF-FEC213D3C8E7}
+10.1.17763.132  Windows SDK Desktop Headers arm                                               Microsoft Corporation                              5 {BFC2CA21-326B-90D1-B0E5-F1327411D4A5}
+10.1.18362.1    Windows SDK Desktop Headers arm                                               Microsoft Corporation                              5 {3DC4086C-B365-3DE4-878B-659DEB72904E}
+10.1.16299.15   Windows SDK Desktop Headers arm64                                             Microsoft Corporation                              5 {97AA8169-0E70-3B19-46C5-D4453608D589}
+10.1.17134.12   Windows SDK Desktop Headers arm64                                             Microsoft Corporation                              5 {366FE23C-D417-99CF-9606-130F37CC6C3F}
+10.1.17763.132  Windows SDK Desktop Headers arm64                                             Microsoft Corporation                              5 {441FA049-A2AB-7E8D-375D-5C9720CD3325}
+10.1.18362.1    Windows SDK Desktop Headers arm64                                             Microsoft Corporation                              5 {452ABC9E-731E-71B2-8824-C5B2595370AF}
+10.1.16299.15   Windows SDK Desktop Headers x64                                               Microsoft Corporation                              5 {20630AC0-B423-2229-3399-A0B5285CB325}
+10.1.17134.12   Windows SDK Desktop Headers x64                                               Microsoft Corporation                              5 {22DC8AC8-D9DC-8989-C12D-C74C3676BDB1}
+10.1.17763.132  Windows SDK Desktop Headers x64                                               Microsoft Corporation                              5 {492AAE4A-619E-64BF-6173-DB4E25D67533}
+10.1.18362.1    Windows SDK Desktop Headers x64                                               Microsoft Corporation                              5 {6A96DEED-D0D8-6DD0-21BD-7D8F60714854}
+10.1.16299.15   Windows SDK Desktop Headers x86                                               Microsoft Corporation                              5 {4616D3B4-B5F0-ECBF-4617-0345C9550649}
+10.1.17134.12   Windows SDK Desktop Headers x86                                               Microsoft Corporation                              5 {6730F3AB-D022-B4A6-29C0-C95A7836EED4}
+10.1.17763.132  Windows SDK Desktop Headers x86                                               Microsoft Corporation                              5 {C971A14A-F045-BD6A-C670-05C7B74A37FE}
+10.1.18362.1    Windows SDK Desktop Headers x86                                               Microsoft Corporation                              5 {86ADBBAE-77AE-FA26-7C17-802AE28AC316}
+10.1.16299.15   Windows SDK Desktop Libs arm                                                  Microsoft Corporation                              5 {1FEC7E98-2A0A-11F9-1321-5F27304A3E4E}
+10.1.17134.12   Windows SDK Desktop Libs arm                                                  Microsoft Corporation                              5 {586380AB-3003-92AB-EB8E-3C33020ED8C3}
+10.1.17763.132  Windows SDK Desktop Libs arm                                                  Microsoft Corporation                              5 {323350A8-D3DC-2F8C-2976-E59E2C132B74}
+10.1.18362.1    Windows SDK Desktop Libs arm                                                  Microsoft Corporation                              5 {995DDD4F-928C-4EBA-9702-E7CD3F6A7A9D}
+10.1.16299.15   Windows SDK Desktop Libs arm64                                                Microsoft Corporation                              5 {A6B742A8-13BA-4A15-0056-E9F2354FADA4}
+10.1.17134.12   Windows SDK Desktop Libs arm64                                                Microsoft Corporation                              5 {008E7522-C30C-1954-BBED-1F8E65094A5B}
+10.1.17763.132  Windows SDK Desktop Libs arm64                                                Microsoft Corporation                              5 {51ACC3C5-D131-0916-3F0C-59455F32E6B0}
+10.1.18362.1    Windows SDK Desktop Libs arm64                                                Microsoft Corporation                              5 {166BCCDD-48C1-8103-A7E7-0F3DE471223D}
+10.1.16299.15   Windows SDK Desktop Libs x64                                                  Microsoft Corporation                              5 {DAE5B0BB-F2BC-98F5-6147-A83B6DF4B2AA}
+10.1.17134.12   Windows SDK Desktop Libs x64                                                  Microsoft Corporation                              5 {A0B6B6D7-5ECA-4A37-182A-05D4F5A4E530}
+10.1.17763.132  Windows SDK Desktop Libs x64                                                  Microsoft Corporation                              5 {AE5CE40F-6C6D-C95F-FD37-D9EF7093CA99}
+10.1.18362.1    Windows SDK Desktop Libs x64                                                  Microsoft Corporation                              5 {54140689-B7DB-B9CF-537D-8FEB279410F9}
+10.1.16299.15   Windows SDK Desktop Libs x86                                                  Microsoft Corporation                              5 {82BEC2F8-2758-E0A4-F14B-CAAF3234FE00}
+10.1.17134.12   Windows SDK Desktop Libs x86                                                  Microsoft Corporation                              5 {02078319-BC7B-218A-7690-53692709C041}
+10.1.17763.132  Windows SDK Desktop Libs x86                                                  Microsoft Corporation                              5 {D5B8B2F7-680B-B6D4-6353-377C73C0F8A8}
+10.1.18362.1    Windows SDK Desktop Libs x86                                                  Microsoft Corporation                              5 {238F56B7-7D14-F8EB-3F4D-8CFF18C19E2B}
+10.1.16299.15   Windows SDK Desktop Tools arm64                                               Microsoft Corporation                              5 {399E1622-1DD3-2284-510C-3ABEBEB4B4FA}
+10.1.17134.12   Windows SDK Desktop Tools arm64                                               Microsoft Corporation                              5 {28FE86CA-745A-6C3B-3279-2879991FCF24}
+10.1.17763.132  Windows SDK Desktop Tools arm64                                               Microsoft Corporation                              5 {9D5486B4-7458-1A53-E92F-8CFD4AF85D4B}
+10.1.18362.1    Windows SDK Desktop Tools arm64                                               Microsoft Corporation                              5 {2E6C6299-BF5F-379D-55F2-8FD3367F5918}
+10.1.16299.15   Windows SDK Desktop Tools x64                                                 Microsoft Corporation                              5 {8105E4C5-379E-F713-8A4D-14A2317A7ABE}
+10.1.17134.12   Windows SDK Desktop Tools x64                                                 Microsoft Corporation                              5 {A84B4CAC-C89B-FAD4-87CC-B2B547E4AFDF}
+10.1.17763.132  Windows SDK Desktop Tools x64                                                 Microsoft Corporation                              5 {8308EFA9-D647-6BF4-6525-349091FBD528}
+10.1.18362.1    Windows SDK Desktop Tools x64                                                 Microsoft Corporation                              5 {795E8F11-37DE-611E-921E-7D70BE09BF7B}
+10.1.16299.15   Windows SDK Desktop Tools x86                                                 Microsoft Corporation                              5 {5169186A-B6CA-38E6-BC29-54ABFAFD3721}
+10.1.17134.12   Windows SDK Desktop Tools x86                                                 Microsoft Corporation                              5 {241CF4B0-1FCB-C443-433B-B663D59408A7}
+10.1.17763.132  Windows SDK Desktop Tools x86                                                 Microsoft Corporation                              5 {F770E8F3-139B-0373-8692-BF619445B8C2}
+10.1.18362.1    Windows SDK Desktop Tools x86                                                 Microsoft Corporation                              5 {540ADDB0-7A37-9B99-3568-FD1EA33D3B38}
+10.1.18362.1    Windows SDK DirectX x64 Remote                                                Microsoft Corporation                              5 {6E3528B9-92A6-A48A-AE84-890E0E5DE9BB}
+10.1.18362.1    Windows SDK DirectX x86 Remote                                                Microsoft Corporation                              5 {52CE7A43-B499-5F4B-A525-AA8794D3580F}
+10.1.16299.15   Windows SDK Facade Windows WinMD Versioned                                    Microsoft Corporation                              5 {F76495AC-2A86-BD70-3F0A-20D33E6A3300}
+10.1.17134.12   Windows SDK Facade Windows WinMD Versioned                                    Microsoft Corporation                              5 {3A971391-8100-F9CB-06EB-6510C6B68937}
+10.1.17763.132  Windows SDK Facade Windows WinMD Versioned                                    Microsoft Corporation                              5 {CA7A8A65-AB2E-43AA-4110-10C50115E211}
+10.1.18362.1    Windows SDK Facade Windows WinMD Versioned                                    Microsoft Corporation                              5 {A5EF45C5-FA27-7E8F-1AE8-E3D39BAC779E}
+10.1.18362.1    Windows SDK for Windows Store Apps                                            Microsoft Corporation                              5 {39692B57-0BA8-2197-8BC5-4108DFB8475A}
+10.1.16299.15   Windows SDK for Windows Store Apps Contracts                                  Microsoft Corporation                              5 {7736BDAD-A5B6-8BE7-E34B-F53280448C29}
+10.1.17134.12   Windows SDK for Windows Store Apps Contracts                                  Microsoft Corporation                              5 {21603239-9380-AE0E-DCDF-FF910036043C}
+10.1.17763.132  Windows SDK for Windows Store Apps Contracts                                  Microsoft Corporation                              5 {36AA7E63-76E9-E591-C985-272415268810}
+10.1.18362.1    Windows SDK for Windows Store Apps Contracts                                  Microsoft Corporation                              5 {C13D21F1-E9A3-FB93-18C4-B905FB47F122}
+10.1.16299.15   Windows SDK for Windows Store Apps DirectX x64 Remote                         Microsoft Corporation                              5 {45D32E0E-27C5-82DE-B739-6A9608A2411A}
+10.1.17134.12   Windows SDK for Windows Store Apps DirectX x64 Remote                         Microsoft Corporation                              5 {45885E89-108E-2590-C1D5-D3532C2435F7}
+10.1.16299.15   Windows SDK for Windows Store Apps DirectX x86 Remote                         Microsoft Corporation                              5 {1D42A0CE-494E-EDB0-9613-553487B5953D}
+10.1.17134.12   Windows SDK for Windows Store Apps DirectX x86 Remote                         Microsoft Corporation                              5 {C8FE2B4D-9C81-DD3B-D414-0E0B3BFE51D1}
+10.1.17763.132  Windows SDK for Windows Store Apps DirectX x86 Remote                         Microsoft Corporation                              5 {929C5E30-584A-9E44-2C03-08AA27927317}
+10.1.18362.1    Windows SDK for Windows Store Apps DirectX x86 Remote                         Microsoft Corporation                              5 {8F21D4CD-9CB4-2648-EECC-60147DE7B32D}
+10.1.16299.15   Windows SDK for Windows Store Apps Headers                                    Microsoft Corporation                              5 {07C90F9B-3020-AD74-53A2-404D0A77E6A8}
+10.1.17134.12   Windows SDK for Windows Store Apps Headers                                    Microsoft Corporation                              5 {40A1FE86-43BB-FE81-2A71-B71E13F8167A}
+10.1.17763.132  Windows SDK for Windows Store Apps Headers                                    Microsoft Corporation                              5 {785711EA-DD49-D232-BB29-D48350CC458F}
+10.1.18362.1    Windows SDK for Windows Store Apps Headers                                    Microsoft Corporation                              5 {65E9398F-77A0-8681-026C-8CF092A71F11}
+10.1.16299.15   Windows SDK for Windows Store Apps Libs                                       Microsoft Corporation                              5 {57186CA6-5B4D-1D1E-0AF0-A6F5244BBA36}
+10.1.17134.12   Windows SDK for Windows Store Apps Libs                                       Microsoft Corporation                              5 {104CBBE4-1D61-05DD-38D2-C3BBA1C212E5}
+10.1.17763.132  Windows SDK for Windows Store Apps Libs                                       Microsoft Corporation                              5 {DAED8629-A799-B67F-9751-F3A1C60EE335}
+10.1.18362.1    Windows SDK for Windows Store Apps Libs                                       Microsoft Corporation                              5 {217E19C8-ACC0-C7ED-AB69-A30F3F96C625}
+10.1.16299.15   Windows SDK for Windows Store Apps Metadata                                   Microsoft Corporation                              5 {ECA49B9D-E452-169B-F8E2-E9E415F0190D}
+10.1.17134.12   Windows SDK for Windows Store Apps Metadata                                   Microsoft Corporation                              5 {6EFCFA87-BB5E-7BE5-3936-BCADCFBFADEB}
+10.1.17763.132  Windows SDK for Windows Store Apps Metadata                                   Microsoft Corporation                              5 {A128C4CE-88C8-8BDF-FBE9-A517979E0BDD}
+10.1.18362.1    Windows SDK for Windows Store Apps Metadata                                   Microsoft Corporation                              5 {5FAF2ED2-CA24-0313-8CAF-C28DEE421200}
+10.1.16299.15   Windows SDK for Windows Store Apps Tools                                      Microsoft Corporation                              5 {CB17BD4C-C6D7-E5D7-5031-F37645D22579}
+10.1.17134.12   Windows SDK for Windows Store Apps Tools                                      Microsoft Corporation                              5 {3A5BBDEC-5254-43DA-F809-443771DBCB85}
+10.1.17763.132  Windows SDK for Windows Store Apps Tools                                      Microsoft Corporation                              5 {BA610F2C-C1FA-0A65-2B4D-8272223AC061}
+10.1.18362.1    Windows SDK for Windows Store Apps Tools                                      Microsoft Corporation                              5 {A5174AE6-3704-EE0A-BEFF-21BC5275BA02}
+10.1.16299.15   Windows SDK for Windows Store Managed Apps Libs                               Microsoft Corporation                              5 {458C3A87-069F-E8E2-AF52-43152BA91548}
+10.1.17134.12   Windows SDK for Windows Store Managed Apps Libs                               Microsoft Corporation                              5 {E3B98FCC-416A-A89A-E672-333BF429632F}
+10.1.17763.132  Windows SDK for Windows Store Managed Apps Libs                               Microsoft Corporation                              5 {9A0DC6A1-E91D-EB94-FB4D-41DDDE8A225D}
+10.1.18362.1    Windows SDK for Windows Store Managed Apps Libs                               Microsoft Corporation                              5 {CEDD7BE6-97B5-9AE8-57C0-B390E0C4328F}
+10.1.18362.1    Windows SDK Modern Non-Versioned Developer Tools                              Microsoft Corporation                              5 {DDAF4CFD-D635-8305-5157-9ECEA9F89678}
+10.1.16299.15   Windows SDK Modern Versioned Developer Tools                                  Microsoft Corporation                              5 {79513535-6F89-55F0-E50F-5D563C4DEAF7}
+10.1.17134.12   Windows SDK Modern Versioned Developer Tools                                  Microsoft Corporation                              5 {5073B1D2-656B-F677-AC77-5F8DAA8888B2}
+10.1.17763.132  Windows SDK Modern Versioned Developer Tools                                  Microsoft Corporation                              5 {C1C8121A-6BDE-478E-3685-C09F9287D6F0}
+10.1.18362.1    Windows SDK Modern Versioned Developer Tools                                  Microsoft Corporation                              5 {21514D7D-4124-E52E-8483-727380B855D7}
+10.1.18362.1    Windows SDK Redistributables                                                  Microsoft Corporation                              5 {34B51780-922E-5CBF-C16F-13F0A9502267}
+10.1.16299.15   Windows SDK Signing Tools                                                     Microsoft Corporation                              5 {3ED687AC-3F6D-819B-3948-F0CB24111524}
+10.1.17134.12   Windows SDK Signing Tools                                                     Microsoft Corporation                              5 {8C4160A1-6C94-FC27-A086-D0FC3A297153}
+10.1.17763.132  Windows SDK Signing Tools                                                     Microsoft Corporation                              5 {58770E7F-37C0-70F9-6CBF-2B18503B0EE0}
+10.1.18362.1    Windows SDK Signing Tools                                                     Microsoft Corporation                              5 {4CA7ABF1-DB68-0F9E-5AD9-58550198D0AC}
+16.0.28522      Windows Simulator                                                             Microsoft Corporation                              5 {E957D37E-05B8-4A46-965E-A27D1F666554}
+16.0.28522      Windows Simulator - ENU                                                       Microsoft Corporation                              5 {0D5009C8-F5AF-4A81-B4F8-F334A6358CCA}
+8.100.26936     Windows Software Development Kit                                              Microsoft Corporation                              5 {984022F2-9BCA-A41D-6A38-1AE658F01415}
+8.100.25984     Windows Software Development Kit DirectX x64 Remote                           Microsoft Corporation                              5 {5247E16E-BCF8-95AB-1653-B3F8FBF8B3F1}
+8.100.25984     Windows Software Development Kit DirectX x86 Remote                           Microsoft Corporation                              5 {A1CB8286-CFB3-A985-D799-721A0F2A27F3}
+8.100.26936     Windows Software Development Kit for Windows Store Apps                       Microsoft Corporation                              5 {37464E70-B0B9-9DFF-649A-CBE169BAD657}
+8.100.26936     Windows Software Development Kit for Windows Store Apps DirectX x64 Remote    Microsoft Corporation                              5 {96F4525A-470D-F15C-796E-58D9988C3E5F}
+8.100.26936     Windows Software Development Kit for Windows Store Apps DirectX x86 Remote    Microsoft Corporation                              5 {56AD3004-0B49-967F-F682-B05650B61A78}
+8.100.26936     Windows Software Development Kit Redistributables                             Microsoft Corporation                              5 {34B86C7D-4103-201B-3A13-03934DB11543}
+10.1.16299.15   Windows Team Extension SDK                                                    Microsoft Corporation                              5 {3BFC920A-C3C0-2DFB-7509-03F5EFC95654}
+10.1.17134.12   Windows Team Extension SDK                                                    Microsoft Corporation                              5 {4B16F2E6-8A76-5A63-2890-329FB7C98C70}
+10.1.17763.132  Windows Team Extension SDK                                                    Microsoft Corporation                              5 {A8B548F5-D495-BB71-F673-2D48FD7E764C}
+10.1.18362.1    Windows Team Extension SDK                                                    Microsoft Corporation                              5 {6EEDDD9D-BF7B-8229-92B4-89DFCF7481ED}
+10.1.16299.15   Windows Team Extension SDK Contracts                                          Microsoft Corporation                              5 {B155C75C-1567-ECA5-D71B-86F5CF1DE1ED}
+10.1.17134.12   Windows Team Extension SDK Contracts                                          Microsoft Corporation                              5 {FA57EACC-E7E8-406A-83FA-168A812BD079}
+10.1.17763.132  Windows Team Extension SDK Contracts                                          Microsoft Corporation                              5 {F57D8118-1428-ECB8-0729-A577A9A1DEA8}
+10.1.18362.1    Windows Team Extension SDK Contracts                                          Microsoft Corporation                              5 {5D60A4EF-6EDF-AAF4-F0F0-49FDD40176B8}
+11.0.51106      Windows XP Targeting with C++                                                 Microsoft Corporation                              5 {F361FE04-789E-42F3-BBAB-E7B380AA5E06}
+11.0.51106      Windows XP Targeting with C++                                                 Microsoft Corporation                              5 {993F6DDC-63F8-4BCD-9B28-D941971A9CAC}
+16.2.29006      windows_toolscorepkg                                                          Microsoft Corporation                              5 {B19FCE66-7C9D-44D4-B232-F304CFF29DD9}
+10.1.16299.15   WinRT Intellisense Desktop - en-us                                            Microsoft Corporation                              5 {385A1387-A488-9E90-3635-086129610034}
+10.1.17134.12   WinRT Intellisense Desktop - en-us                                            Microsoft Corporation                              5 {389D182F-0ADA-5C7E-FF32-2573A821592C}
+10.1.17763.132  WinRT Intellisense Desktop - en-us                                            Microsoft Corporation                              5 {00B12DF9-5428-9406-DE2C-8E8A1A062B05}
+10.1.18362.1    WinRT Intellisense Desktop - en-us                                            Microsoft Corporation                              5 {E67F1F03-FB4A-3D61-8999-E6A4C4B26F34}
+10.1.16299.15   WinRT Intellisense Desktop - Other Languages                                  Microsoft Corporation                              5 {D7DD3171-DA58-52A1-95B2-4769640855AF}
+10.1.17134.12   WinRT Intellisense Desktop - Other Languages                                  Microsoft Corporation                              5 {C3776B36-B34E-00E2-3009-95A6F1870B58}
+10.1.17763.132  WinRT Intellisense Desktop - Other Languages                                  Microsoft Corporation                              5 {E82A4A6C-C21C-35FE-B805-3E44318F6D63}
+10.1.18362.1    WinRT Intellisense Desktop - Other Languages                                  Microsoft Corporation                              5 {7EF010FF-7800-28BA-FF49-2D219EC7BA82}
+10.1.16299.15   WinRT Intellisense IoT - en-us                                                Microsoft Corporation                              5 {7336279F-8F8F-5530-A543-3BE963846C0A}
+10.1.17134.12   WinRT Intellisense IoT - en-us                                                Microsoft Corporation                              5 {965D1746-D94A-49B9-2A48-A14914CA3B57}
+10.1.17763.132  WinRT Intellisense IoT - en-us                                                Microsoft Corporation                              5 {7E898893-9C42-A572-7F57-FDE55CE812F7}
+10.1.18362.1    WinRT Intellisense IoT - en-us                                                Microsoft Corporation                              5 {36AE12FB-4349-6EAA-B6E4-5F4E06FA8AE8}
+10.1.16299.15   WinRT Intellisense IoT - Other Languages                                      Microsoft Corporation                              5 {E414A474-0A87-4F66-C409-A4D9857CFD34}
+10.1.17134.12   WinRT Intellisense IoT - Other Languages                                      Microsoft Corporation                              5 {84C6B91B-67DA-DDE3-86F1-87A3E307E8C1}
+10.1.17763.132  WinRT Intellisense IoT - Other Languages                                      Microsoft Corporation                              5 {E8B1CB29-5C24-D882-3CEF-F8A7263BC63D}
+10.1.18362.1    WinRT Intellisense IoT - Other Languages                                      Microsoft Corporation                              5 {6B03A6A4-643C-57CE-CA6F-4E19BF47497A}
+10.1.16299.15   WinRT Intellisense Mobile - en-us                                             Microsoft Corporation                              5 {CE760B86-975B-F514-5673-0ED4332B801B}
+10.1.17134.12   WinRT Intellisense Mobile - en-us                                             Microsoft Corporation                              5 {3755CD99-C62E-3312-DDD3-29A4F259270D}
+10.1.17763.132  WinRT Intellisense Mobile - en-us                                             Microsoft Corporation                              5 {F6F11150-93DE-0507-FCA0-F746E0207017}
+10.1.18362.1    WinRT Intellisense Mobile - en-us                                             Microsoft Corporation                              5 {918A448F-59E8-FBF5-B087-D3F07160C7E0}
+10.1.16299.15   WinRT Intellisense PPI - en-us                                                Microsoft Corporation                              5 {5E67F8BE-D8D2-257F-CE19-419A2D5125C7}
+10.1.17134.12   WinRT Intellisense PPI - en-us                                                Microsoft Corporation                              5 {729DA966-8590-2C1F-2178-16C1D32FD7FD}
+10.1.17763.132  WinRT Intellisense PPI - en-us                                                Microsoft Corporation                              5 {8329C3A0-8582-D1C2-67FF-800654BFDF45}
+10.1.18362.1    WinRT Intellisense PPI - en-us                                                Microsoft Corporation                              5 {66483041-F590-EC46-4AF0-EE39C62FB680}
+10.1.16299.15   WinRT Intellisense PPI - Other Languages                                      Microsoft Corporation                              5 {A2AA063E-AF50-A1F5-8925-A06EB1556644}
+10.1.17134.12   WinRT Intellisense PPI - Other Languages                                      Microsoft Corporation                              5 {F1C18506-3168-A9D9-E2D9-D23A512A326E}
+10.1.17763.132  WinRT Intellisense PPI - Other Languages                                      Microsoft Corporation                              5 {771C9DEF-7C0B-85DA-6426-7A20F06BEC94}
+10.1.18362.1    WinRT Intellisense PPI - Other Languages                                      Microsoft Corporation                              5 {9C61E6D2-C43E-6746-B519-6185558C4A24}
+10.1.16299.15   WinRT Intellisense UAP - en-us                                                Microsoft Corporation                              5 {7D4C7F4A-02A9-E434-6451-C8787DF28C1F}
+10.1.17134.12   WinRT Intellisense UAP - en-us                                                Microsoft Corporation                              5 {4095D263-6A13-78D3-DEDA-AA3452011F6E}
+10.1.17763.132  WinRT Intellisense UAP - en-us                                                Microsoft Corporation                              5 {B047C746-63E8-41C7-A5C0-7ABD390CF3E6}
+10.1.18362.1    WinRT Intellisense UAP - en-us                                                Microsoft Corporation                              5 {6B37CC5B-78DF-5050-2215-68479716A587}
+10.1.16299.15   WinRT Intellisense UAP - Other Languages                                      Microsoft Corporation                              5 {BC467065-9374-5345-DA3F-FCF073304A25}
+10.1.17134.12   WinRT Intellisense UAP - Other Languages                                      Microsoft Corporation                              5 {C3243E23-2EB6-4419-2692-40944923B112}
+10.1.17763.132  WinRT Intellisense UAP - Other Languages                                      Microsoft Corporation                              5 {0063AF94-397B-9C64-1C71-D404B27C5D96}
+10.1.18362.1    WinRT Intellisense UAP - Other Languages                                      Microsoft Corporation                              5 {250D5341-0879-4016-399C-BBCD87B80E95}
+2.1.10525.2     Workflow Manager Client 1.0                                                   Microsoft Corporation                              5 {69CD1F2D-DF68-4E23-9108-1B70783F2855}
+2.1.30411.0     Workflow Manager Tools 1.0 for Visual Studio                                  Microsoft Corporation                              5 {C3726F8C-851B-44AE-B971-33F1D70FF5FB}
+10.1.17763.1    SDK ARM Additions EULA                                                        Microsoft Corporations                             5 {A677A776-896B-C200-B77F-058EC2D0E1C3}
+10.1.18362.1    SDK ARM Additions EULA                                                        Microsoft Corporations                             5 {D3C12D2F-4EF0-7D05-6D9D-6542636B12F9}
+10.1.16299.15   Windows SDK EULA                                                              Microsoft Corporations                             5 {A2528C8D-B98A-D28F-C650-722503516A93}
+10.1.17134.12   Windows SDK EULA                                                              Microsoft Corporations                             5 {18380907-0DDE-C70B-74D1-46F0144502CD}
+10.1.17763.132  Windows SDK EULA                                                              Microsoft Corporations                             5 {2DD06060-C61D-7C3A-AA55-6E3FD9493D61}
+10.1.18362.1    Windows SDK EULA                                                              Microsoft Corporations                             5 {5F56BF12-0818-B58A-5862-939784E12F8B}
+8.100.25984     Windows Software Development Kit EULA                                         Microsoft Corporations                             5 {1F5C7BAE-1E1A-7C93-1B90-84CE308AFC1C}
+4.0.1           MongoDB 4.0.1 2008R2Plus SSL (64 bit)                                         MongoDB Inc.                                       5 {2BE67B63-0823-4899-9FA9-44E41090079C}
+8.16.0          Node.js                                                                       Node.js Foundation                                 5 {3EBDA3D6-92BC-44DB-BCB2-9D31DB275BB6}
+7.0.800         Java 7 Update 80                                                              Oracle                                             5 {26A24AE4-039D-4CA4-87B4-2F03217080FF}
+7.0.800         Java 7 Update 80 (64-bit)                                                     Oracle                                             5 {26A24AE4-039D-4CA4-87B4-2F06417080FF}
+1.7.0.800       Java SE Development Kit 7 Update 80                                           Oracle                                             5 {32A3A4F4-B792-11D6-A78A-00B0D0170800}
+1.7.0.800       Java SE Development Kit 7 Update 80 (64-bit)                                  Oracle                                             5 {64A3A4F4-B792-11D6-A78A-00B0D0170800}
+8.0.2210.11     Java 8 Update 221                                                             Oracle Corporation                                 5 {26A24AE4-039D-4CA4-87B4-2F32180221F0}
+8.0.2210.11     Java 8 Update 221 (64-bit)                                                    Oracle Corporation                                 5 {26A24AE4-039D-4CA4-87B4-2F64180221F0}
+2.8.221.11      Java Auto Updater                                                             Oracle Corporation                                 5 {4A03706F-666A-4037-7777-5F2748764D10}
+8.0.2210.11     Java SE Development Kit 8 Update 221                                          Oracle Corporation                                 5 {32A3A4F4-B792-11D6-A78A-00B0D0180221}
+8.0.2210.11     Java SE Development Kit 8 Update 221 (64-bit)                                 Oracle Corporation                                 5 {64A3A4F4-B792-11D6-A78A-00B0D0180221}
+2.6.6150        Python 2.6.6                                                                  Python Software Foundation                         5 {6151CF20-0BD8-4023-A4A0-6A86DCFE58E5}
+2.6.6150        Python 2.6.6 (64-bit)                                                         Python Software Foundation                         5 {6151CF20-0BD8-4023-A4A0-6A86DCFE58E6}
+2.7.16150       Python 2.7.16                                                                 Python Software Foundation                         5 {DCD5B320-89D9-4C7C-9E8B-84496588744D}
+2.7.16150       Python 2.7.16 (64-bit)                                                        Python Software Foundation                         5 {DCD5B320-89D9-4C7C-9E8B-84496588744E}
+3.3.5150        Python 3.3.5                                                                  Python Software Foundation                         5 {D5A55E9F-237F-302F-A8E9-D01EB292A741}
+3.3.5150        Python 3.3.5 (64-bit)                                                         Python Software Foundation                         5 {51F10CAC-4175-3B46-8143-E9442D562EA5}
+3.4.16789       Python 3.4.4                                                                  Python Software Foundation                         5 {50F37472-CBAB-47C6-A318-4C2BAE04D8EB}
+3.4.4150        Python 3.4.4 (64-bit)                                                         Python Software Foundation                         5 {56EBF7CF-F2B2-30ED-9DE5-307FC2CE3449}
+3.5.4150.0      Python 3.5.4 Core Interpreter (32-bit)                                        Python Software Foundation                         5 {B8FED221-DFDD-4FE0-8EED-7D81101BA84D}
+3.5.4150.0      Python 3.5.4 Core Interpreter (64-bit)                                        Python Software Foundation                         5 {7808D6D7-9C0D-4593-8808-B83EF9EC8884}
+3.5.4150.0      Python 3.5.4 Development Libraries (32-bit)                                   Python Software Foundation                         5 {82C9A5A3-D68F-403A-AEEB-878CFBB373F1}
+3.5.4150.0      Python 3.5.4 Development Libraries (64-bit)                                   Python Software Foundation                         5 {3E5BDD64-1DA3-4C6A-87E3-5759E6C58191}
+3.5.4150.0      Python 3.5.4 Documentation (32-bit)                                           Python Software Foundation                         5 {E3EC512B-DDA5-44B4-BEFC-FC93829CC80D}
+3.5.4150.0      Python 3.5.4 Documentation (64-bit)                                           Python Software Foundation                         5 {7CE3B1AC-72AF-497C-B259-4AF399623AE3}
+3.5.4150.0      Python 3.5.4 Executables (32-bit)                                             Python Software Foundation                         5 {522FB3CA-6871-4466-9465-F9D65B59A345}
+3.5.4150.0      Python 3.5.4 Executables (64-bit)                                             Python Software Foundation                         5 {84848A30-C77B-4442-B84C-08B7B4DA1B01}
+3.5.4150.0      Python 3.5.4 pip Bootstrap (32-bit)                                           Python Software Foundation                         5 {AF3BF572-25F0-4C68-A699-2C543E2F554B}
+3.5.4150.0      Python 3.5.4 pip Bootstrap (64-bit)                                           Python Software Foundation                         5 {0399AD56-31E2-40D2-810B-01231A8A1515}
+3.5.4150.0      Python 3.5.4 Standard Library (32-bit)                                        Python Software Foundation                         5 {0CEE27BF-B5C5-4C4B-9764-B996C508A5F7}
+3.5.4150.0      Python 3.5.4 Standard Library (64-bit)                                        Python Software Foundation                         5 {9FE0823D-9A9B-45AB-82CD-86879F4BADB8}
+3.5.4150.0      Python 3.5.4 Tcl/Tk Support (32-bit)                                          Python Software Foundation                         5 {CDDEA0F5-4863-4E5D-A7BB-EB8E7586BB22}
+3.5.4150.0      Python 3.5.4 Tcl/Tk Support (64-bit)                                          Python Software Foundation                         5 {9C11591B-57F1-4DBF-8D05-85E910609371}
+3.5.4150.0      Python 3.5.4 Test Suite (32-bit)                                              Python Software Foundation                         5 {655DA27C-8F3D-4C5D-BA4C-036A3D8599B6}
+3.5.4150.0      Python 3.5.4 Test Suite (64-bit)                                              Python Software Foundation                         5 {F7E6C0F0-E854-4F65-9722-45981A876E5F}
+3.5.4150.0      Python 3.5.4 Utility Scripts (32-bit)                                         Python Software Foundation                         5 {6B58B402-411A-4882-9E26-D19C22477DB0}
+3.5.4150.0      Python 3.5.4 Utility Scripts (64-bit)                                         Python Software Foundation                         5 {5C780CBB-67B4-4819-9A00-E3BD40540197}
+3.6.8150.0      Python 3.6.8 Core Interpreter (32-bit)                                        Python Software Foundation                         5 {6DBCDF5D-DEB5-4CFA-85B8-67D9D58673A1}
+3.6.8150.0      Python 3.6.8 Core Interpreter (64-bit)                                        Python Software Foundation                         5 {290348F2-D9D3-470E-9858-22F0F74E3623}
+3.6.8150.0      Python 3.6.8 Development Libraries (32-bit)                                   Python Software Foundation                         5 {5DBA5E56-654C-4608-A6C2-CCD52B01EACC}
+3.6.8150.0      Python 3.6.8 Development Libraries (64-bit)                                   Python Software Foundation                         5 {A43B98B0-5A92-4EBA-929D-FE0A840CD97A}
+3.6.8150.0      Python 3.6.8 Documentation (32-bit)                                           Python Software Foundation                         5 {2A9D4BC2-910F-492F-928C-4DCFC364FF41}
+3.6.8150.0      Python 3.6.8 Documentation (64-bit)                                           Python Software Foundation                         5 {73EE519A-D901-4844-8E8F-C635705A2414}
+3.6.8150.0      Python 3.6.8 Executables (32-bit)                                             Python Software Foundation                         5 {B56829C6-1C25-469E-B351-1467C6295566}
+3.6.8150.0      Python 3.6.8 Executables (64-bit)                                             Python Software Foundation                         5 {E1155302-B578-4D8C-8431-FAE677FBC58C}
+3.6.8150.0      Python 3.6.8 pip Bootstrap (32-bit)                                           Python Software Foundation                         5 {E5C0286F-B26B-4B97-8968-EB0543060635}
+3.6.8150.0      Python 3.6.8 pip Bootstrap (64-bit)                                           Python Software Foundation                         5 {C48DD541-2669-499A-B7AB-EC0504307601}
+3.6.8150.0      Python 3.6.8 Standard Library (32-bit)                                        Python Software Foundation                         5 {42E8F541-E6A9-42D4-9797-E45F709D56E9}
+3.6.8150.0      Python 3.6.8 Standard Library (64-bit)                                        Python Software Foundation                         5 {4BFF1147-97F2-432E-AD26-2224B609957C}
+3.6.8150.0      Python 3.6.8 Tcl/Tk Support (32-bit)                                          Python Software Foundation                         5 {D5085A39-DD67-400C-952C-9B72602243FF}
+3.6.8150.0      Python 3.6.8 Tcl/Tk Support (64-bit)                                          Python Software Foundation                         5 {EBD78311-1837-4432-94EE-5A5E5E206888}
+3.6.8150.0      Python 3.6.8 Test Suite (32-bit)                                              Python Software Foundation                         5 {73407F01-D22B-429D-A7A4-C14966E2CE36}
+3.6.8150.0      Python 3.6.8 Test Suite (64-bit)                                              Python Software Foundation                         5 {315736CC-5A10-4E28-AE50-78BD74EF0346}
+3.6.8150.0      Python 3.6.8 Utility Scripts (32-bit)                                         Python Software Foundation                         5 {C324D8B5-8824-4AA5-A574-2DF4FF4897DC}
+3.6.8150.0      Python 3.6.8 Utility Scripts (64-bit)                                         Python Software Foundation                         5 {1F5F06E6-A6C0-482E-8FEB-681DE2059228}
+3.7.4150.0      Python 3.7.4 Core Interpreter (32-bit)                                        Python Software Foundation                         5 {A56641A4-58A7-471F-A0AE-A6633F4FA2BB}
+3.7.4150.0      Python 3.7.4 Core Interpreter (64-bit)                                        Python Software Foundation                         5 {92A73F83-DC16-4316-945A-B66BC12362A7}
+3.7.4150.0      Python 3.7.4 Development Libraries (32-bit)                                   Python Software Foundation                         5 {4816C66E-55BF-4A8D-A5CE-FEAC36F4D192}
+3.7.4150.0      Python 3.7.4 Development Libraries (64-bit)                                   Python Software Foundation                         5 {B86709C3-962E-4C62-BF25-CF8D06267D72}
+3.7.4150.0      Python 3.7.4 Documentation (32-bit)                                           Python Software Foundation                         5 {BB344FE7-A97C-44F0-BAF4-AA0C7D6359BA}
+3.7.4150.0      Python 3.7.4 Documentation (64-bit)                                           Python Software Foundation                         5 {4BC82D3B-BBC7-4BAF-899D-10AF5745E4AB}
+3.7.4150.0      Python 3.7.4 Executables (32-bit)                                             Python Software Foundation                         5 {CE095720-010D-4605-872E-EF3673551DF0}
+3.7.4150.0      Python 3.7.4 Executables (64-bit)                                             Python Software Foundation                         5 {6DDB726E-09CE-44B4-A129-B62AD1604A95}
+3.7.4150.0      Python 3.7.4 pip Bootstrap (32-bit)                                           Python Software Foundation                         5 {8DA900ED-69C5-41D9-8F85-416FBE1C89CB}
+3.7.4150.0      Python 3.7.4 pip Bootstrap (64-bit)                                           Python Software Foundation                         5 {F92D31AF-F447-4A85-B0FD-CE6378F7625A}
+3.7.4150.0      Python 3.7.4 Standard Library (32-bit)                                        Python Software Foundation                         5 {236BB597-B9C7-4084-BD77-0DCCDA0D947F}
+3.7.4150.0      Python 3.7.4 Standard Library (64-bit)                                        Python Software Foundation                         5 {5BF79310-A787-430F-93DD-CC8A9787679D}
+3.7.4150.0      Python 3.7.4 Tcl/Tk Support (32-bit)                                          Python Software Foundation                         5 {8F959BE9-8184-4C35-AB2A-87401C0279EB}
+3.7.4150.0      Python 3.7.4 Tcl/Tk Support (64-bit)                                          Python Software Foundation                         5 {E5B772D5-8CCD-461B-BC60-B10DFB5704AB}
+3.7.4150.0      Python 3.7.4 Test Suite (32-bit)                                              Python Software Foundation                         5 {D41CCB8E-4FD1-4EBF-9790-5B2218B5C5DD}
+3.7.4150.0      Python 3.7.4 Test Suite (64-bit)                                              Python Software Foundation                         5 {794D5EC8-A92F-4969-A318-449C2E71D8C4}
+3.7.4150.0      Python 3.7.4 Utility Scripts (32-bit)                                         Python Software Foundation                         5 {DE70FA71-6C2C-48C2-9B54-4049CD25154C}
+3.7.4150.0      Python 3.7.4 Utility Scripts (64-bit)                                         Python Software Foundation                         5 {16F74529-EDE0-4BBD-B2AF-89AF9C696EA8}
+3.7.6762.0      Python Launcher                                                               Python Software Foundation                         5 {D722DA3A-92F5-454A-BD5D-A48C94D82300}
+16.3.565        Xamarin Offline Packages                                                      Xamarin                                            5 {145F5FC1-B711-4FDF-B954-560F9FCF40B2}
+1.0.9.0         Xamarin PCL Profiles v1.0.9                                                   Xamarin                                            5 {5E6844AB-A867-419C-A376-B12B574AA5F7}
+1.4.0.0         Xamarin Remoted iOS Simulator                                                 Xamarin                                            5 {F3091F8F-3C66-41A8-965B-6449640F8DED}
+1.16.0          Yarn                                                                          Yarn Contributors                                  5 {A2B44B24-D344-4EEF-BB2D-BB80A16CDA61}
+
+
