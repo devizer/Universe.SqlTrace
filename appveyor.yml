@@ -197,8 +197,8 @@ after_build:
         # Script for LocalDB 2019 is empty - it is already preinstalled
         if ($Env:Script) {
             Say "Installing $Env:JOB"
-            # Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            & $Env:Script 
+            Invoke-Expression $Env:Script | tee -file "$Env:ARTIFACT\Sql Server Setup.log"
+            # & cmd /c $Env:Script 
             Say "Finished SQL Server Installers"
         } 
         
