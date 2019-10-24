@@ -201,7 +201,7 @@ after_build:
             # Invoke-Expression $Env:Script | tee -file "$Env:ARTIFACT\Sql Server Setup.log"
             # Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
             # & $Env:Script # for frozen sql 
-            Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=33; Say "Sleep $dur"; help Exit-AppVeyorBuild; sleep $dur; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
+            Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=33; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job 1; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
             Say "Finished SQL Server Installers"
         } 
         
