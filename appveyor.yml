@@ -44,16 +44,16 @@ environment:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
 
-# 3 SQL Servers are not supported on the "Visual Studio 2015" image
+# 3 SQL Servers below are not supported on the "Visual Studio 2015" image
 matrix:
   exclude:
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      image: "Visual Studio 2015"
+      
     - JOB: "SQL SERVER LocalDB 2017"
       image: "Visual Studio 2015"
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      image: "Visual Studio 2015"
-      
-    - JOB: "SQL SERVER 2019 RC (Developer)"
       image: "Visual Studio 2015"
       
 platform: Any CPU
@@ -76,6 +76,7 @@ init:
     $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
     Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
 
+    # returns array of strings like SQL2017, 2016, ...
     function Get-Preinstalled-SqlServers
     {
         $names = @();
@@ -102,6 +103,7 @@ init:
         }
     }
 
+    # uninstallation does not work properly, but upgrade works better
     function Hide-LocalDB-Servers {
         Say "Hide SQL Server LocalDB"; 
         Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
@@ -116,7 +118,7 @@ init:
         "$($Global:LocalDbExe)"
     }
 
-    # Does not work propery without reboot - logs report that unsunstall successful, but
+    # Does not work propery without reboot - logs report that unsunstall is successful, but
     function Uninstall-SqlLocalDB { param([string] $version)
         Say "Deleting LocalDB $version"
         $apps = Find-Apps "LocalDB" | ? { $($_.DisplayName -like "*$($version)*") -and ($_.DisplayName -like "*Microsoft*")  }
@@ -178,6 +180,7 @@ cache:
 
 before_build:
 - ps: | 
+    # PSReadLine must be upgraded on VS 2019 image
     if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
         try {
             Say "Upgrading PSReadLine on $($Env:APPVEYOR_BUILD_WORKER_IMAGE)"
@@ -258,15 +261,6 @@ test_script:
     # Optional logs and files
     if ($false) {
 
-        <#
-        @("Users", "Program Files", "Program Files (x86)", "ProgramData", "SQL", "Windows") | % {
-            if (Test-Path "C:\$($_)") {
-                Say "Exists: C:\$($_). Looking for *.log(s)"
-                Get-ChildItem -Path "C:\$($_)" -recurse -force -Include "*.log" *> "$Env:ARTIFACT\Logs from $($_).log"
-            }
-        }
-        #>
-
         Say "Program Files (names)"
         cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
@@ -286,7 +280,7 @@ test_script:
         get-wmiobject win32_product | sort -Property Vendor, Name, Version | ft Version, Name, Vendor, InstallState, IdentifyingNumber *> "$Env:ARTIFACT\Preintalled Software.log"
     }
     
-    Say "Pack working folder"
+    Say "Pack working folder as the SqlProfiler (AppVeyor Build Folder).7z artifact"
     & "7z" a -t7z -mx=3 -ms=on "SqlProfiler (AppVeyor Build Folder).7z" .
     Say "Bye-bye"
 
