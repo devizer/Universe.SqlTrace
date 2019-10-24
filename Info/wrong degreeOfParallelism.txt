@@ -1,3 +1,6 @@
+SqlProfiler API Integration Tests #154
+https://ci.appveyor.com/project/devizer/universe-sqltrace/builds/28336564
+
 [00:00:00] Build started
 [00:00:00] 
 [00:00:00] function Say { param( [string] $message )
@@ -92,9 +95,9 @@
 [00:00:00] This is free software; you are free to change and redistribute it.
 [00:00:00] There is NO WARRANTY, to the extent permitted by law.
 [00:00:00] 
-[00:00:00] real	0m0.029s
-[00:00:00] user	0m0.000s
-[00:00:00] sys	0m0.046s
+[00:00:00] real 0m0.029s
+[00:00:00] user 0m0.000s
+[00:00:00] sys  0m0.046s
 [00:00:00] git clone -q --branch=master https://github.com/devizer/Universe.SqlTrace.git C:\projects\universe-sqltrace
 [00:00:01] git checkout -qf 3e677a51d9ec738304eb99a6bdc12f8e550f39d3
 [00:00:17] Running Install scripts

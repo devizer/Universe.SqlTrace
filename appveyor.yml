@@ -125,20 +125,19 @@ init:
         }
         $apps |
             foreach { $_ | Add-Member Guid $_.PSChildName; $_ } |
+            where { $_.PSobject.Properties.Name -match "DisplayName" } |
+            where { "DisplayName" -in $_.PSobject.Properties.Name } |
             foreach { $_.DisplayName = "$($_.DisplayName)".Trim(); $_ } |
-            foreach { $_ | Add-Member MsiUninstallArgs ("/X " + ($_.UninstallString -Replace "msiexec.exe","" -Replace "/I","" -Replace "/X","" ).ToString().Trim() + " /qn"); $_ }
+            foreach { $_ | Add-Member MsiUninstallArgs ("/X " + ($_.UninstallString -Replace "msiexec.exe","" -Replace "/I","" -Replace "/X","" ).ToString().Trim() + " /qn"); $_ } |
+            sort @{e={$_.DisplayName}; a=$true}
     }
 
     function Show-SqlServers {
         get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft State, Name, DisplayName, StartMode
     }
 
-
-- cmd: bash -c 'time echo "Hello from BASH $(bash --version)"'
-
 install:
-- ps: $Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; 
-- ps: 'Say "ARTIFACT folder: $($Env:ARTIFACT)"'
+- ps: '$Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"'
 - ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
@@ -146,13 +145,15 @@ install:
     Say "Pre-installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
 
+    Say "Pre-installed LocalDB Servers"
+    Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
+
     Say "Disable All pre-installed sql servers"
     Disable-SqlServers (Get-Preinstalled-SqlServers)
     
     Say "Delete All pre-installed sql servers"
     Delete-SqlServers (Get-Preinstalled-SqlServers)
     Show-SqlServers
-
 
 ### THE END OF TEMPLATE ###
 
@@ -199,21 +200,16 @@ after_build:
         
         # hide pre-installed LocalDB for tests with SQL Express/Developer
         if ($Env:Local_DB -eq $null) {
-            Find-Apps LocalDB | ft DisplayName, DisplayVersion, Guid, MsiUninstallArgs
             Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
-            # it is imposible to delete LocalDB 2016 On VS 2017 image, but it is ok to delete 2016th LocalDB
-            # Uninstall-SqlLocalDB 2016
-            # Uninstall-SqlLocalDB 2014
-            # Uninstall-SqlLocalDB 2016
-            # Uninstall-SqlLocalDB 2016
+            # it is imposible to delete LocalDB 2016, but it is ok to delete 2014th LocalDB
+            # @(2016, 2014, 2016, 2016) | % { Uninstall-SqlLocalDB "$_" }
             Hide-LocalDB-Servers
         }
 
         popd
-        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft Name, DisplayName, StartMode, State
+        Show-SqlServers
 
 test_script:
-# already tested?
 - ps: |
     $Env:TEST_SQL_NET_DURATION_OF_Ping = 42
     $Env:TEST_SQL_NET_DURATION_OF_Upload = 42
@@ -258,9 +254,9 @@ test_script:
 
 after_test:
 - ps: Stop-Transcript;
+# - cmd: bash -c 'time echo "Hello from $(bash --version)"'
 
 # Error uploading artifact the storage: The underlying connection was closed: An unexpected error occurred on a send.
 artifacts:
  - path: Artifact
-
  - path: 'SqlProfiler (AppVeyor Build Folder).7z'
