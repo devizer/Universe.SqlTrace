@@ -76,7 +76,7 @@ init:
     $win_10_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
     $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
     Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
-    $cpu=Get-WmiObject Win32_Processor; Say $cpuName="CPU: $($cpu.Name), $([System.Environment]::ProcessorCount) Cores";
+    $cpu=Get-WmiObject Win32_Processor; Say "CPU: $($cpu.Name), $([System.Environment]::ProcessorCount) Cores";
 
     # returns array of strings like SQL2017, 2016, ...
     function Get-Preinstalled-SqlServers
