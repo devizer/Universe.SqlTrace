@@ -20,7 +20,7 @@ namespace Universe.SqlTrace.Tests
             ThreadPool.SetMinThreads(workers, prevPorts);
 
             return all.Select(x => x.ConnectionString)
-                .AsParallel().WithDegreeOfParallelism(all.Count)
+                .AsParallel().WithDegreeOfParallelism(Math.Max(all.Count, 2))
                 .Where(IsAlive)
                 .ToList();
         }
