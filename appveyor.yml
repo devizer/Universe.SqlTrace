@@ -1,9 +1,9 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
 # - Visual Studio 2013
-- Visual Studio 2019
 - Visual Studio 2015
 - Visual Studio 2017
+- Visual Studio 2019
 
 environment:
 
@@ -238,7 +238,11 @@ test_script:
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
-    powershell -f Info\Store-Logs-2.ps1
+    # Find and store logs
+    # powershell -f Info\Store-Logs-2.ps1
+    
+    # Copy Event Logs
+    Say "Store Event Logs"; pushd $Env:ARTIFACT; & $Env:APPVEYOR_BUILD_FOLDER\appveyor\StoreEventLogs.exe; popd
     
     # Optional logs and files
     if ($false) {
