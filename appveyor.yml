@@ -61,7 +61,7 @@ init:
     }; $_=Get-Elapsed;
 
     $currentVersion=Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
-    $win_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
+    $win_10_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
     $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
     Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
 
@@ -85,7 +85,7 @@ init:
     function Delete-SqlServers { param( [array] $names ) 
         foreach($sqlname in $names) {
             Say "Delete MSSQL`$$sqlname"
-            Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
+            Stop-Service "MSSQL`$$sqlname" -EA SilentlyContinue
             Set-Service "MSSQL`$$sqlname" -StartupType Disabled
             & cmd /c sc delete "MSSQL`$$sqlname"
         }
