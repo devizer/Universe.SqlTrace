@@ -238,10 +238,12 @@ test_script:
     cmd /c systeminfo >$Env:ARTIFACT\System-Info.log
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
+    # Optional logs and files
     if ($true -or $false) {
+
         @("Users", "Program Files", "Program Files (x86)", "ProgramData", "SQL") | % {
             if (Test-Path "C:\$($_)") {
-                "Exists: C:\$($_). Loojing for *.log(s)"
+                Say "Exists: C:\$($_). Loojing for *.log(s)"
                 Get-ChildItem -Path "C:\$($_)" -recurse -force -Include "*.log" *> "$Env:ARTIFACT\Logs from $($_).log"
             }
         }
