@@ -1,14 +1,17 @@
 version: 'SqlProfiler API Integration Tests #{build}'
 image:
-- Visual Studio 2015
-- Visual Studio 2017
 - Visual Studio 2019
+- Visual Studio 2017
+- Visual Studio 2015
 
 environment:
 
   Project: "SQL Server Profiler API for .NET"
 
   matrix:
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      Script: .\SQL-Express-2005-SP4-x86.cmd
 
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
@@ -41,9 +44,6 @@ environment:
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       Script: .\SQL-Express-2008-SP3-x64.cmd
 
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: .\SQL-Express-2005-SP4-x86.cmd
-
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
 matrix:
   exclude:
@@ -71,10 +71,12 @@ init:
         [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
     }; $_=Get-Elapsed;
 
+    # Display OS and CPU
     $currentVersion=Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
     $win_10_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
     $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
     Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
+    $cpu=Get-WmiObject Win32_Processor; Say $cpuName="CPU: $($cpu.Name), $([System.Environment]::ProcessorCount) Cores";
 
     # returns array of strings like SQL2017, 2016, ...
     function Get-Preinstalled-SqlServers
@@ -216,8 +218,8 @@ after_build:
             Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
             # & $Env:Script # for frozen sql 
             # $job = Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=66; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job $job.Id; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
-            # & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap"
-            Say "Finished SQL Server Installers"
+            & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap" *> "$Env:TEMP\_"
+            # Say "Finished SQL Server Installers"
         } 
         
         # hide pre-installed LocalDB for tests with SQL Express/Developer
