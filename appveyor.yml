@@ -200,8 +200,8 @@ after_build:
             Say "Installing $Env:JOB"
             # Invoke-Expression $Env:Script | tee -file "$Env:ARTIFACT\Sql Server Setup.log"
             # Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            # for frozen sql 
-            & $Env:Script
+            # & $Env:Script # for frozen sql 
+            Start-Job { & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; Say "Sleep 120"; sleep 120; Say "Exit Success"; Exit-AppVeyorBuild;  # for frozen sql 
             Say "Finished SQL Server Installers"
         } 
         
