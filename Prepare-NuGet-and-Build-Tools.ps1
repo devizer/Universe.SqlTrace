@@ -36,7 +36,7 @@ function SmartDownload { param([string] $key, [string] $url, [string] $fileName)
   }
   $path = "$workdir\$fileName";
   $dir = [System.IO.Path]::GetDirectoryName($path)
-  Write-Host "Create DIR: $dir"
+  # Write-Host "Create DIR: $dir"
   New-Item -ItemType Directory -Path $dir -EA SilentlyContinue | out-null
   Write-Host "Caching '$url' as`r`n        [$path]" -ForegroundColor $color
   $webClient.DownloadFile($url, $path);
