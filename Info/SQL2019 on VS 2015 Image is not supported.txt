@@ -1,0 +1,15 @@
+[00:01:02] Installing SQL SERVER 2019 RC (Developer)
+DOWNLOADING SQL 2019-RC1 BOOTSTRAPPER
+DOWNLOADING SQL 2019-RC1
+
+Microsoft (R) SQL Server 2019 RC1 15.00.1900.25
+Copyright (c) 2019 Microsoft.  All rights reserved.
+
+The operating system on this computer or its service pack level does not meet the minimum requirements for SQL Server 2019 RC1. To determine the minimum required operating system supported for this SQL Server release, see Hardware and Software Requirements for installing SQL Server 2019 RC1 at:
+An error occurred during the SQL Server 2019 RC1 Setup operation.
+
+Error result: -2067529676
+Result facility code: 1220
+Result error code: 52
+
+For more information, review SQL Server 2019 RC1 Setup logs in your temp folder.
