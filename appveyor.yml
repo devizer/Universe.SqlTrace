@@ -15,6 +15,12 @@ environment:
       Local_DB: True
       Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
 
+    - JOB: "SQL SERVER 2008 SP3 (Express)"
+      Script: .\SQL-Express-2008-SP3-x64.cmd
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      Script: .\SQL-Express-2005-SP4-x86.cmd
+
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
 
@@ -39,12 +45,6 @@ environment:
     - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
       Script: .\SQL-Express-2008-R2-SP2-x86.cmd
 
-    - JOB: "SQL SERVER 2008 SP3 (Express)"
-      Script: .\SQL-Express-2008-SP3-x64.cmd
-
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: .\SQL-Express-2005-SP4-x86.cmd
-
 platform: Any CPU
 init:
 - ps: |
@@ -60,7 +60,8 @@ init:
         [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("HH:mm:ss"), "]");
     }; $_=Get-Elapsed;
 
-    $win_10_release_id = (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId
+    $currentVersion=Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
+    $win_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
     $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
     Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
 
