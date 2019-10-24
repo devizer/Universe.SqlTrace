@@ -5,30 +5,18 @@ image:
 - Visual Studio 2017
 - Visual Studio 2019
 
-matrix:
-  exclude:
-
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      image: "Visual Studio 2015"
-      
-    - JOB: "SQL SERVER 2019 RC (Developer)"
-      image: "Visual Studio 2015"
-      
 environment:
 
   Project: "SQL Server Profiler API for .NET"
 
   matrix:
 
-    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      Local_DB: True
-
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
       Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
 
-    - JOB: "SQL SERVER 2008 SP3 (Express)"
-      Script: .\SQL-Express-2008-SP3-x64.cmd
+    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
+      Local_DB: True
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       Script: .\SQL-2019-Pre.cmd
@@ -51,9 +39,21 @@ environment:
     - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
       Script: .\SQL-Express-2008-R2-SP2-x86.cmd
 
+    - JOB: "SQL SERVER 2008 SP3 (Express)"
+      Script: .\SQL-Express-2008-SP3-x64.cmd
+
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       Script: .\SQL-Express-2005-SP4-x86.cmd
 
+matrix:
+  exclude:
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      image: "Visual Studio 2015"
+      
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      image: "Visual Studio 2015"
+      
 platform: Any CPU
 init:
 - ps: |
@@ -208,10 +208,10 @@ after_build:
         if ($Env:Script) {
             Say "Installing $Env:JOB"
             # Invoke-Expression $Env:Script | tee -file "$Env:ARTIFACT\Sql Server Setup.log"
-            # Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            # & $Env:Script # for frozen sql 
-            $job = Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=66; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job $job.Id; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
-            & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap"
+            Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
+            & $Env:Script # for frozen sql 
+            # $job = Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=66; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job $job.Id; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
+            # & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap"
             Say "Finished SQL Server Installers"
         } 
         
