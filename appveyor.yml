@@ -239,6 +239,13 @@ test_script:
     get-WmiObject win32_logicaldisk | ft >$Env:ARTIFACT\Logical-Disks.log
 
     if ($true -or $false) {
+        @("Users", "Program Files", "Program Files (x86)", "ProgramData", "SQL") | % {
+            if (Test-Path "C:\$($_)") {
+                "Exists: C:\$($_). Loojing for *.log(s)"
+                Get-ChildItem -Path "C:\$($_)" -recurse -force -Include "*.log" *> "$Env:ARTIFACT\Logs from $($_).log"
+            }
+        }
+
         Say "Program Files (names)"
         cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
 
@@ -250,6 +257,7 @@ test_script:
 
         Say "User Profile (files)"
         Get-ChildItem -Path "$Env:USERPROFILE" -recurse -force *> "$Env:ARTIFACT\User Profile (objects).log"
+
     }
 
     if ($Env:Script -eq $null) {
