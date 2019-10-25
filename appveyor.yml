@@ -10,6 +10,9 @@ environment:
 
   matrix:
 
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      Script: .\SQL-Express-2005-SP4-x86.cmd
+
     - JOB: "SQL SERVER LocalDB 2017"
       Local_DB: True
       Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
@@ -40,9 +43,6 @@ environment:
 
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       Script: .\SQL-Express-2008-SP3-x64.cmd
-
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: .\SQL-Express-2005-SP4-x86.cmd
 
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
@@ -219,8 +219,9 @@ after_build:
             Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
             # & $Env:Script # for frozen sql 
             # $job = Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=66; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job $job.Id; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
-            Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap" -recurse -force
-            & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files\Microsoft SQL Server\90\Setup Bootstrap" *> "$Env:TEMP\_"
+            Get-ChildItem -Path "C:\Program Files (x86)\Microsoft SQL Server\90\Setup Bootstrap\LOG" -recurse -force
+            & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files (x86)\Microsoft SQL Server\90\Setup Bootstrap\LOG" *> "$Env:TEMP\_"
+                                                                          
             # Say "Finished SQL Server Installers"
         } 
         
