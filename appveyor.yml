@@ -10,17 +10,11 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      SqlKeys: 'SqlServer 2005 Express'
-
-    - JOB: "SQL SERVER 2012 & 2008"
-      SqlKeys: 'SqlServer 2012 Express, SqlServer 2008 Express'
-
     - JOB: "SQL SERVER LocalDB 2017"
       SqlKeys: 'LocalDB 2017'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      SqlKeys: 'LocalDB 2016'
+      SqlKeys: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
       SqlKeys: 'SqlServer 2019'
@@ -45,6 +39,12 @@ environment:
 
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       SqlKeys: 'SqlServer 2008 Express'
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      SqlKeys: 'SqlServer 2005 Express'
+
+    - JOB: "SQL SERVER 2012 & 2008"
+      SqlKeys: 'SqlServer 2012 Express, SqlServer 2008 Express'
 
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
@@ -108,8 +108,8 @@ before_build:
         }
     }
 
-    # alternative without the matrix and SqlKeys variables:
-    # Find-SqlServers "SqlServer 2017 Developer" | % { Install-SqlServer $_ }
+    # alternative without the matrix:
+    Find-SqlServers "SqlServer 2017 Developer, SqlServer 2008R2 Express" | % { Install-SqlServer $_ }
 
     # Install new SQL Servers
     $todo = Find-SqlServers "$($Env:SqlKeys)"
