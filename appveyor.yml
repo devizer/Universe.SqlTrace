@@ -65,7 +65,7 @@ init:
 
     $Work="$($Env:LocalAppData)"; if ($Work -eq "") { $Work="$($Env:UserProfile)"; }; $Work="$Work\Temp\Sql-Installers"
     if (-not (Test-Path $Work)) { New-Item -ItemType Directory -Path $Work -EA SilentlyContinue | out-null }
-    Write-Host "Downloading SQL Installer Scripts to: $Work"
+    Write-Host "Downloading SQL Installer Scripts to: $Work" -ForegroundColor Cyan
     (new-object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/devizer/glist/master/bin/SQL-Express/Sql-Setup-Bootstrap.ps1', "$Work\Sql-Setup-Bootstrap.ps1")
     pushd $Work; . .\Sql-Setup-Bootstrap.ps1; popd
 
@@ -100,7 +100,7 @@ before_build:
     # PSReadLine must be upgraded on VS 2019 image
     if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
         try {
-            Say "Upgrading PSReadLine on $($Env:APPVEYOR_BUILD_WORKER_IMAGE)"
+            Say "Upgrading PSReadLine on '$($Env:APPVEYOR_BUILD_WORKER_IMAGE)' image"
             Install-Module PSReadLine -AllowPrerelease -Force
             Say "PSReadLine Upgraded"
         } catch {
@@ -108,15 +108,18 @@ before_build:
         }
     }
 
+    # alternative without the matrix and SqlKeys variables:
+    Find-SqlServers "SqlServer 2017 Developer" | % { Install-SqlServer $_ }
+
     # Install new SQL Servers
-    Say "Installing: $($Env:SqlKeys)"
-    "$($Env:SqlKeys)".Split(@([char]44, [char]59)) | % { $sqlKey=$_.Trim()
-        $tags=@("$sqlKey".Split([char]32) | % {$_.Trim()} | where { $_.Length -gt 0 } )
-        if ($tags.Count -gt 0) {
-            Find-SqlServers $tags | % { Install-SqlServer $_ }
-        }
+    $todo = Find-SqlServers "$($Env:SqlKeys)"
+    $todo | % { Install-SqlServer $_ }
+    $has_Local_DB = $todo | % { $_.Keys -contains "LocalDB" }
+    if (!$has_Local_DB) { 
+        Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
+        Hide-LocalDB-Servers
     }
-    # Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | % { Install-SqlServer $_ }
+
     Show-SqlServers
 
 
