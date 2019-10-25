@@ -14,15 +14,15 @@ environment:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       SqlKeys: 'SqlServer 2005 Express'
 
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      SqlKeys: 'SqlServer 2019'
+
     - JOB: "SQL SERVER LocalDB 2017"
       SqlKeys: 'LocalDB 2017'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       SqlKeys: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
-
-    - JOB: "SQL SERVER 2019 RC (Developer)"
-      SqlKeys: 'SqlServer 2019'
 
     - JOB: "SQL SERVER 2017 (Developer)"
       SqlKeys: 'SqlServer 2017 Developer'
@@ -112,6 +112,13 @@ before_build:
 
     # alternative without the matrix:
     Find-SqlServers "SqlServer 2019 Developer, SqlServer 2017 Developer" | % { Install-SqlServer $_ }
+        # WTF
+        Say "Pack all the logs"
+        pushd "c:\"
+        & 7z a a -t7z -mx=3 "$($Env:SQL_SETUP_LOG_FOLDER)\All the logs.7z" -ir!*.log -xr!Artifact
+        popd
+    <#     
+
 
     # Install new SQL Servers
     $todo = Find-SqlServers "$($Env:SqlKeys)"
@@ -127,6 +134,7 @@ before_build:
         Say "Pack all the logs"
         & 7z a a -t7z -mx=3 "$($Env:SQL_SETUP_LOG_FOLDER)\All the logs.7z" -ir!*.log -xr!Artifact
     }
+    #>
 
     Show-SqlServers
 
