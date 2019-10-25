@@ -68,9 +68,9 @@ init:
 
 
 install:
-- ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - ps: '$Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"'
 - PS: '$Env:SQL_SETUP_LOG_FOLDER = $Env:ARTIFACT;'
+- ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
 - git submodule update --init --recursive
 - ps: |
 
