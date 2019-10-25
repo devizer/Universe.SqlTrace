@@ -11,39 +11,37 @@ environment:
   matrix:
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      Script: |
-            .\SQL-Express-2005-SP4-x86.cmd; @(${Env:ProgramFiles(x86)}, $Env:ProgramFiles) | % { $log_dir="$($_)\Microsoft SQL Server\90\Setup Bootstrap\LOG"; if (Test-Path $log_dir) { Write-Host "Store $log_dir"; & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql 2005 Setup Log.7z" "$log_dir" *> "$Env:TEMP\_" } }
+      SqlKeys: 'SqlServer 2005 Express'
 
     - JOB: "SQL SERVER LocalDB 2017"
-      Local_DB: True
-      Script: 'powershell -f .\Install-SQL-LocalDB.ps1; cp C:\Users\appveyor\AppData\Local\Temp\LocalDB-Installer\SqlLocaLDB-v14-x64.log $Env:ARTIFACT;'
+      SqlKeys: 'LocalDB 2017'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      Local_DB: True
+      SqlKeys: 'LocalDB 2016'
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
-      Script: .\SQL-2019-Pre.cmd
+      SqlKeys: 'SqlServer 2019'
 
     - JOB: "SQL SERVER 2017 (Developer)"
-      Script: 'powershell -f .\sql-dev-2017.ps1'
+      SqlKeys: 'SqlServer 2017 Developer'
 
     - JOB: "SQL SERVER 2017 (Express)"
-      Script: .\SQL-Express-2017-Updated.cmd
+      SqlKeys: 'SqlServer 2017 Express'
 
     - JOB: "SQL SERVER 2016 (Express)"
-      Script: .\SQL-Express-2016-Updated.cmd
+      SqlKeys: 'SqlServer 2016 Express'
     
     - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-      Script: .\SQL-Express-2014-SP2-x86.cmd
+      SqlKeys: 'SqlServer 2014 Express'
 
     - JOB: "SQL SERVER 2012 SP3 (Express)"
-      Script: .\SQL-Express-2012-SP3.cmd
+      SqlKeys: 'SqlServer 2012 Express'
 
     - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-      Script: .\SQL-Express-2008-R2-SP2-x86.cmd
+      SqlKeys: 'SqlServer 2008R2 Express'
 
     - JOB: "SQL SERVER 2008 SP3 (Express)"
-      Script: .\SQL-Express-2008-SP3-x64.cmd
+      SqlKeys: 'SqlServer 2008 Express'
 
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
@@ -62,105 +60,17 @@ platform: Any CPU
 init:
 - ps: |
 
-    function Say { param( [string] $message )
-        Write-Host "$(Get-Elapsed) " -NoNewline -ForegroundColor Magenta
-        Write-Host "$message" -ForegroundColor Yellow
-    }
-    
-    function Get-Elapsed
-    {
-        if ($Global:startAt -eq $null) { $Global:startAt = [System.Diagnostics.Stopwatch]::StartNew(); }
-        [System.String]::Concat("[", (new-object System.DateTime(0)).AddMilliseconds($Global:startAt.ElapsedMilliseconds).ToString("mm:ss"), "]");
-    }; $_=Get-Elapsed;
+    $Work="$($Env:LocalAppData)"; if ($Work -eq "") { $Work="$($Env:UserProfile)"; }; $Work="$Work\Temp\Sql-Installers"
+    New-Item -ItemType Directory -Path $Work -EA SilentlyContinue | out-null
+    Write-Host "Downloading SQL Installer Scripts to: $Work"
+    (new-object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/devizer/glist/master/bin/SQL-Express/Sql-Setup-Bootstrap.ps1', "$Work\Sql-Setup-Bootstrap.ps1")
+    pushd; . .\Sql-Setup-Bootstrap.ps1; popd
 
-    # Display OS and CPU
-    $currentVersion=Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion'
-    $win_10_release_id = $currentVersion.ReleaseId; if (! $win_10_release_id) { $win_10_release_id = $currentVersion.CurrentBuildNumber }
-    $win_name = $(Get-WMIObject win32_operatingsystem -EA SilentlyContinue).Caption
-    Say "$($win_name): Release [$win_10_release_id], powershell [$($PSVersionTable.PSVersion)]"
-    $cpu=Get-WmiObject Win32_Processor; Say "CPU: $($cpu.Name), $([System.Environment]::ProcessorCount) Cores";
-
-    # returns array of strings like SQL2017, 2016, ...
-    function Get-Preinstalled-SqlServers
-    {
-        $names = @();
-        foreach($path in @('HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SQL Server')) {
-            try { $v = (get-itemproperty $path).InstalledInstances; $names += $v } catch {}
-        }
-        $names | sort | where { "$_".Length -gt 0 }
-    }
-
-    function Disable-SqlServers { param( [array] $names ) 
-        foreach($sqlname in $names) {
-            Say "Disable MSSQL`$$sqlname"
-            Stop-Service "MSSQL`$$sqlname" -ErrorAction SilentlyContinue
-            Set-Service "MSSQL`$$sqlname" -StartupType Disabled
-        }
-    }
-
-    function Delete-SqlServers { param( [array] $names ) 
-        foreach($sqlname in $names) {
-            Say "Delete MSSQL`$$sqlname"
-            Stop-Service "MSSQL`$$sqlname" -EA SilentlyContinue
-            Set-Service "MSSQL`$$sqlname" -StartupType Disabled
-            & cmd /c sc delete "MSSQL`$$sqlname"
-        }
-    }
-
-    # uninstallation does not work properly, but upgrade works better
-    function Hide-LocalDB-Servers {
-        Say "Hide SQL Server LocalDB"; 
-        Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Microsoft SQL Server Local DB\Installed Versions" -Recurse -Force
-    }
-
-    # return empty string if SqlLocalDB.exe is not found. always returns latest installed SqlLocalDB.exe
-    function Find-SqlLocalDB-Exe {
-        if ($Global:LocalDbExe -eq $null) {
-            $Global:LocalDbExe=(Get-ChildItem -Path "C:\Program Files\Microsoft SQL Server" -Filter "SqlLocalDB.exe" -Recurse -ErrorAction SilentlyContinue -Force | Sort-Object -Property "FullName" -Descending)[0].FullName
-            if ($Global:LocalDbExe) { Write-Host "$(Get-Elapsed) Found SqlLocalDB.exe full path: [$($Global:LocalDbExe)]" } else { Write-Host "$(Get-Elapsed) SqlLocalDB.exe NOT Found" }
-        }
-        "$($Global:LocalDbExe)"
-    }
-
-    # Does not work propery without reboot - logs report that unsunstall is successful, but
-    function Uninstall-SqlLocalDB { param([string] $version)
-        Say "Deleting LocalDB $version"
-        $apps = Find-Apps "LocalDB" | ? { $($_.DisplayName -like "*$($version)*") -and ($_.DisplayName -like "*Microsoft*")  }
-        if ($apps -and $apps[0]) { 
-            # DisplayName, DisplayVersion, PSPath, PSChildName, UninstallString, Guid, MsiUninstallArgs
-            $msi=@($apps)[0]; $msi_args=$msi.MsiUninstallArgs + " /L*v `"$($Env:ARTIFACT)\Uninstall $($msi.DisplayName).log`""
-            Say "Deleting MSI Package $($msi.DisplayName) (version [$($msi.DisplayVersion)]) using args: [$msi_args]"
-            start-process "msiexec.exe" -arg $msi_args -Wait
-        } else {
-            Say "LocalDB $version is not found"
-        }
-    }
-
-    # https://stackoverflow.com/questions/113542/how-can-i-uninstall-an-application-using-powershell
-    function Find-Apps { param([string] $pattern)
-        $apps = @();
-        $path32="HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
-        $path64="HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-        foreach($path in @($path64, $path32)) {
-            $u = gci $path | foreach { gp $_.PSPath } | ? { $_ -like "*$($pattern)*" }
-            if ($u.Length -gt 0) { $apps += $u }
-        }
-        $apps |
-            foreach { $_ | Add-Member Guid $_.PSChildName; $_ } |
-            where { $_.PSobject.Properties.Name -match "DisplayName" } |
-            where { "DisplayName" -in $_.PSobject.Properties.Name } |
-            foreach { $_.DisplayName = "$($_.DisplayName)".Trim(); $_ } |
-            foreach { $_ | Add-Member MsiUninstallArgs ("/X " + ($_.UninstallString -Replace "msiexec.exe","" -Replace "/I","" -Replace "/X","" ).ToString().Trim() + " /qn"); $_ } |
-            sort @{e={$_.DisplayName}; a=$true}
-    }
-
-    function Show-SqlServers {
-        get-wmiobject win32_service | where {$_.Name.ToLower().IndexOf("sql") -ge 0 } | sort-object -Property "DisplayName" | ft State, Name, DisplayName, StartMode
-    }
 
 install:
-- ps: '$Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"'
 - ps: Start-Transcript "Artifact\Detailed-Build.log" -Force
+- ps: '$Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"'
+- PS: '$Env:SQL_SETUP_LOG_FOLDER = $Env:ARTIFACT;'
 - git submodule update --init --recursive
 - ps: |
 
@@ -195,51 +105,17 @@ before_build:
         }
     }
 
+    # Install new SQL Servers
+    Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | % { Install-SqlServer $_ }
+    Show-SqlServers
+
+
 build_script:
 - ps: | 
       Say "RESTORE and BUILD"
       & .\build-for-appveyor.cmd
 
 after_build:
-- ps: | 
-        # Install new SQL Servers
-        pushd SQL-Express; 
-
-        "$Env:Script" > "$Env:ARTIFACT\$Env:JOB (script).txt"
-
-        if ($false -and (Find-SqlLocalDB-Exe)) {
-            Say "Shutting down MSSqlLocalDB"
-            try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -i } catch {}
-            try { & "$(Find-SqlLocalDB-Exe)" stop MSSQLLocalDB -k } catch {}
-        }
-
-        # Script for LocalDB 2019 is empty - it is already preinstalled
-        if ($Env:Script) {
-            Say "Installing $Env:JOB"
-            # Invoke-Expression $Env:Script | tee -file "$Env:ARTIFACT\Sql Server Setup.log"
-            Invoke-Expression $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log"
-            # & $Env:Script # for frozen sql 
-            # $job = Start-Job { cd "$($Env:APPVEYOR_BUILD_FOLDER)\SQL-Express"; Get-Location; "Launch $($Env:Script) at $(Get-Location) with loggin to [$Env:ARTIFACT\Sql Server Setup.log]" > "$Env:ARTIFACT\Launch Sql Server Setup.log"; & $Env:Script *> "$Env:ARTIFACT\Sql Server Setup.log" }; $skip_test=$true; $dur=66; Say "Sleep $dur"; sleep $dur; Say "Stop Installer"; Stop-Job $job.Id; Say "Exit Success"; # Exit-AppVeyorBuild;  # for frozen sql 
-
-            # pack sql 2005 logs if they presented
-            # @(${Env:ProgramFiles(x86)}, $Env:ProgramFiles) | % { $log_dir="$($_)\Microsoft SQL Server\90\Setup Bootstrap\LOG"; if (Test-Path $log_dir) { Write-Host "Store $log_dir"; & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "$log_dir" *> "$Env:TEMP\_" } }
-            
-            # Get-ChildItem -Path "C:\Program Files (x86)\Microsoft SQL Server\90\Setup Bootstrap\LOG" -recurse -force
-            # & 7z a -t7z -mx=3 -ms=on "$Env:ARTIFACT\Sql Bootstrap Log.7z" "C:\Program Files (x86)\Microsoft SQL Server\90\Setup Bootstrap\LOG" *> "$Env:TEMP\_"
-                                                                          
-            # Say "Finished SQL Server Installers"
-        } 
-        
-        # hide pre-installed LocalDB for tests with SQL Express/Developer
-        if ($Env:Local_DB -eq $null) {
-            Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
-            # it is imposible to delete LocalDB 2016, but it is ok to delete 2014th LocalDB
-            # @(2016, 2014, 2016, 2016) | % { Uninstall-SqlLocalDB "$_" }
-            Hide-LocalDB-Servers
-        }
-
-        popd
-        Show-SqlServers
 
 test_script:
 - ps: |
