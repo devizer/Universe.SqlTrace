@@ -114,7 +114,7 @@ before_build:
     # Install new SQL Servers
     $todo = Find-SqlServers "$($Env:SqlKeys)"
     $todo | % { Install-SqlServer $_ }
-    $has_Local_DB = $todo | % { $_.Keys -contains "LocalDB" }
+    $has_Local_DB = $todo | where { $_.Keys -contains "LocalDB" }
     if (!$has_Local_DB) { 
         Say "Pre-installed SqlLocalDB.exe: $(Find-SqlLocalDB-Exe)"
         Hide-LocalDB-Servers
