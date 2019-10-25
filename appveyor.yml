@@ -109,7 +109,7 @@ before_build:
     }
 
     # alternative without the matrix and SqlKeys variables:
-    Find-SqlServers "SqlServer 2017 Developer" | % { Install-SqlServer $_ }
+    # Find-SqlServers "SqlServer 2017 Developer" | % { Install-SqlServer $_ }
 
     # Install new SQL Servers
     $todo = Find-SqlServers "$($Env:SqlKeys)"
