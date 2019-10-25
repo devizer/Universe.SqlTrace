@@ -41,7 +41,7 @@ namespace Universe.SqlTrace.Tests
                 }
             }
 
-            throw new InvalidOperationException("Local Sql Express (or above) with SysAdmin permission for the current user not found");
+            throw new InvalidOperationException("Local Sql Express or LocalDB 2014+ (or above) with SysAdmin permission for the current user not found");
         }
 
         public static readonly string DB = "UNITEST_" + Guid.NewGuid().ToString("N");
