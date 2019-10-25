@@ -106,6 +106,7 @@ before_build:
     }
 
     # Install new SQL Servers
+    Say "Installing: $($Env:SqlKeys)"
     Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | % { Install-SqlServer $_ }
     Show-SqlServers
 
