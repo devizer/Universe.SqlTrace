@@ -111,7 +111,7 @@ before_build:
     # Install new SQL Servers
     Say "Installing: $($Env:SqlKeys)"
     "$($Env:SqlKeys)".Split(@([char]44, [char]59)) | % { $sqlKey=$_.Trim()
-        Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | select {$_.Trim()} | where { $_.Length == 0 } | % { Install-SqlServer $_ }
+        Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | select {$_.Trim()} | where { $_.Length -gt 0 } | % { Install-SqlServer $_ }
     }
     # Find-SqlServers "$($Env:SqlKeys)".Split([char]32) | % { Install-SqlServer $_ }
     Show-SqlServers
