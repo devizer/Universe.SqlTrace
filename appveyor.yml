@@ -114,8 +114,8 @@ before_build:
     Find-SqlServers "SqlServer 2019 Developer, SqlServer 2017 Developer" | % { Install-SqlServer $_ }
         # WTF
         Say "Pack all the logs"
-        pushd "c:\"
-        & 7z a a -t7z -mx=3 "$($Env:SQL_SETUP_LOG_FOLDER)\All the logs.7z" -ir!*.log -xr!Artifact
+        pushd "C:\Program Files\Microsoft SQL Server"
+        & 7z a a -t7z -mx=3 "$($Env:SQL_SETUP_LOG_FOLDER)\All the logs.7z" -ir!*.log
         popd
     <#     
 
