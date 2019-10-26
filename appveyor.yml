@@ -10,6 +10,9 @@ environment:
 
   matrix:
 
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      SqlKeys: 'SqlServer 2005 Express'
+
     - JOB: "SQL SERVER LocalDB 2017"
       SqlKeys: 'LocalDB 2017'
 
@@ -39,9 +42,6 @@ environment:
 
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       SqlKeys: 'SqlServer 2008 Express'
-
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      SqlKeys: 'SqlServer 2005 Express'
 
     - JOB: "SQL SERVER 2012 & 2008 R2"
       SqlKeys: 'SqlServer 2012 Express, SqlServer 2008R2 Express'
@@ -109,7 +109,7 @@ before_build:
     }
 
         # alternative without the matrix:
-        # Find-SqlServers "SqlServer 2019 Developer, SqlServer 2017 Developer" | % { Install-SqlServer $_ }
+        # Parse-SqlServers "SqlServer 2019 Developer, SqlServer 2017 Developer" | % { Install-SqlServer $_ }
         # WTF
         # Say "Pack all the logs"
         # pushd "C:\Program Files\Microsoft SQL Server"
@@ -118,7 +118,7 @@ before_build:
 
 
     # Install new SQL Servers
-    $todo = Find-SqlServers "$($Env:SqlKeys)"
+    $todo = Parse-SqlServers "$($Env:SqlKeys)"
     $todo | % { Install-SqlServer $_ }
     $has_Local_DB = $todo | where { $_.Keys -contains "LocalDB" }
     if (!$has_Local_DB) { 
