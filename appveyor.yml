@@ -10,8 +10,8 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      SqlKeys: 'SqlServer 2005 Express: EXPRESS_2005'
+    - JOB: "SQL SERVER 2017 (Developer)"
+      SqlKeys: 'SqlServer 2017 Developer: DEVELOPER_2017'
 
     - JOB: "SQL SERVER 2012 & 2008 R2"
       SqlKeys: 'SqlServer 2012 Express: EXPRESS_2012, SqlServer 2008R2 Express: EXPRESS_2008_R2'
@@ -25,8 +25,6 @@ environment:
     - JOB: "SQL SERVER 2019 RC (Developer)"
       SqlKeys: 'SqlServer 2019: DEVELOPER_2019'
 
-    - JOB: "SQL SERVER 2017 (Developer)"
-      SqlKeys: 'SqlServer 2017 Developer: DEVELOPER_2017'
 
     - JOB: "SQL SERVER 2017 (Express)"
       SqlKeys: 'SqlServer 2017 Express: EXPRESS_2017'
@@ -40,11 +38,14 @@ environment:
     - JOB: "SQL SERVER 2012 SP3 (Express)"
       SqlKeys: 'SqlServer 2012 Express: EXPRESS_2012'
 
+    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
+      SqlKeys: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
+
     - JOB: "SQL SERVER 2008 SP3 (Express)"
       SqlKeys: 'SqlServer 2008 Express: EXPRESS_2008'
 
-    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-      SqlKeys: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      SqlKeys: 'SqlServer 2005 Express: EXPRESS_2005'
 
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
