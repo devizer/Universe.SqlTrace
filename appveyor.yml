@@ -11,41 +11,41 @@ environment:
   matrix:
 
     - JOB: "SQL SERVER 2017 (Developer)"
-      SqlKeys: 'SqlServer 2017 Developer: DEVELOPER_2017'
+      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
 
     - JOB: "SQL SERVER 2012 & 2008 R2"
-      SqlKeys: 'SqlServer 2012 Express: EXPRESS_2012, SqlServer 2008R2 Express: EXPRESS_2008_R2'
+      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012, SqlServer 2008R2 Express: EXPRESS_2008_R2'
 
     - JOB: "SQL SERVER LocalDB 2017"
-      SqlKeys: 'LocalDB 2017'
+      SqlServers: 'LocalDB 2017'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      SqlKeys: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
+      SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
     - JOB: "SQL SERVER 2019 RC (Developer)"
-      SqlKeys: 'SqlServer 2019: DEVELOPER_2019'
+      SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
 
     - JOB: "SQL SERVER 2017 (Express)"
-      SqlKeys: 'SqlServer 2017 Express: EXPRESS_2017'
+      SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
 
     - JOB: "SQL SERVER 2016 (Express)"
-      SqlKeys: 'SqlServer 2016 Express: EXPRESS_2016'
+      SqlServers: 'SqlServer 2016 Express: EXPRESS_2016'
     
     - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-      SqlKeys: 'SqlServer 2014 Express: EXPRESS_2014'
+      SqlServers: 'SqlServer 2014 Express: EXPRESS_2014'
 
     - JOB: "SQL SERVER 2012 SP3 (Express)"
-      SqlKeys: 'SqlServer 2012 Express: EXPRESS_2012'
+      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012'
 
     - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-      SqlKeys: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
+      SqlServers: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
 
     - JOB: "SQL SERVER 2008 SP3 (Express)"
-      SqlKeys: 'SqlServer 2008 Express: EXPRESS_2008'
+      SqlServers: 'SqlServer 2008 Express: EXPRESS_2008'
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      SqlKeys: 'SqlServer 2005 Express: EXPRESS_2005'
+      SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
 
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
@@ -119,7 +119,7 @@ before_build:
 
 
     # Install new SQL Servers
-    $todo = Parse-SqlServers "$($Env:SqlKeys)"
+    $todo = Parse-SqlServers "$($Env:SqlServers)"
     $todo | % { Install-SqlServer $_ }
     $has_Local_DB = $todo | where { $_.Keys -contains "LocalDB" }
     if (!$has_Local_DB) { 
