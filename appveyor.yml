@@ -10,12 +10,6 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER 2017 (Developer)"
-      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
-
-    - JOB: "SQL SERVER 2012 & 2008 R2"
-      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012, SqlServer 2008R2 Express: EXPRESS_2008_R2'
-
     - JOB: "SQL SERVER LocalDB 2017"
       SqlServers: 'LocalDB 2017'
 
@@ -25,6 +19,8 @@ environment:
     - JOB: "SQL SERVER 2019 RC (Developer)"
       SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
+    - JOB: "SQL SERVER 2017 (Developer)"
+      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
 
     - JOB: "SQL SERVER 2017 (Express)"
       SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
@@ -47,6 +43,10 @@ environment:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
 
+      # it is ease to install multiple SQL Servers
+    - JOB: "SQL SERVER 2012 & 2008 R2"
+      SqlServers: 'SqlServer 2019: SQL_2019, SqlServer 2012: EXPRESS_2012, SqlServer 2008R2: EXPRESS_2008_R2'
+
 
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
 matrix:
@@ -64,6 +64,7 @@ platform: Any CPU
 init:
 - ps: |
 
+    # copy paste it
     $Work="$($Env:LocalAppData)"; if ($Work -eq "") { $Work="$($Env:UserProfile)"; }; $Work="$Work\Temp\Sql-Installers"
     if (-not (Test-Path $Work)) { New-Item -ItemType Directory -Path $Work -EA SilentlyContinue | out-null }
     Write-Host "Downloading SQL Installer Scripts to: $Work" -ForegroundColor Cyan
@@ -99,24 +100,8 @@ cache:
 before_build:
 - ps: | 
     # PSReadLine must be upgraded on VS 2019 image
-    if ($Env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
-        try {
-            Say "Upgrading PSReadLine on '$($Env:APPVEYOR_BUILD_WORKER_IMAGE)' image"
-            Install-Module PSReadLine -AllowPrerelease -Force
-            Say "PSReadLine Upgraded"
-        } catch {
-            Say "PSReadLine Upgrade Failed. $($_.Exception.GetType().Name) $($_.Exception.Message)"
-        }
-    }
-
-        # alternative without the matrix:
-        # Parse-SqlServers "SqlServer 2019 Developer, SqlServer 2017 Developer" | % { Install-SqlServer $_ }
-        # WTF
-        # Say "Pack all the logs"
-        # pushd "C:\Program Files\Microsoft SQL Server"
-        # & 7z a a -t7z -mx=3 "$($Env:SQL_SETUP_LOG_FOLDER)\All the logs.7z" -ir!*.log
-        # popd
-
+    
+    Upgrade-PSReadLine
 
     # Install new SQL Servers
     $todo = Parse-SqlServers "$($Env:SqlServers)"
