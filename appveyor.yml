@@ -11,12 +11,12 @@ environment:
 
   matrix:
 
-    - JOB: "SQL SERVER LocalDB 2017"
-      SqlServers: 'LocalDB 2017'
+    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
+      SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
      # just to measure Disk IO Benchmark
-#    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-#      SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
+#    - JOB: "SQL SERVER LocalDB 2017"
+#      SqlServers: 'LocalDB 2017'
 
 #    - JOB: "SQL SERVER 2019 RC (Developer)"
 #      SqlServers: 'SqlServer 2019: DEVELOPER_2019'

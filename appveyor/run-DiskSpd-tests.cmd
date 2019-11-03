@@ -1,4 +1,4 @@
-mkdir ..\ARTIFACT >nul 2&1
+mkdir ..\ARTIFACT 1>nul 2>&1
 diskspd.exe -d5 -c2000M -b1M -Sw -Su -t1 -w0 -s1b "io-perf.tmp" > ..\ARTIFACT\seq-read-report.txt
 diskspd.exe -d5 -c2000M -b1M -Sw -Su -t1 -w100 -s1b "io-perf.tmp" > ..\ARTIFACT\seq-write-report.txt
 
