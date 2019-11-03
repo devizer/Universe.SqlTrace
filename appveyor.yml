@@ -80,6 +80,8 @@ install:
 - git submodule update --init --recursive
 - ps: |
 
+    Say "Measuring Disk IO Perf"; pushd appveyor; & cmd /c run-DiskSpd-tests.cmd; popd
+
     Say "Pre-installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
     Show-SqlServers
 
@@ -156,7 +158,6 @@ test_script:
     
     # Copy Event Logs
     Say "Store Event Logs"; pushd $Env:ARTIFACT; & $Env:APPVEYOR_BUILD_FOLDER\appveyor\StoreEventLogs.exe; popd
-    Say "Measuring Disk IO Perf"; pushd appveyor; & cmd /c run-DiskSpd-tests.cmd; popd
     
     # Optional logs and files
     if ($false) {
