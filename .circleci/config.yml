@@ -4,16 +4,19 @@ jobs:
   build:
     docker:
       - image: mono:6.4
+      - image: mono:5
     steps:
       - checkout
       - run: 'curl -I https://google.com'
-      - run: 'apt -q update >/dev/null ; apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release'
+      - run: 'apt -q update >/dev/null ; apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
       - run: git submodule update --init --recursive
       - run: nuget restore
       - run: 'pushd include/Universe.SqlServerJam/src; nuget restore; popd'
       - run: msbuild Universe.SqlTrace.sln
       - run: 'url=https://raw.githubusercontent.com/devizer/glist/master/install-docker-on-debian.sh; (wget -q -nv --no-check-certificate -O - $url 2>/dev/null || curl -sSL $url) | bash'
-      - run: 'docker run -t hello-world'
+      - run: 'docker run -t hello-world || true'
+      # /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+      # /usr/bin/dockerd -H unix:///var/run/docker.sock
   test:
     docker:
       - image: mono:6.4
