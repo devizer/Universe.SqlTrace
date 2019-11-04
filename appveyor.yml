@@ -3,7 +3,6 @@ image:
 - Visual Studio 2019
 - Visual Studio 2017
 - Visual Studio 2015
-- Visual Studio 2013
 
 environment:
 
@@ -15,39 +14,39 @@ environment:
       SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
      # just to measure Disk IO Benchmark
-#    - JOB: "SQL SERVER LocalDB 2017"
-#      SqlServers: 'LocalDB 2017'
+    - JOB: "SQL SERVER LocalDB 2017"
+      SqlServers: 'LocalDB 2017'
 
-#    - JOB: "SQL SERVER 2019 RC (Developer)"
-#      SqlServers: 'SqlServer 2019: DEVELOPER_2019'
+    - JOB: "SQL SERVER 2019 RC (Developer)"
+      SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
-#    - JOB: "SQL SERVER 2017 (Developer)"
-#      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
+    - JOB: "SQL SERVER 2017 (Developer)"
+      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
 
-#    - JOB: "SQL SERVER 2017 (Express)"
-#      SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
+    - JOB: "SQL SERVER 2017 (Express)"
+      SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
 
-#    - JOB: "SQL SERVER 2016 (Express)"
-#      SqlServers: 'SqlServer 2016 Express: EXPRESS_2016'
-     
-#    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-#      SqlServers: 'SqlServer 2014 Express: EXPRESS_2014'
+    - JOB: "SQL SERVER 2016 (Express)"
+      SqlServers: 'SqlServer 2016 Express: EXPRESS_2016'
+    
+    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
+      SqlServers: 'SqlServer 2014 Express: EXPRESS_2014'
 
-#    - JOB: "SQL SERVER 2012 SP3 (Express)"
-#      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012'
- 
-#    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-#      SqlServers: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
+    - JOB: "SQL SERVER 2012 SP3 (Express)"
+      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012'
 
-#    - JOB: "SQL SERVER 2008 SP3 (Express)"
-#      SqlServers: 'SqlServer 2008 Express: EXPRESS_2008'
- 
-#    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-#      SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
+    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
+      SqlServers: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
 
-       # it is ease to install multiple SQL Servers
-#    - JOB: "SQL SERVER 2012 & 2008 R2"
-#      SqlServers: 'SqlServer 2019: SQL_2019, SqlServer 2012: EXPRESS_2012, SqlServer 2008R2: EXPRESS_2008_R2'
+    - JOB: "SQL SERVER 2008 SP3 (Express)"
+      SqlServers: 'SqlServer 2008 Express: EXPRESS_2008'
+
+    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+      SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
+
+      # it is ease to install multiple SQL Servers
+    - JOB: "SQL SERVER 2012 & 2008 R2"
+      SqlServers: 'SqlServer 2019: SQL_2019, SqlServer 2012: EXPRESS_2012, SqlServer 2008R2: EXPRESS_2008_R2'
  
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
 matrix:
@@ -80,9 +79,9 @@ install:
 - git submodule update --init --recursive
 - ps: |
 
-    Say "Measuring Disk IO Perf"; pushd appveyor; & cmd /c run-DiskSpd-tests.cmd
-    popd
-    Exit-AppVeyorBuild
+    # Say "Measuring Disk IO Perf"; pushd appveyor; & cmd /c run-DiskSpd-tests.cmd
+    # popd
+    # Exit-AppVeyorBuild
 
 - ps: |
     Say "Pre-installed Sql Servers: $((Get-Preinstalled-SqlServers) -Join ", ")"
@@ -160,10 +159,13 @@ test_script:
     # powershell -f Info\Store-Logs-2.ps1
     
     # Copy Event Logs
-    Say "Store Event Logs"; pushd $Env:ARTIFACT; & $Env:APPVEYOR_BUILD_FOLDER\appveyor\StoreEventLogs.exe; popd
+    
     
     # Optional logs and files
     if ($false) {
+
+        # it taskes 20 seconds
+        Say "Store Event Logs"; pushd $Env:ARTIFACT; & $Env:APPVEYOR_BUILD_FOLDER\appveyor\StoreEventLogs.exe; popd
 
         Say "Program Files (names)"
         cmd /c dir /b /s /ah /as "c:\program files" *> "$Env:ARTIFACT\Program Files (names).log"
@@ -191,7 +193,6 @@ test_script:
 after_test:
 - ps: Stop-Transcript;
 # - cmd: bash -c 'time echo "Hello from $(bash --version)"'
-
 
 # Error uploading artifact the storage: The underlying connection was closed: An unexpected error occurred on a send.
 artifacts:
