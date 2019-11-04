@@ -6,9 +6,7 @@ jobs:
       - image: mono:6.4
     steps:
       - checkout
-      - run: | 
-            sudo apt update & sudo apt install -y git
-
+      - run: apt update & apt install -y git sudo jq tar bzip gzip
       - run: git submodule update --init --recursive
       - run: nuget restore
       - run: msbuild Universe.SqlTrace.sln
@@ -18,6 +16,7 @@ jobs:
     steps:
       - checkout
       - run: echo Not yet implemented
+
 workflows:
   version: 2
   build_and_test:
