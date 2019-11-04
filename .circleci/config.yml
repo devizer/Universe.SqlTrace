@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run: 'curl -I https://google.com'
-      - run: 'apt update; apt install -y git sudo jq tar bzip gzip'
+      - run: 'apt -q update >/dev/null ; apt install -y -q git sudo jq tar bzip2 gzip'
       - run: git submodule update --init --recursive
       - run: nuget restore
       - run: msbuild Universe.SqlTrace.sln
