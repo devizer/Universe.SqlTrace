@@ -158,9 +158,6 @@ test_script:
     # Find and store logs
     # powershell -f Info\Store-Logs-2.ps1
     
-    # Copy Event Logs
-    
-    
     # Optional logs and files
     if ($false) {
 
