@@ -2,8 +2,9 @@ version: 2
 
 jobs:
   build:
-    docker:
-      - image: mono:6.4
+    machine: true
+#    docker:
+#      - image: mono:6.4
     steps:
       - checkout
       - run: 'curl -I https://google.com'
