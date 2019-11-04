@@ -1,0 +1,21 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: mono:6.4
+    steps:
+      - checkout
+      - run: nuget restore
+      - run: msbuild Universe.SqlTrace.sln 
+  test:
+    docker:
+      - image: mono:6.4
+    steps:
+      - checkout
+      - run: echo Not yet implemented
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
