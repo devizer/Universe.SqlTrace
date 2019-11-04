@@ -14,8 +14,9 @@ jobs:
       - run: msbuild Universe.SqlTrace.sln
       - run: 'url=https://raw.githubusercontent.com/devizer/glist/master/install-docker-on-debian.sh; (wget -q -nv --no-check-certificate -O - $url 2>/dev/null || curl -sSL $url) | bash'
       - run: 'docker run -t hello-world || true'
+      - run: '/usr/bin/dockerd -H unix:///var/run/docker.sock || true'
       # /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
-      # /usr/bin/dockerd -H unix:///var/run/docker.sock
+      # 
   test:
     docker:
       - image: mono:6.4
