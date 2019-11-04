@@ -7,9 +7,10 @@ jobs:
     steps:
       - checkout
       - run: 'curl -I https://google.com'
-      - run: 'apt -q update >/dev/null ; apt install -y -q git sudo jq tar bzip2 gzip'
+      - run: 'apt -q update >/dev/null ; apt install -y -q git sudo jq tar bzip2 gzip >/dev/null; apt install -y -q git sudo jq tar bzip2 gzip'
       - run: git submodule update --init --recursive
       - run: nuget restore
+      - run: 'pushd include/Universe.SqlServerJam; nuget restore; popd'
       - run: msbuild Universe.SqlTrace.sln
   test:
     docker:
