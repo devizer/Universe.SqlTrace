@@ -5,8 +5,9 @@ jobs:
       - image: mono:6.4
     steps:
       - checkout
+      - run: git submodule update --init --recursive
       - run: nuget restore
-      - run: msbuild Universe.SqlTrace.sln 
+      - run: msbuild Universe.SqlTrace.sln
   test:
     docker:
       - image: mono:6.4
