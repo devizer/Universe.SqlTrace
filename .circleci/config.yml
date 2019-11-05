@@ -14,7 +14,7 @@ jobs:
       - run: 'free -m'
       - run: 'cat /etc/os-release'
       - run: |
-            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;
+            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild; true
       - run: |
             echo 'Acquire::Check-Valid-Until "0";' | sudo tee /etc/apt/apt.conf.d/10no--check-valid-until
             echo 'APT::Get::Assume-Yes "true";' | sudo tee /etc/apt/apt.conf.d/11assume-yes
@@ -31,6 +31,7 @@ jobs:
               sudo apt-get update; time sudo apt-get install mono-complete nuget msbuild -y -q
             fi
             echo "ok?"
+
       - run: |
             apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;
 
@@ -42,6 +43,7 @@ jobs:
       - run: 'docker run -t hello-world || true'
       - run: 'sudo docker version'
       - run: 'docker version'
+      - run: 'script=https://raw.githubusercontent.com/devizer/glist/master/install-dotnet-and-nodejs.sh; (wget -q -nv --no-check-certificate -O - $script 2>/dev/null || curl -ksSL $script) | bash -s dotnet node pwsh'
       # - run: '/usr/bin/dockerd -H unix:///var/run/docker.sock || true'
       # /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
       # 
