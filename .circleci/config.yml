@@ -6,12 +6,12 @@ jobs:
 #    docker:
 #      - image: mono:6.4
     steps:
-      - run: git config --global core.autocrlf false
+      - run: git config --global core.autocrlf true
       - checkout
       - run: 'curl -I https://google.com'
       - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
       - run: git submodule update --init --recursive
-      - run: 'bash ".circleci/install-7z.sh'
+      - run: 'bash .circleci/install-7z.sh'
       - run: '7zr b || 7z b'
       - run: 'cat /proc/cpuinfo'
       - run: 'lscpu || true'
