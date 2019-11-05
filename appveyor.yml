@@ -76,6 +76,10 @@ init:
     (new-object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/devizer/glist/master/bin/SQL-Express/Sql-Setup-Bootstrap.ps1', "$Work\Sql-Setup-Bootstrap.ps1")
     pushd $Work; . .\Sql-Setup-Bootstrap.ps1; popd
 
+    pushd $Work; & cmd /c SQL-2019-Pre.cmd ; popd
+
+
+
 
 install:
 - ps: '$Env:ARTIFACT = "$($Env:APPVEYOR_BUILD_FOLDER)\Artifact"; mkdir $Env:ARTIFACT | out-null; Say "ARTIFACT folder: $($Env:ARTIFACT)"'
