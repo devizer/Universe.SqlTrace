@@ -10,6 +10,9 @@ environment:
 
   matrix:
 
+    - JOB: "SQL SERVER LocalDB 2019"
+      SqlServers: 'LocalDB 2019'
+
     - JOB: "SQL SERVER LocalDB 2017"
       SqlServers: 'LocalDB 2017'
 
