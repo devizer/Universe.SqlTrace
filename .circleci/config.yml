@@ -6,6 +6,7 @@ jobs:
 #    docker:
 #      - image: mono:6.4
     steps:
+      - run: git config --global core.autocrlf true
       - checkout
       - run: 'curl -I https://google.com'
       - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
