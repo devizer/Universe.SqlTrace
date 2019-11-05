@@ -13,41 +13,41 @@ environment:
     - JOB: "SQL SERVER LocalDB 2019"
       SqlServers: 'LocalDB 2019'
 
-    - JOB: "SQL SERVER LocalDB 2017"
-      SqlServers: 'LocalDB 2017'
-
-    - JOB: "SQL SERVER 2019 (Developer)"
-      SqlServers: 'SqlServer 2019: DEVELOPER_2019'
-
-    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
-      SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
-
-    - JOB: "SQL SERVER 2017 (Developer)"
-      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
-
-    - JOB: "SQL SERVER 2017 (Express)"
-      SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
-
-    - JOB: "SQL SERVER 2016 (Express)"
-      SqlServers: 'SqlServer 2016 Express: EXPRESS_2016'
-    
-    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
-      SqlServers: 'SqlServer 2014 Express: EXPRESS_2014'
-
-    - JOB: "SQL SERVER 2012 SP3 (Express)"
-      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012'
-
-    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
-      SqlServers: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
-
-    - JOB: "SQL SERVER 2008 SP3 (Express)"
-      SqlServers: 'SqlServer 2008 Express: EXPRESS_2008'
-
-    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
-      SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
-
-    #   it is ease to install multiple SQL Servers
-    # - JOB: "SQL SERVER 2012 & 2008 R2"
+#    - JOB: "SQL SERVER LocalDB 2017"
+#      SqlServers: 'LocalDB 2017'
+#
+#    - JOB: "SQL SERVER 2019 (Developer)"
+#      SqlServers: 'SqlServer 2019: DEVELOPER_2019'
+#
+#    - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
+#      SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
+#
+#    - JOB: "SQL SERVER 2017 (Developer)"
+#      SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
+#
+#    - JOB: "SQL SERVER 2017 (Express)"
+#      SqlServers: 'SqlServer 2017 Express: EXPRESS_2017'
+#
+#    - JOB: "SQL SERVER 2016 (Express)"
+#      SqlServers: 'SqlServer 2016 Express: EXPRESS_2016'
+#    
+#    - JOB: "SQL SERVER 2014 SP2 x86 (Express)"
+#      SqlServers: 'SqlServer 2014 Express: EXPRESS_2014'
+#
+#    - JOB: "SQL SERVER 2012 SP3 (Express)"
+#      SqlServers: 'SqlServer 2012 Express: EXPRESS_2012'
+#
+#    - JOB: "SQL SERVER 2008 R2 SP2 x86 (Express)"
+#      SqlServers: 'SqlServer 2008R2 Express: EXPRESS_2008_R2'
+#
+#    - JOB: "SQL SERVER 2008 SP3 (Express)"
+#      SqlServers: 'SqlServer 2008 Express: EXPRESS_2008'
+#
+#    - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
+#      SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
+#
+#    #   it is ease to install multiple SQL Servers
+#    # - JOB: "SQL SERVER 2012 & 2008 R2"
     #   SqlServers: 'SqlServer 2012: EXPRESS_2012, SqlServer 2008R2: EXPRESS_2008_R2'
  
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
@@ -77,6 +77,8 @@ init:
     pushd $Work; . .\Sql-Setup-Bootstrap.ps1; popd
 
     # pushd $Work; & cmd /c SQL-2019-RTM.cmd ; popd
+    7z b 
+    Exit-AppveyorBuild
 
 
 
