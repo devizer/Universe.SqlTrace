@@ -10,7 +10,11 @@ jobs:
       - run: 'curl -I https://google.com'
       - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
       - run: git submodule update --init --recursive
+      - run: 'lscpu || true'
+      - run: 'free -m'
       - run: 'cat /etc/os-release'
+      - run: |
+            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;
       - run: |
             if [[ "$(command -v mono)" == "" ]]; then 
               sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6A19B38D3D831EF
@@ -22,6 +26,8 @@ jobs:
               sudo apt-get --allow-unauthenticated update && time sudo apt-get --allow-unauthenticated install mono-complete nuget msbuild -y -q
             fi
             echo "ok?"
+      - run: |
+            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;
 
       - run: nuget restore
       - run: 'pushd include/Universe.SqlServerJam/src; nuget restore; popd'
