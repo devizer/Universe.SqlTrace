@@ -65,6 +65,7 @@ jobs:
       - run: sudo docker logs sql-2017-for-tests
       - run: sudo docker logs sql-2019-for-tests
 
+
       # - run: '/usr/bin/dockerd -H unix:///var/run/docker.sock || true'
       # /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
       # 
