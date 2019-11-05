@@ -10,6 +10,21 @@ jobs:
       - run: 'curl -I https://google.com'
       - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
       - run: git submodule update --init --recursive
+      - run: 'cat /etc/os-release'
+      - run: |
+            if [[ "$(command -v mono)" == "" ]]; then 
+              sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6A19B38D3D831EF
+              sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+              source /etc/os-release
+              def="deb https://download.mono-project.com/repo/$ID stable-$(lsb_release -s -c) main"
+              if [[ "$ID" == "raspbian" ]]; then def="deb https://download.mono-project.com/repo/debian stable-raspbian$(lsb_release -cs) main"; fi
+              echo "$def" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+              sudo apt-get --allow-unauthenticated update && time sudo apt-get --allow-unauthenticated install mono-complete nuget msbuild -y \
+                && sudo apt purge 'monodoc*' -y &&  \
+              sudo apt clean; sudo rm -f /etc/apt/sources.list.d/mono-official-stable.list; \
+              sudo apt update
+            fi
+
       - run: nuget restore
       - run: 'pushd include/Universe.SqlServerJam/src; nuget restore; popd'
       - run: msbuild Universe.SqlTrace.sln
