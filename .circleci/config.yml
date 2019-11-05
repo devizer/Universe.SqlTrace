@@ -50,7 +50,7 @@ jobs:
       - image: mono:6.4
     steps:
       - checkout
-      - run: echo Not yet implemented
+      - run: 'cat /etc/os-release'
 
 workflows:
   version: 2
