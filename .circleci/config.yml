@@ -24,6 +24,7 @@ jobs:
               sudo apt clean; sudo rm -f /etc/apt/sources.list.d/mono-official-stable.list; \
               sudo apt update
             fi
+            echo "ok?"
 
       - run: nuget restore
       - run: 'pushd include/Universe.SqlServerJam/src; nuget restore; popd'
