@@ -10,14 +10,14 @@ environment:
 
   matrix:
 
+    - JOB: "SQL SERVER LocalDB 2017"
+      SqlServers: 'LocalDB 2017'
+
     - JOB: "SQL SERVER 2019 RC (Developer)"
       SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
-
-    - JOB: "SQL SERVER LocalDB 2017"
-      SqlServers: 'LocalDB 2017'
 
     - JOB: "SQL SERVER 2017 (Developer)"
       SqlServers: 'SqlServer 2017 Developer: DEVELOPER_2017'
