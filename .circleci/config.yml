@@ -44,6 +44,8 @@ jobs:
       - run: 'sudo docker version'
       - run: 'docker version'
       - run: 'script=https://raw.githubusercontent.com/devizer/glist/master/install-dotnet-and-nodejs.sh; (wget -q -nv --no-check-certificate -O - $script 2>/dev/null || curl -ksSL $script) | bash -s dotnet node pwsh'
+      - run: 'url=https://raw.githubusercontent.com/devizer/glist/master/install-5-mysqls-for-tests-V2.sh; (wget -q -nv --no-check-certificate -O - $url 2>/dev/null || curl -sSL $url) | bash'
+      - run: 'url=https://raw.githubusercontent.com/devizer/glist/master/install-7-postres-for-tests.sh; (wget -q -nv --no-check-certificate -O - $url 2>/dev/null || curl -sSL $url) | bash'
       # - run: '/usr/bin/dockerd -H unix:///var/run/docker.sock || true'
       # /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
       # 
