@@ -63,7 +63,9 @@ matrix:
       image: "Visual Studio 2015"
       
 skip_commits:
-  message: /\[Any-Commit-Should-Not-Be-Ignored\]/
+  files:
+    - .circleci/*
+    - dir/*.md
 
 platform: Any CPU
 init:
