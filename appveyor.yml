@@ -66,6 +66,9 @@ platform: Any CPU
 init:
 - ps: |
 
+    Get-ExecutionPolicy
+    Set-ExecutionPolicy Unrestricted
+
     # copy paste it
     $Work="$($Env:LocalAppData)"; if ($Work -eq "") { $Work="$($Env:UserProfile)"; }; $Work="$Work\Temp\Sql-Installers"
     if (-not (Test-Path $Work)) { New-Item -ItemType Directory -Path $Work -EA SilentlyContinue | out-null }
