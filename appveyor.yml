@@ -59,8 +59,8 @@ matrix:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       image: "Visual Studio 2015"
       
-skip_commits:
-  message: /\[CircleCI\]/
+#skip_commits:
+#  message: /\[CircleCI\]/
 
 platform: Any CPU
 init:
