@@ -13,7 +13,7 @@ environment:
     - JOB: "SQL SERVER LocalDB 2017"
       SqlServers: 'LocalDB 2017'
 
-    - JOB: "SQL SERVER 2019 RC (Developer)"
+    - JOB: "SQL SERVER 2019 (Developer)"
       SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
@@ -50,7 +50,7 @@ environment:
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
 matrix:
   exclude:
-    - JOB: "SQL SERVER 2019 RC (Developer)"
+    - JOB: "SQL SERVER 2019 (Developer)"
       image: "Visual Studio 2015"
       
     - JOB: "SQL SERVER LocalDB 2017"
@@ -66,9 +66,6 @@ platform: Any CPU
 init:
 - ps: |
 
-    Get-ExecutionPolicy
-    Set-ExecutionPolicy Unrestricted
-
     # copy paste it
     $Work="$($Env:LocalAppData)"; if ($Work -eq "") { $Work="$($Env:UserProfile)"; }; $Work="$Work\Temp\Sql-Installers"
     if (-not (Test-Path $Work)) { New-Item -ItemType Directory -Path $Work -EA SilentlyContinue | out-null }
@@ -76,7 +73,7 @@ init:
     (new-object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/devizer/glist/master/bin/SQL-Express/Sql-Setup-Bootstrap.ps1', "$Work\Sql-Setup-Bootstrap.ps1")
     pushd $Work; . .\Sql-Setup-Bootstrap.ps1; popd
 
-    pushd $Work; & cmd /c SQL-2019-Pre.cmd ; popd
+    # pushd $Work; & cmd /c SQL-2019-Pre.cmd ; popd
 
 
 
