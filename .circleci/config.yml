@@ -8,8 +8,9 @@ jobs:
     steps:
       - checkout
       - run: 'curl -I https://google.com'
-      - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
+      - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps p7zip'
       - run: git submodule update --init --recursive
+      - run: '7za b || 7z b'
       - run: 'lscpu || true'
       - run: 'free -m'
       - run: 'cat /etc/os-release'
