@@ -6,7 +6,7 @@ jobs:
 #    docker:
 #      - image: mono:6.4
     steps:
-      - run: 'bash .circleci/install-7z.sh'
+      - run: 'bash .circleci/init.sh'
       - checkout
       - run: git submodule update --init --recursive
       
