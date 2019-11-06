@@ -52,7 +52,9 @@ jobs:
             # run_sql_server 'sql-2019-for-tests' 'mcr.microsoft.com/mssql/server:2019-CTP3.2-ubuntu' 1435
             run_sql_server 'sql-2019-for-tests' 'mcr.microsoft.com/mssql/server:2019-RC1-ubuntu' 1435
 
-      - run: sleep 13
+      - run: docker run --link sql-2017-for-tests:sql-2017-for-tests aanand/wait
+      - run: docker run --link sql-2019-for-tests:sql-2019-for-tests aanand/wait
+      # - run: sleep 13
       - run: sudo docker logs sql-2017-for-tests
       - run: sudo docker logs sql-2019-for-tests
 
