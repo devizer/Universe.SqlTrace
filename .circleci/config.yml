@@ -6,8 +6,9 @@ jobs:
 #    docker:
 #      - image: mono:6.4
     steps:
-      - run: 'bash .circleci/init.sh'
+      - run: git config --global core.autocrlf false
       - checkout
+      - run: bash .circleci/init.sh
       - run: git submodule update --init --recursive
       
       - run: 'sudo apt install p7zip -y;'
