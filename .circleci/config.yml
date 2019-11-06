@@ -21,7 +21,7 @@ jobs:
       - run: 'cat /etc/os-release'
       
       # before install
-      - run: 'export MONO_ENV_OPTIONS=-O=-aot; bash .circleci/install-mono.sh'
+      - run: 'bash .circleci/install-mono.sh'
       - run: 'apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;'
 
       # it is the real build

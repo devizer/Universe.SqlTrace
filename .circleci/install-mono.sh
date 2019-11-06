@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 if [[ "$(command -v mono)" == "" ]]; then 
+  # export MONO_ENV_OPTIONS=-O=-aot
+  export MONO_USE_LLVM=0
+  
   # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6A19B38D3D831EF
   # sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
   source /etc/os-release
