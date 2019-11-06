@@ -6,11 +6,10 @@ jobs:
 #    docker:
 #      - image: mono:6.4
     steps:
-      - run: git config --global core.autocrlf false
+      - run: 'bash .circleci/install-7z.sh'
       - checkout
-      - run: 'curl -I https://google.com'
-      - run: 'sudo apt -q update >/dev/null ; sudo apt install -y -q git sudo jq tar bzip2 gzip curl lsb-release procps'
       - run: git submodule update --init --recursive
+      
       - run: 'sudo apt install p7zip -y;'
       - run: 'echo v9.20; 7zr b || 7z b'
       - run: 'bash .circleci/install-7z.sh'
@@ -19,31 +18,16 @@ jobs:
       - run: 'lscpu || true'
       - run: 'free -m'
       - run: 'cat /etc/os-release'
-      - run: |
-            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild; true
-      - run: |
-            echo 'Acquire::Check-Valid-Until "0";' | sudo tee /etc/apt/apt.conf.d/10no--check-valid-until
-            echo 'APT::Get::Assume-Yes "true";' | sudo tee /etc/apt/apt.conf.d/11assume-yes
-            echo 'APT::Get::AllowUnauthenticated "true";' | sudo tee /etc/apt/apt.conf.d/12allow-unauth
+      
+      # before install
+      - run: 'bash .circleci/install-mono.sh'
+      - run: 'apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;'
 
-            if [[ "$(command -v mono)" == "" ]]; then 
-              # sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A6A19B38D3D831EF
-              # sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-              source /etc/os-release
-              def="deb https://download.mono-project.com/repo/$ID stable-$(lsb_release -s -c) main"
-              if [[ "$ID" == "raspbian" ]]; then def="deb https://download.mono-project.com/repo/debian stable-raspbian$(lsb_release -cs) main"; fi
-              echo "$def" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-              ## sudo apt-get --allow-unauthenticated update && time sudo apt-get --allow-unauthenticated install mono-complete nuget msbuild -y -q
-              sudo apt-get update; time sudo apt-get install mono-complete nuget msbuild -y -q
-            fi
-            echo "ok?"
-
-      - run: |
-            apt-cache policy mono-complete; apt-cache policy nuget; apt-cache policy msbuild;
-
+      # it is the real build
       - run: nuget restore
       - run: 'pushd include/Universe.SqlServerJam/src; nuget restore; popd'
       - run: msbuild Universe.SqlTrace.sln
+
       # - run: 'url=https://raw.githubusercontent.com/devizer/glist/master/install-docker-on-debian.sh; (wget -q -nv --no-check-certificate -O - $url 2>/dev/null || curl -sSL $url) | bash'
       - run: 'sudo docker run -t hello-world || true'
       - run: 'docker run -t hello-world || true'
