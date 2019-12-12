@@ -45,9 +45,9 @@ environment:
 
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       SqlServers: 'SqlServer 2005 Express: EXPRESS_2005'
-#
-#    #   it is ease to install multiple SQL Servers
-#    # - JOB: "SQL SERVER 2012 & 2008 R2"
+
+    #   it is ease to install multiple SQL Servers
+    # - JOB: "SQL SERVER 2012 & 2008 R2"
     #   SqlServers: 'SqlServer 2012: EXPRESS_2012, SqlServer 2008R2: EXPRESS_2008_R2'
  
 # 3 SQL Servers below are not supported on the "Visual Studio 2015" image
