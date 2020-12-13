@@ -80,7 +80,7 @@ init:
 
     # pushd $Work; & cmd /c SQL-2019-RTM.cmd ; popd
     7z b 
-    Exit-AppveyorBuild
+    # Exit-AppveyorBuild
 
 
 
