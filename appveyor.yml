@@ -112,8 +112,8 @@ install:
 
 ### THE END OF TEMPLATE ###
 
-cache:
-  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
+# cache:
+#  - '%USERPROFILE%\AppData\Local\temp\build-tools-online.temp -> Prepare-NuGet-and-Build-Tools.ps1'
 
 before_build:
 - ps: | 
