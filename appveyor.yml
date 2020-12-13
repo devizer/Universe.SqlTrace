@@ -62,6 +62,9 @@ matrix:
     - JOB: "SQL SERVER 2005 SP4 x86 (Express)"
       image: "Visual Studio 2015"
       
+    - JOB: "SQL SERVER 2017 (Developer)"
+      image: "Visual Studio 2015"
+      
 skip_commits:
   files:
     - .circleci/*
