@@ -78,7 +78,7 @@ namespace Universe.SqlTrace
                 }
 
                 string sqlCmd = SQL_START1_TRACE + sqlSetFields + SQL_START2_TRACE;
-                Console.WriteLine($"TRACE ON {connectionString}");
+                // Console.WriteLine($"TRACE ON {connectionString}");
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
                     cmd.CommandType = CommandType.Text;
