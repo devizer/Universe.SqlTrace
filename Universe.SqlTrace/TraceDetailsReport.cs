@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Universe.SqlTrace
 {
     public class TraceDetailsReport : ReadOnlyCollection<SqlStatementCounters>
     {
-        public readonly TraceColumns _includedColumns = TraceColumns.None;
+        public readonly TraceColumns IncludedColumns = TraceColumns.None;
         public delegate bool Predicate(SqlStatementCounters filter);
 
         private SqlCounters _Summary;
-
 
 
         public TraceDetailsReport()
@@ -21,7 +19,7 @@ namespace Universe.SqlTrace
 
         public TraceDetailsReport(TraceColumns includedColumns, IList<SqlStatementCounters> list) : base(list)
         {
-            _includedColumns = includedColumns;
+            IncludedColumns = includedColumns;
         }
 
         public void Filter(Predicate filter)
@@ -57,7 +55,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<int> GroupByClientProcess()
         {
-            if ((_includedColumns & TraceColumns.ClientProcess) == 0)
+            if ((IncludedColumns & TraceColumns.ClientProcess) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.ClientProcess; });
@@ -65,7 +63,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<string> GroupByClientHost()
         {
-            if ((_includedColumns & TraceColumns.ClientHost) == 0)
+            if ((IncludedColumns & TraceColumns.ClientHost) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.ClientHost; });
@@ -73,7 +71,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<string> GroupByLogin()
         {
-            if ((_includedColumns & TraceColumns.Login) == 0)
+            if ((IncludedColumns & TraceColumns.Login) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.Login; });
@@ -81,7 +79,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<string> GroupByDatabase()
         {
-            if ((_includedColumns & TraceColumns.Database) == 0)
+            if ((IncludedColumns & TraceColumns.Database) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.Database; });
@@ -89,7 +87,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<string> GroupByApplication()
         {
-            if ((_includedColumns & TraceColumns.Application) == 0)
+            if ((IncludedColumns & TraceColumns.Application) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.Application; });
@@ -97,7 +95,7 @@ namespace Universe.SqlTrace
 
         public TraceGroupsReport<int> GroupByServerProcess()
         {
-            if ((_includedColumns & TraceColumns.ServerProcess) == 0)
+            if ((IncludedColumns & TraceColumns.ServerProcess) == 0)
                 throw new InvalidOperationException();
 
             return CreateDictionary(delegate(SqlStatementCounters counters) { return counters.ServerProcess; });

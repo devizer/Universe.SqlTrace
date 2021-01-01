@@ -157,10 +157,10 @@ TableName:         {env.TableName}");
         {
             var cmds = new[]
             {
-                "begin tran",
-                "CREATE TYPE dbo.IntIntSet_42 AS TABLE(Value0 Int NOT NULL,Value1 Int NOT NULL)",
-                "declare @myPK dbo.IntIntSet_42",
-                "rollback"
+                "Begin Tran",
+                "CREATE TYPE dbo.GodType_42_31415926 AS TABLE(Value0 Int NOT NULL, Value1 Int NOT NULL)",
+                "Declare @myPK dbo.GodType_42_31415926",
+                "Rollback"
             };
 
             using (SqlConnection con = new SqlConnection(connectionString))
