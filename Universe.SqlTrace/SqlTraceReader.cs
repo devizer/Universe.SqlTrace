@@ -327,12 +327,15 @@ namespace Universe.SqlTrace
             string file = _traceFile + ".trc";
             try
             {
-                // if (_traceFile != null /* && File.Exists(file) */) File.Delete(file);
+                if (_traceFile != null /*&& File.Exists(file)*/) File.Delete(file);
             }
             catch(Exception ex)
             {
-                DebugConsole.WriteException(ex, "SKIP trace file {0}", file);
-                PInvoke.DeleteFileOnReboot(file);
+                if (!(ex is DirectoryNotFoundException || ex is FileNotFoundException))
+                {
+                    DebugConsole.WriteException(ex, "SKIP trace file {0}", file);
+                    PInvoke.DeleteFileOnReboot(file);
+                }
             }
         }
 
