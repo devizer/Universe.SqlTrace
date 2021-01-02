@@ -364,7 +364,7 @@ TableName:         {env.TableName}");
             {
                 Console.WriteLine(
                     "{" + (statement.SpName == null ? statement.Sql : statement.SpName + ": " + statement.Sql) + "}: "
-                    + statement.Counters);
+                    + statement.Counters + ", Error: " + (statement.SqlErrorCode.HasValue ? statement.SqlErrorCode.ToString() : "<None>"));
             }
         }
 

@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Configuration;
 using System.Text;
 using Universe.Utils;
 
@@ -13,15 +14,22 @@ namespace Universe.SqlTrace
 {
     public class SqlTraceReader : IDisposable
     {
+        // Kilo Bytes
+        public int MaxFileSize { get; set; }
+
         private int _traceId;
         private string _traceFile;
         private string _connectionString;
         TraceColumns _columns = TraceColumns.None;
-        public bool IsReady;
         private bool _NeedStop = false;
 
         private static string _PrevCreatedDirectory = null;
-        
+
+        public SqlTraceReader()
+        {
+            MaxFileSize = 128 * 1024;
+        }
+
         public void Start(string connectionString, string tracePath, TraceColumns columns, params TraceRowFilter[] rowFilters)
         {
 
@@ -83,6 +91,8 @@ namespace Universe.SqlTrace
                 {
                     cmd.CommandType = CommandType.Text;
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile;
+                    var maxFileSize = Math.Max(8, MaxFileSize);
+                    cmd.Parameters.Add("@MaxFileSize", SqlDbType.BigInt).Value = maxFileSize;
                     cmd.Parameters.AddRange(parameters.ToArray());
                     _traceId = (int)cmd.ExecuteScalar();
                     // PInvoke.DeleteFileOnReboot(_traceFile + ".trc");
@@ -123,7 +133,7 @@ namespace Universe.SqlTrace
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
                 var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
-                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error";
+                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, SPID";
                 // TODO: Always read SPID
                 sqlColumns = sqlErrorColumn + ", " + sqlColumns;
                 string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
@@ -133,20 +143,27 @@ namespace Universe.SqlTrace
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
-                        int? sqlErrorNumber = null;
+                        ErrorsBySpid errors = new ErrorsBySpid();
                         while (rdr.Read())
                         {
+                            int? spid = rdr.IsDBNull(1) ? (int?) null : rdr.GetInt32(1);
+                            // if (spid == null) throw new InvalidOperationException("SPID column #1 cannot be null");
+
                             SqlStatementCounters item = new SqlStatementCounters();
                             
                             // Error of Exception event follows sql statement or sp row
                             int? tempSqlErrorNumber = rdr.IsDBNull(0) ? (int?) null : rdr.GetInt32(0);
                             if (tempSqlErrorNumber.GetValueOrDefault() != 0)
                             {
-                                sqlErrorNumber = tempSqlErrorNumber;
+                                if (spid != null)
+                                {
+                                    errors.SetErrorBySpid(spid.Value, tempSqlErrorNumber.Value);
+                                }
+                                    
                                 continue;
                             }
 
-                            int colNum = 1;
+                            int colNum = 2;
                             if ((_columns & TraceColumns.Application) != 0)
                             {
                                 item.Application = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
@@ -193,13 +210,15 @@ namespace Universe.SqlTrace
                             }
 
                             item.Counters = ReadCounters(rdr, colNum);
+                            
                             if (item.Counters != null)
                             {
-                                if (sqlErrorNumber.GetValueOrDefault() != 0)
+                                int? error = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
+                                if (error.GetValueOrDefault() != 0)
                                 {
-                                    item.SqlErrorCode = sqlErrorNumber;
-                                    sqlErrorNumber = null;
+                                    item.SqlErrorCode = error;
                                 }
+                                if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0);
 
                                 ret.Add(item);
                             }
@@ -341,13 +360,12 @@ namespace Universe.SqlTrace
 
         private static readonly string
             SQL_START1_TRACE =
-                @"
+                @"DECLARE @TRACE int
 SET NOCOUNT ON
 DECLARE @ERROR int
-DECLARE @TRACE int
 DECLARE @ON bit
-DECLARE @maxfilesize bigint
-set @maxfilesize = 16384
+-- DECLARE @MaxFileSize bigint
+-- SET @MaxFileSize = 16384
 SET @ON = 1
 EXEC @ERROR = sp_trace_create @TRACE OUTPUT, 0, @file, @maxfilesize
 -- IF @ERROR <> 0 Begin RAISEERROR ('Failed to create trace', 16, 0) End
@@ -356,15 +374,18 @@ EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%-- This magic comment as we
 EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 7, N'%sp_reset_connection%'
 -- Statement below also works
 -- EXEC @ERROR = sp_trace_setfilter @TRACE, 1, 0, 1, N'exec sp_reset_connection '
+EXEC @ERROR = sp_trace_setevent @TRACE, 12, 12, @ON -- SPID
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 17, @ON -- Writes
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 18, @ON -- CPU
+EXEC @ERROR = sp_trace_setevent @TRACE, 10, 12, @ON -- SPID
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 17, @ON -- Writes
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 18, @ON -- CPU
 -- Error Code (follows command)
+EXEC @ERROR = sp_trace_setevent @TRACE, 33, 12, @ON -- SPID
 EXEC @ERROR = sp_trace_setevent @TRACE, 33, 31, @ON -- Error Code (int) of exception event
 -- SP Completed Only 
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 27, @ON -- EventClass
@@ -401,5 +422,58 @@ EXEC sp_trace_setstatus @trace, 2",
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 10, {0}, @ON; -- {1}
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 ";
+
+        class ErrorBySpid
+        {
+            public int Spid, Error;
+        }
+
+        class ErrorsBySpid
+        {
+            private List<ErrorBySpid> Buffer = new List<ErrorBySpid>();
+
+            public int? GetErrorBySpid(int spid)
+            {
+                foreach (var errorBySpid in Buffer)
+                {
+                    if (errorBySpid.Spid == spid) return errorBySpid.Error;
+                }
+
+                return null;
+            }
+
+            public void SetErrorBySpid(int spid, int error)
+            {
+                int index = -1, p = 0;
+                foreach (var errorBySpid in Buffer)
+                {
+                    if (errorBySpid.Spid == spid)
+                    {
+                        index = p;
+                        break;
+                    }
+                }
+
+                if (error == 0)
+                {
+                    if (index >= 0)
+                        Buffer.RemoveAt(index);
+
+                    return;
+                }
+
+                if (index >= 0)
+                {
+                    Buffer[index].Error = error;
+                }
+                else
+                {
+                    Buffer.Add(new ErrorBySpid() { Spid = spid, Error = error});
+
+                }
+
+
+            }
+        }
     }
 }
