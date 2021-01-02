@@ -3,7 +3,7 @@
   <metadata>
     <id>Universe.SqlTrace</id>
     <version>$version$</version>
-    <iconUrl>https://raw.githubusercontent.com/devizer/Universe.SqlTrace/Icon/v1.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/devizer/Universe.SqlTrace/master/Icon/v1.png</iconUrl>
     <title>MS SQL Profiler .NET</title>
     <authors>Volodymyr Hoida</authors>
     <owners>Volodymyr Hoida</owners>

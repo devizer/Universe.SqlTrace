@@ -133,7 +133,7 @@ namespace Universe.SqlTrace
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
                 var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
-                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, SPID";
+                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, SPID SPID_For_Error";
                 // TODO: Always read SPID
                 sqlColumns = sqlErrorColumn + ", " + sqlColumns;
                 string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
