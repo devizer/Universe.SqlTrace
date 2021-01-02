@@ -143,6 +143,10 @@ TableName:         {env.TableName}");
                     int idProcess = Process.GetCurrentProcess().Id;
                     foreach (SqlStatementCounters report in detailsReport)
                     {
+                        if (report.SqlErrorCode.HasValue)
+                            Assert.Fail("All the statement are successful, but '{0}' produces error {1}", report.Sql,
+                            report.SqlErrorCode);
+
                         if (report.Sql == sql && report.ClientProcess == idProcess)
                             return;
                     }
@@ -151,6 +155,72 @@ TableName:         {env.TableName}");
                 }
             }
         }
+
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Error_Is_Captured(string masterConnectionString)
+        {
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
+            {
+                if (con.Manage().IsAzure)
+                {
+                    Console.WriteLine("Tracing for Azure is not yet implemented");
+                    return;
+                }
+            }
+
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
+            {
+                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
+            }
+
+
+            TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
+            using (env)
+            {
+                string sql = "Select 42 / 0;";
+                sql = sql + sql + sql;
+                using (SqlTraceReader reader = new SqlTraceReader())
+                {
+                    Console.WriteLine($@"
+Master Connection: {env.MasterConnectionString}
+TraceDir:          {env.TraceDirectory}
+TableName:         {env.TableName}");
+
+                    reader.Start(env.MasterConnectionString, env.TraceDirectory,
+                        TraceColumns.Sql | TraceColumns.ClientProcess, TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
+
+                    try
+                    {
+                        using (SqlConnection con = new SqlConnection(masterConnectionString))
+                        {
+                            con.Open();
+                            using (SqlCommand cmd = new SqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Divide by zero IS REQUIRED: " + ex);
+                    }
+
+                    reader.Stop();
+                    var detailsReport = reader.ReadDetailsReport();
+                    DumpCounters(detailsReport);
+                    Assert.AreEqual(1, detailsReport.Count, "Exactly one statement is expected");
+                    Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
+
+                    foreach (SqlStatementCounters report in detailsReport)
+                    {
+                        if (report.SqlErrorCode != 8134)
+                            Assert.Fail("SQL ERROR 8134 expected");
+                    }
+
+                }
+            }
+        }
+
 
         [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
         public void RaiseDeadLock1205(string connectionString)
@@ -288,6 +358,8 @@ TableName:         {env.TableName}");
 
         private void DumpCounters(TraceDetailsReport rpt)
         {
+            Console.WriteLine("STATEMENTS");
+            Console.WriteLine("~~~~~~~~~~");
             foreach (SqlStatementCounters statement in rpt)
             {
                 Console.WriteLine(

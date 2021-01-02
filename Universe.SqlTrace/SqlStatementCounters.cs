@@ -10,6 +10,7 @@ namespace Universe.SqlTrace
         public int ClientProcess;
         public string Login;
         public int ServerProcess;
+        public int? SqlErrorCode;
 
         public SqlCounters Counters;
 

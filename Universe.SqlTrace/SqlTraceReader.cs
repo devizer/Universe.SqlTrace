@@ -122,69 +122,87 @@ namespace Universe.SqlTrace
                 List<SqlStatementCounters> ret = new List<SqlStatementCounters>();
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
-                string sqlCmd =
-                    string.Format(
-                        SQL_SELECT_DETAILS,
-                        sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS
-                        );
+                var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
+                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error";
+                // TODO: Always read SPID
+                sqlColumns = sqlErrorColumn + ", " + sqlColumns;
+                string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
 
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
+                        int? sqlErrorNumber = null;
                         while (rdr.Read())
                         {
                             SqlStatementCounters item = new SqlStatementCounters();
-                            int num = 0;
+                            
+                            // Error of Exception event follows sql statement or sp row
+                            int? tempSqlErrorNumber = rdr.IsDBNull(0) ? (int?) null : rdr.GetInt32(0);
+                            if (tempSqlErrorNumber.GetValueOrDefault() != 0)
+                            {
+                                sqlErrorNumber = tempSqlErrorNumber;
+                                continue;
+                            }
+
+                            int colNum = 1;
                             if ((_columns & TraceColumns.Application) != 0)
                             {
-                                item.Application = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.Application = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.ClientHost) != 0)
                             {
-                                item.ClientHost = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.ClientHost = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.ClientProcess) != 0)
                             {
-                                item.ClientProcess = rdr.IsDBNull(num) ? 0 : rdr.GetInt32(num);
-                                num++;
+                                item.ClientProcess = rdr.IsDBNull(colNum) ? 0 : rdr.GetInt32(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.Database) != 0)
                             {
-                                item.Database = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.Database = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.Login) != 0)
                             {
-                                item.Login = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.Login = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.ServerProcess) != 0)
                             {
-                                item.ServerProcess = rdr.IsDBNull(num) ? 0 : rdr.GetInt32(num);
-                                num++;
+                                item.ServerProcess = rdr.IsDBNull(colNum) ? 0 : rdr.GetInt32(colNum);
+                                colNum++;
                             }
 
                             if ((_columns & TraceColumns.Sql) != 0)
                             {
-                                item.SpName = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.SpName = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
 
-                                item.Sql = rdr.IsDBNull(num) ? null : rdr.GetString(num);
-                                num++;
+                                item.Sql = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
                             }
 
-                            item.Counters = ReadCounters(rdr, num);
+                            item.Counters = ReadCounters(rdr, colNum);
                             if (item.Counters != null)
+                            {
+                                if (sqlErrorNumber.GetValueOrDefault() != 0)
+                                {
+                                    item.SqlErrorCode = sqlErrorNumber;
+                                    sqlErrorNumber = null;
+                                }
+
                                 ret.Add(item);
+                            }
 
                         }
                     }
@@ -309,8 +327,7 @@ namespace Universe.SqlTrace
             string file = _traceFile + ".trc";
             try
             {
-                if (_traceFile != null /* && File.Exists(file) */)
-                    File.Delete(file);
+                // if (_traceFile != null /* && File.Exists(file) */) File.Delete(file);
             }
             catch(Exception ex)
             {
@@ -344,6 +361,8 @@ EXEC @ERROR = sp_trace_setevent @TRACE, 10, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 17, @ON -- Writes
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 18, @ON -- CPU
+-- Error Code (follows command)
+EXEC @ERROR = sp_trace_setevent @TRACE, 33, 31, @ON -- Error Code (int) of exception event
 -- SP Completed Only 
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 27, @ON -- EventClass
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 34, @ON -- ObjectName
@@ -367,11 +386,11 @@ EXEC sp_trace_setstatus @trace, 2",
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_SUMMARY =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1);
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1) Where EventClass <> 33;
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_GROUPS =
-                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) GROUP BY {0}
+                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33 GROUP BY {0};
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
                 
 
