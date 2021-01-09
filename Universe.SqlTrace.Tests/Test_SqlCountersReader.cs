@@ -189,6 +189,7 @@ TableName:         {env.TableName}");
                     reader.Start(env.MasterConnectionString, env.TraceDirectory,
                         TraceColumns.Sql | TraceColumns.ClientProcess, TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
 
+                    Exception caught = null;
                     try
                     {
                         using (SqlConnection con = new SqlConnection(masterConnectionString))
@@ -202,7 +203,8 @@ TableName:         {env.TableName}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Divide by zero IS REQUIRED: " + ex);
+                        // Console.WriteLine("Divide by zero IS REQUIRED: " + ex);
+                        caught = ex;
                     }
 
                     reader.Stop();
@@ -214,7 +216,7 @@ TableName:         {env.TableName}");
                     foreach (SqlStatementCounters report in detailsReport)
                     {
                         if (report.SqlErrorCode != 8134)
-                            Assert.Fail("SQL ERROR 8134 expected");
+                            Assert.Fail("SQL ERROR 8134 expected. Caught Exception is " + caught);
                     }
 
                 }
