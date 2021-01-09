@@ -11,6 +11,7 @@ namespace Universe.SqlTrace
         public string Login;
         public int ServerProcess;
         public int? SqlErrorCode;
+        public string SqlErrorText;
 
         public SqlCounters Counters;
 

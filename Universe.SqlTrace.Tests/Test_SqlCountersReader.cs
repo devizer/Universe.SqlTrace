@@ -428,7 +428,8 @@ TableName:         {env.TableName}");
             {
                 Console.WriteLine(
                     "{" + (statement.SpName == null ? statement.Sql : statement.SpName + ": " + statement.Sql) + "}: "
-                    + statement.Counters + ", Error: " + (statement.SqlErrorCode.HasValue ? statement.SqlErrorCode.ToString() : "<None>"));
+                    + statement.Counters + ", Error: " + (statement.SqlErrorCode.HasValue ? statement.SqlErrorCode.ToString() : "<None>")
+                    + ", ErrorText: " + (statement.SqlErrorText == null ? "<null>" : $"'{statement.SqlErrorText}'"));
             }
         }
 

@@ -129,7 +129,7 @@ namespace Universe.SqlTrace
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
                 var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
-                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, SPID SPID_For_Error";
+                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, Cast(CASE WHEN EventClass = 33 Then TextData Else Null END As ntext) ErrorText, SPID SPID_For_Error";
                 // TODO: Always read SPID
                 sqlColumns = sqlErrorColumn + ", " + sqlColumns;
                 string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
@@ -142,24 +142,25 @@ namespace Universe.SqlTrace
                         ErrorsBySpid errors = new ErrorsBySpid();
                         while (rdr.Read())
                         {
-                            int? spid = rdr.IsDBNull(1) ? (int?) null : rdr.GetInt32(1);
+                            int? spid = rdr.IsDBNull(2) ? (int?) null : rdr.GetInt32(2);
                             // if (spid == null) throw new InvalidOperationException("SPID column #1 cannot be null");
 
                             SqlStatementCounters item = new SqlStatementCounters();
                             
                             // Error of Exception event follows sql statement or sp row
                             int? tempSqlErrorNumber = rdr.IsDBNull(0) ? (int?) null : rdr.GetInt32(0);
+                            string tempErrorText = rdr.IsDBNull(1) ? (string) null : rdr.GetString(1);
                             if (tempSqlErrorNumber.GetValueOrDefault() != 0)
                             {
                                 if (spid != null)
                                 {
-                                    errors.SetErrorBySpid(spid.Value, tempSqlErrorNumber.Value);
+                                    errors.SetErrorBySpid(spid.Value, tempSqlErrorNumber.Value, tempErrorText);
                                 }
                                     
                                 continue;
                             }
 
-                            int colNum = 2;
+                            int colNum = 3;
                             if ((_columns & TraceColumns.Application) != 0)
                             {
                                 item.Application = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
@@ -209,12 +210,14 @@ namespace Universe.SqlTrace
                             
                             if (item.Counters != null)
                             {
-                                int? error = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
+                                var errorBySpid = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
+                                int? error = errorBySpid == null ? (int?) null : errorBySpid.Error; 
                                 if (error.GetValueOrDefault() != 0)
                                 {
                                     item.SqlErrorCode = error;
+                                    item.SqlErrorText = errorBySpid?.ErrorText;
                                 }
-                                if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0);
+                                if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0, null);
 
                                 ret.Add(item);
                             }
@@ -436,24 +439,29 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 
         class ErrorBySpid
         {
-            public int Spid, Error;
+            // Key
+            public int Spid;
+            
+            // Value
+            public int Error;
+            public string ErrorText;
         }
 
         class ErrorsBySpid
         {
             private List<ErrorBySpid> Buffer = new List<ErrorBySpid>();
 
-            public int? GetErrorBySpid(int spid)
+            public ErrorBySpid GetErrorBySpid(int spid)
             {
                 foreach (var errorBySpid in Buffer)
                 {
-                    if (errorBySpid.Spid == spid) return errorBySpid.Error;
+                    if (errorBySpid.Spid == spid) return errorBySpid;
                 }
 
                 return null;
             }
 
-            public void SetErrorBySpid(int spid, int error)
+            public void SetErrorBySpid(int spid, int error, string errorText)
             {
                 int index = -1, p = 0;
                 foreach (var errorBySpid in Buffer)
@@ -476,10 +484,11 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
                 if (index >= 0)
                 {
                     Buffer[index].Error = error;
+                    Buffer[index].ErrorText = errorText;
                 }
                 else
                 {
-                    Buffer.Add(new ErrorBySpid() { Spid = spid, Error = error});
+                    Buffer.Add(new ErrorBySpid() { Spid = spid, Error = error, ErrorText = errorText});
                 }
             }
         }
