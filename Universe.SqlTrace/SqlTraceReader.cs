@@ -306,15 +306,17 @@ namespace Universe.SqlTrace
             bool isNull1 = rdr.IsDBNull(startIndex + 1);
             bool isNull2 = rdr.IsDBNull(startIndex + 2);
             bool isNull3 = rdr.IsDBNull(startIndex + 3);
-            bool isNull4 = rdr.IsDBNull(startIndex + 4);
-            if (isNull0 && isNull1 && isNull2 && isNull3 && isNull4)
+            bool isNull4 = rdr.IsDBNull(startIndex + 4); // RowCounts
+            bool isNull5 = rdr.IsDBNull(startIndex + 5);
+            if (isNull0 && isNull1 && isNull2 && isNull3 && isNull5)
                 return null;
 
             ret.Duration = isNull0 ? 0 : rdr.GetInt64(startIndex + 0) / 1000;
             ret.CPU = isNull1 ? 0 : rdr.GetInt32(startIndex + 1);
             ret.Reads = isNull2 ? 0 : rdr.GetInt64(startIndex + 2);
             ret.Writes = isNull3 ? 0 : rdr.GetInt64(startIndex + 3);
-            ret.Requests = isNull4 ? 0 : rdr.GetInt32(startIndex + 4);
+            ret.RowCounts = isNull4 ? 0 : rdr.GetInt64(startIndex + 4);
+            ret.Requests = isNull5 ? 0 : rdr.GetInt32(startIndex + 5);
             return ret;
         }
 
@@ -326,6 +328,7 @@ namespace Universe.SqlTrace
             bool isNull1 = rdr.IsDBNull(startIndex + 1);
             bool isNull2 = rdr.IsDBNull(startIndex + 2);
             bool isNull3 = rdr.IsDBNull(startIndex + 3);
+            bool isNull4 = rdr.IsDBNull(startIndex + 4);
             if (isNull0 && isNull1 && isNull2 && isNull3)
                 return null;
 
@@ -333,6 +336,7 @@ namespace Universe.SqlTrace
             ret.CPU = isNull1 ? 0 : rdr.GetInt32(startIndex + 1);
             ret.Reads = isNull2 ? 0 : rdr.GetInt64(startIndex + 2);
             ret.Writes = isNull3 ? 0 : rdr.GetInt64(startIndex + 3);
+            ret.RowCounts = isNull4 ? 0 : rdr.GetInt64(startIndex + 4);
             return ret;
         }
 
@@ -376,14 +380,19 @@ EXEC @ERROR = sp_trace_setevent @TRACE, 12, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 17, @ON -- Writes
 EXEC @ERROR = sp_trace_setevent @TRACE, 12, 18, @ON -- CPU
+EXEC @ERROR = sp_trace_setevent @TRACE, 12, 48, @ON -- RowCounts
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 12, @ON -- SPID
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 13, @ON -- Duration
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 16, @ON -- Reads
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 17, @ON -- Writes
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 18, @ON -- CPU
+EXEC @ERROR = sp_trace_setevent @TRACE, 10, 48, @ON -- RowCounts
+
 -- Error Code (follows command)
 EXEC @ERROR = sp_trace_setevent @TRACE, 33, 12, @ON -- SPID
 EXEC @ERROR = sp_trace_setevent @TRACE, 33, 31, @ON -- Error Code (int) of exception event
+EXEC @ERROR = sp_trace_setevent @TRACE, 33, 1, @ON  -- TextData (error text) 
+
 -- SP Completed Only 
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 27, @ON -- EventClass
 EXEC @ERROR = sp_trace_setevent @TRACE, 10, 34, @ON -- ObjectName
@@ -400,18 +409,18 @@ EXEC sp_trace_setstatus @trace, 0
 EXEC sp_trace_setstatus @trace, 2",
 
             SQL_SELECT_COUNTERS =
-                "[Duration], [CPU], [Reads], [Writes]",
+                "[Duration], [CPU], [Reads], [Writes], [RowCounts]",
 
             SQL_SELECT_DETAILS =
                 @"SELECT {0} FROM ::fn_trace_gettable (@file, -1);
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_SUMMARY =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33;
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Sum(RowCounts), Count(Duration) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33;
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_GROUPS =
-                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33 GROUP BY {0};
+                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]), Sum(RowCounts) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33 GROUP BY {0};
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
                 
 
@@ -419,6 +428,11 @@ EXEC sp_trace_setstatus @trace, 2",
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 10, {0}, @ON; -- {1}
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 ";
+
+        public string TraceFile
+        {
+            get { return _traceFile; }
+        }
 
         class ErrorBySpid
         {

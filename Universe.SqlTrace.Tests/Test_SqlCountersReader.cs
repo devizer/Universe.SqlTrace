@@ -94,6 +94,68 @@ namespace Universe.SqlTrace.Tests
         }
 
         [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void RowCounts_Of_Insert(string masterConnectionString)
+        {
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
+            {
+                if (con.Manage().IsAzure)
+                {
+                    Console.WriteLine("Tracing for Azure is not yet implemented");
+                    return;
+                }
+            }
+
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
+            {
+                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
+            }
+
+
+            var table = $"#T_{Guid.NewGuid().ToString("N")}";
+            string[] sqlCommands = new[]
+            {
+                $"Create Table {table}(id int);",
+                $"Insert {table} Values(42); Insert {table} Values(43); Insert {table} Values(44); Insert {table} Values(45);",
+            };
+
+            TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
+            using (env)
+            {
+                using (SqlTraceReader reader = new SqlTraceReader())
+                {
+                    Console.WriteLine($@"
+Master Connection: {env.MasterConnectionString}
+TraceDir:          {env.TraceDirectory}
+TableName:         {env.TableName}");
+
+                    reader.Start(env.MasterConnectionString, env.TraceDirectory,
+                        TraceColumns.Sql | TraceColumns.ClientProcess, 
+                        TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
+
+                    using (SqlConnection con = new SqlConnection(masterConnectionString))
+                    {
+                        con.Open();
+                        foreach (var sql in sqlCommands)
+                        {
+                            using (SqlCommand cmd = new SqlCommand(sql, con))
+                            {
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    Console.WriteLine($"Trace File: {reader.TraceFile}");
+                    reader.Stop();
+                    var detailsReport = reader.ReadDetailsReport();
+                    DumpCounters(detailsReport);
+                    Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
+                    var rowCountsOfLastStatements = detailsReport.Last().Counters.RowCounts;
+                    Assert.AreEqual(4, rowCountsOfLastStatements, "Insert 4x should result RowCounts==4");
+                }
+            }
+        }
+
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
         public void Single_SqlBatch_Is_Captured(string masterConnectionString)
         {
             using (SqlConnection con = new SqlConnection(masterConnectionString))
@@ -114,7 +176,7 @@ namespace Universe.SqlTrace.Tests
             TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
             using (env)
             {
-                string sql = "SELECT @@version, 'Hello, World!'; Exec sp_server_info;";
+                string sql = "Set NOCOUNT ON; SELECT @@version, 'Hello, World!'; Exec sp_server_info;";
                 sql = sql + sql + sql;
                 using (SqlTraceReader reader = new SqlTraceReader())
                 {
@@ -273,7 +335,7 @@ TableName:         {env.TableName}");
                 reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All);
                 
                 // summary
-                var summary = reader.ReadSummaryReport();
+                SqlCounters summary = reader.ReadSummaryReport();
                 Assert.Zero(summary.Requests);
                 Console.WriteLine("Summary of empty session is " + summary);
 
