@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading;
 
@@ -45,14 +44,15 @@ namespace Universe.SqlTrace.Tests
 
                     try
                     {
-                        ThreadCountersReader start = ThreadCountersReader.CreateCurrent();
+                        var start = CpuUsage.CpuUsage.GetByThread();
+                        // ThreadCountersReader start = ThreadCountersReader.CreateCurrent();
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
 
                         scenario();
 
-                        ThreadCountersReader delta = ThreadCountersReader.CreateCurrent() - start;
-                        Interlocked.Add(ref sumCpu, (long) delta.TotalTime.TotalMilliseconds);
+                        CpuUsage.CpuUsage? delta = CpuUsage.CpuUsage.GetByThread() - start;
+                        Interlocked.Add(ref sumCpu, (long) delta.GetValueOrDefault().TotalMicroSeconds / 1000);
                     }
                     finally
                     {

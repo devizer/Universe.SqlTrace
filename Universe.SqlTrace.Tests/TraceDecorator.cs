@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
-using Universe.SqlTrace.LocalInstances;
+using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
 {
@@ -22,7 +22,8 @@ namespace Universe.SqlTrace.Tests
 
                 if (UseTrace)
                 {
-                    int? spid = SqlServerUtils.GetCurrentSpid(connection);
+                    // int? spid = SqlServerUtils.GetCurrentSpid(connection);
+                    int? spid = connection.Manage().CurrentSPID;
                     rdr.Start(
                         TestEnvironment.MasterConnectionString, 
                         TestEnvironment.TracePath, 

@@ -128,7 +128,5 @@ namespace Universe.SqlTrace
             return ret;
             
         }
-
-
     }
 }

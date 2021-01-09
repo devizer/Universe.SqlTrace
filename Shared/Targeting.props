@@ -1,0 +1,19 @@
+﻿<Project>
+
+    <PropertyGroup>
+        <SignAssembly>True</SignAssembly>
+        <DelaySign>False</DelaySign>
+        <AssemblyOriginatorKeyFile>..\Shared\Universe.SqlTrace.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <CopyMeTargetFrameworks>net47;net46;net45;net40;net35;net20;netcoreapp2.0;netstandard2.0</CopyMeTargetFrameworks>
+        <CopyMeTestTargetFrameworks>net47;net46;net45;net40;net35;net20;netcoreapp2.0</CopyMeTestTargetFrameworks>
+        <CopyMeMinimalTargetFrameworks>net46;netcoreapp2.0</CopyMeMinimalTargetFrameworks>
+    </PropertyGroup>
+
+</Project>

@@ -1,16 +1,13 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Universe.SqlTrace")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MyTrace")]
-[assembly: AssemblyCopyright("Copyright © Volodymyr Hoida 2009")]
+[assembly: AssemblyTitle("MS SQL Profiler API for .NET Framework 2.0+ and .NET Core")]
+[assembly: AssemblyDescription("MS SQL Profiler API for .NET Framework 2.0+ and .NET Core")]
+[assembly: AssemblyProduct("Universe.SqlTrace")]
+[assembly: AssemblyCopyright("Copyright © Volodymyr Hoida 2009 - 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

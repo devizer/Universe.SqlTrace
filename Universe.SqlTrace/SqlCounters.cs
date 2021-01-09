@@ -2,7 +2,9 @@ using System;
 
 namespace Universe.SqlTrace
 {
+#if !NETSTANDARD1_3
     [Serializable]
+#endif
     public class SqlCounters
     {
         public long Duration { get; set; }

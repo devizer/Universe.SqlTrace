@@ -1,116 +1,70 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{656428BD-D958-4A92-B000-E44DCADA5477}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Universe.SqlTrace</RootNamespace>
-    <AssemblyName>Universe.SqlTrace</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\Shared\Targeting.props" />
+
+    <Target Name="DisplayInfo">
+        <Message Text="Project File Name = $(MSBuildProjectFile)" />
+        <Message Text="Project Extension = $(MSBuildProjectExtension)" />
+        <Message Text="OS                = $(OS)" />
+        <Message Text="TargetFramework   = $(TargetFramework)" />
+    </Target>
+
+    <PropertyGroup>
+        <CommonTargetFrameworks>net20;net40;netstandard2.0;netstandard1.3</CommonTargetFrameworks>
+        <TargetFrameworks>net20;net40;netstandard2.0;netstandard1.3</TargetFrameworks>
+        <DebugType>Full</DebugType>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <AssemblyName>Universe.SqlTrace</AssemblyName>
+        <RootNamespace>Universe.SqlTrace</RootNamespace>
+        <LangVersion>latest</LangVersion>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+            
+        <NoWarn>1701;1702;CS0162;CS0414;CS1591;NU5048</NoWarn>
+
+        <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+        <OutputType>Library</OutputType>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net35'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v3.5</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net30'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v3.0</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net20'">
+        <AssemblyAttribute Include="System.Runtime.Versioning.TargetFrameworkAttribute">
+            <_Parameter1>.NETFramework,Version=v2.0</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net35' Or '$(TargetFramework)' == 'net30' Or '$(TargetFramework)' == 'net20' ">
+        <PackageReference Include="Theraot.Core" Version="3.2.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard1.3' ">
+        <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All" />
+    </ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="LocalInstances\*.cs" />
+	</ItemGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DebugConsole.cs" />
-    <Compile Include="LocalInstances\LocalInstanceInfo.cs" />
-    <Compile Include="LocalInstances\MSSqlServerInfo.cs" />
-    <Compile Include="LocalInstances\SqlServerUtils.cs" />
-    <Compile Include="LocalInstances\LocalInstancesDiscovery.cs" />
-    <Compile Include="PInvoke.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\AssemblyVersion.cs" />
-    <Compile Include="SqlCounters.cs" />
-    <Compile Include="SqlTraceReader.cs" />
-    <Compile Include="SqlGroupCounters.cs" />
-    <Compile Include="SqlStatementCounters.cs" />
-    <Compile Include="ThreadCountersReader.cs" />
-    <Compile Include="TraceDetailsReport.cs" />
-    <Compile Include="TraceColumns.cs" />
-    <Compile Include="TraceFieldInfo.cs" />
-    <Compile Include="TraceGroupsReport.cs" />
-    <Compile Include="TraceRowFilter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LocalInstances\Strategy.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="LocalInstances\Drop Phantom DBs.sql" />
-    <None Include="LocalInstances\Turn default trace off.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

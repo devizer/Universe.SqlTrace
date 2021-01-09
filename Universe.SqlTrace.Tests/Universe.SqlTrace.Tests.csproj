@@ -75,6 +75,10 @@
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Universe.CpuUsage, Version=2.2.497.598, Culture=neutral, PublicKeyToken=17687aae3e4abb16">
+      <HintPath>..\packages\Universe.CpuUsage.2.2.497.598\lib\net45\Universe.CpuUsage.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbMan.cs" />

@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Universe.SqlTrace
 {
     class PInvoke
     {
+#if NETSTANDARD1_3
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+#else    
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+#endif
         static extern bool MoveFileEx(string lpExistingFileName, string lpNewFileName,
            MoveFileFlags dwFlags);
 

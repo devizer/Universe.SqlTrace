@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Universe.SqlTrace.LocalInstances;
+using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
 {
@@ -58,7 +58,7 @@ namespace Universe.SqlTrace.Tests
                                     using (var connection = connectionFactory())
                                     {
                                         connection.Open();
-                                        int? spid = SqlServerUtils.GetCurrentSpid(connection);
+                                        int? spid = connection.Manage().CurrentSPID;
                                         const string sql = "Select NULL";
                                         using (SqlCommand cmd = new SqlCommand(sql, connection))
                                         {
@@ -111,7 +111,7 @@ namespace Universe.SqlTrace.Tests
                                             using (var connection = connectionFactory())
                                             {
                                                 connection.Open();
-                                                int? spid = SqlServerUtils.GetCurrentSpid(connection);
+                                                int? spid = connection.Manage().CurrentSPID;
                                                 SqlTraceReader rdr = new SqlTraceReader();
                                                 rdr.Start(
                                                     traceConnection.ConnectionString,
@@ -188,7 +188,7 @@ namespace Universe.SqlTrace.Tests
                                         using (var connection = connectionFactory())
                                         {
                                             connection.Open();
-                                            int? spid = SqlServerUtils.GetCurrentSpid(connection);
+                                            int? spid = connection.Manage().CurrentSPID;
 
                                             const string sql = "Select NULL";
                                             using (SqlCommand cmd = new SqlCommand(sql, connection))

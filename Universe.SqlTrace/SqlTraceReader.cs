@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
-using System.Net.Configuration;
 using System.Text;
 using Universe.Utils;
 
@@ -260,6 +256,7 @@ namespace Universe.SqlTrace
                             SqlCounters counters = ReadCounters(rdr, 2);
                             if (counters != null)
                             {
+                                counters.Requests = count;
                                 TKey key = (TKey)rawKey;
                                 SqlGroupCounters<TKey> group =
                                     new SqlGroupCounters<TKey>() { Group = key, Count = count, Counters = counters };
@@ -352,7 +349,7 @@ namespace Universe.SqlTrace
             {
                 if (!(ex is DirectoryNotFoundException || ex is FileNotFoundException))
                 {
-                    DebugConsole.WriteException(ex, "SKIP trace file {0}", file);
+                    DebugConsole.WriteException(ex, "SqlTrace::OnDelete Skipping deletion of trace file {0}", file);
                     PInvoke.DeleteFileOnReboot(file);
                 }
             }
@@ -410,7 +407,7 @@ EXEC sp_trace_setstatus @trace, 2",
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_SUMMARY =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable(@file, -1) Where EventClass <> 33;
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Count(Duration) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33;
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_GROUPS =
@@ -469,10 +466,7 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
                 else
                 {
                     Buffer.Add(new ErrorBySpid() { Spid = spid, Error = error});
-
                 }
-
-
             }
         }
     }

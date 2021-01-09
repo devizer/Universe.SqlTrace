@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Universe.SqlServerJam;
-using Universe.SqlTrace.LocalInstances;
 
 namespace Universe.SqlTrace.Tests
 {
@@ -18,13 +18,17 @@ namespace Universe.SqlTrace.Tests
         [Test]
         public void Local_Instances_Get()
         {
-            var servers = LocalInstancesDiscovery.Get();
+            List<SqlServerRef> servers = SqlDiscovery.GetLocalDbAndServerList();
         }
 
         [Test]
         public void Local_Instances_GetFull()
         {
-            var servers = LocalInstancesDiscovery.GetFull(TimeSpan.FromSeconds(9));
+            List<SqlServerRef> servers = SqlDiscovery.GetLocalDbAndServerList();
+            Parallel.ForEach(servers, sqlRef =>
+            {
+                var transportList = sqlRef.ProbeTransports(9000);
+            });
         }
 
         [Test]
@@ -80,7 +84,5 @@ namespace Universe.SqlTrace.Tests
             }
         }
         
-
-
     }
 }
