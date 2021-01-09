@@ -17,7 +17,9 @@ It supports column chooser and row filtering. Tested on SQL Server 2005 ... 2019
     <tags>mssql trace fn_trace_gettable</tags>
   </metadata>
   <files>
-    <file src="..\Universe.SqlTrace\bin\Release\net**" 
-          target="lib" />
+    <file src="..\Universe.SqlTrace\bin\Release\net**\Universe.SqlTrace*" 
+          target="lib" 
+          exclude="**\*.xml;**\*.json"
+          />
   </files>
 </package>
