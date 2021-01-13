@@ -18,7 +18,8 @@
         <AssemblyName>Universe.SqlTrace</AssemblyName>
         <RootNamespace>Universe.SqlTrace</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
             
         <NoWarn>1701;1702;CS0162;CS0414;CS1591;NU5048</NoWarn>
 
@@ -27,7 +28,20 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
+    </PropertyGroup>
 
+    <PropertyGroup>
+        <PackageId>Universe.SqlTrace</PackageId>
+        <Title>Universe.SqlTrace</Title>
+        <Authors>Volodymyr Hoida</Authors>
+        <Product>Universe.SqlTrace</Product>
+        <Description>Tiny library that wraps MS SQL Profiler API into strongly types data access. It supports column chooser and row filtering. Tested on SQL Server 2005 ... 2019 including SQL Server on Linux. Targets .Net Framework 2.0+, Net Standard 1.3+</Description>
+        <PackageProjectUrl>https://github.com/devizer/Universe.SqlTrace</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/devizer/Universe.SqlTrace</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIconUrl>https://raw.githubusercontent.com/devizer/Universe.SqlTrace/master/Icon/v1.png</PackageIconUrl>
+        <PackageTags>mssql trace fn_trace_gettable</PackageTags>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net35'">

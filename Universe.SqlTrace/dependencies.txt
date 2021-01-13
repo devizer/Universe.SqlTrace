@@ -1,2 +1,2 @@
 ﻿SqlClient: Net Standard 1.2
-Diles And Directories: Net Standard 1.2
+Files And Directories: Net Standard 1.3
