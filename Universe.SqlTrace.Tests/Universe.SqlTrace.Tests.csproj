@@ -87,6 +87,7 @@
     <Compile Include="RamDriveInfo.cs" />
     <Compile Include="SqlUnitOfWork.cs" />
     <Compile Include="Stress.cs" />
+    <Compile Include="Test_ExtendedEvents.cs" />
     <Compile Include="Test_Local_Instances_Discovery.cs" />
     <Compile Include="TraceDecorator.cs" />
     <Compile Include="StressController.cs" />

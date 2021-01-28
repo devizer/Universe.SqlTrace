@@ -8,13 +8,19 @@ namespace Universe.SqlTrace.Tests
 {
     static class TestEnvironment
     {
+        private static volatile bool Initialized = false, IsDbCreated = false;
+        
         static TestEnvironment()
         {
             Initialize();
         }
+        
+        
 
         public static void Initialize()
         {
+            if (Initialized) return;
+            Initialized = true;
             if (MasterConnectionString != null) return;
             var servers = MyServers.GetSqlServers();
             foreach (var server in servers)
@@ -76,6 +82,9 @@ namespace Universe.SqlTrace.Tests
 
         public static void SetUp()
         {
+            if (IsDbCreated) return;
+            IsDbCreated = true;
+            
             Trace.WriteLine(
                 "Working SQL Server instance is [" + MasterConnectionString + "]");
 
