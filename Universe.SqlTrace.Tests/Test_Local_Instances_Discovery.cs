@@ -27,7 +27,23 @@ namespace Universe.SqlTrace.Tests
             List<SqlServerRef> servers = SqlDiscovery.GetLocalDbAndServerList();
             Parallel.ForEach(servers, sqlRef =>
             {
-                var transportList = sqlRef.ProbeTransports(9000);
+                string ver = null;
+                SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(sqlRef.ConnectionString);
+                try
+                {
+                    using (SqlConnection con = new SqlConnection(sqlRef.ConnectionString))
+                    {
+                        ver = con.Manage().ShortServerVersion.ToString();
+                    }
+                }
+                catch(Exception ex)
+                {
+                    ver = ex.GetType().Name;
+                }
+
+                Console.WriteLine($"{b.DataSource} --> {ver}");
+                List<SqlServerRef> transportList = sqlRef.ProbeTransports(9000);
+                
             });
         }
 
