@@ -19,6 +19,9 @@ environment:
     - JOB: "SQL SERVER LocalDB 2016 SP1 CU8"
       SqlServers: 'LocalDB 2016' # For VS 2015 image it is the LocalDB 2014
 
+    - JOB: "SQL SERVER 2022 (Developer)"
+      SqlServers: 'SqlServer 2022: DEVELOPER_2022'
+
     - JOB: "SQL SERVER 2019 (Developer)"
       SqlServers: 'SqlServer 2019: DEVELOPER_2019'
 
