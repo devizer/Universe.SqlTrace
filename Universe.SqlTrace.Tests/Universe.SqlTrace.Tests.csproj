@@ -79,6 +79,9 @@
       <HintPath>..\packages\Universe.CpuUsage.2.2.497.598\lib\net45\Universe.CpuUsage.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Universe.SqlServerJam, Version=1.0.98.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Universe.SqlServerJam.1.0.98\lib\net40\Universe.SqlServerJam.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbMan.cs" />
@@ -99,10 +102,6 @@
     <Compile Include="TraceTetsEnv.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj">
-      <Project>{9ef049b1-cc08-4d1b-8f89-b462652e4d9d}</Project>
-      <Name>Universe.SqlServerJam</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Universe.SqlTrace\Universe.SqlTrace.csproj">
       <Project>{656428BD-D958-4A92-B000-E44DCADA5477}</Project>
       <Name>Universe.SqlTrace</Name>

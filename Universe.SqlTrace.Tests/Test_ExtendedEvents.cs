@@ -8,6 +8,7 @@ using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
 {
+    // https://learn.microsoft.com/en-us/sql/relational-databases/extended-events/extended-events?view=sql-server-ver16&redirectedfrom=MSDN
     public class Test_ExtendedEvents
     {
         

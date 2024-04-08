@@ -1,15 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace", "Universe.SqlTrace\Universe.SqlTrace.csproj", "{656428BD-D958-4A92-B000-E44DCADA5477}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Universe.SqlTrace", "Universe.SqlTrace\Universe.SqlTrace.csproj", "{656428BD-D958-4A92-B000-E44DCADA5477}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlTrace.Tests", "Universe.SqlTrace.Tests\Universe.SqlTrace.Tests.csproj", "{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlServerJam", "include\Universe.SqlServerJam\src\Universe.SqlServerJam\Universe.SqlServerJam.csproj", "{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Universe.SqlServerJam.Tests", "include\Universe.SqlServerJam\src\Universe.SqlServerJam.Tests\Universe.SqlServerJam.Tests.csproj", "{9F9FFC18-928B-4197-9C6D-63580B3C4A0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +21,6 @@ Global
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDFEE388-DBC8-4DAA-A2A6-50CF1D54BE52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EF049B1-CC08-4D1B-8F89-B462652E4D9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F9FFC18-928B-4197-9C6D-63580B3C4A0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F9FFC18-928B-4197-9C6D-63580B3C4A0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F9FFC18-928B-4197-9C6D-63580B3C4A0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F9FFC18-928B-4197-9C6D-63580B3C4A0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
