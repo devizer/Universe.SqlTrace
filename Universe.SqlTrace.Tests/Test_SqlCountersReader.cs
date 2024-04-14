@@ -31,12 +31,6 @@ namespace Universe.SqlTrace.Tests
             Table1Holder = new SqlConnection(TestEnvironment.DbConnectionString);
             Table1Holder.Open();
             Table1Holder.Execute($"Create table {Table1Name}(id int)");
-            /*
-            using (SqlCommand cmd = new SqlCommand($"Create table {Table1Name}(id int)", Table1Holder))
-            {
-                cmd.ExecuteNonQuery();
-            }
-            */
             Console.WriteLine($"Table Created: {Table1Name}");
         }
 
@@ -54,42 +48,12 @@ namespace Universe.SqlTrace.Tests
                     con.Open();
 
                     con.Execute(SqlBatch);
-                    /*
-                    using (SqlCommand cmd = new SqlCommand(SqlBatch, con))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    */
 
                     for (int i = 1; i < 10; i++)
-                    {
                         con.Execute($"Insert {Table1Name}(id) Values(@i)", new { i = i });
-                        /*
-                        using (SqlCommand cmd = new SqlCommand($"Insert {Table1Name}(id) Values(@i)", con))
-                        {
-                            cmd.Parameters.Add("@i", i);
-                            cmd.ExecuteNonQuery();
-                        }
-                    */
-                    }
 
                     con.Execute($"Select * From {Table1Name}");
-                    /*
-                    using (SqlCommand cmd = new SqlCommand($"Select * From {Table1Name}", con))
-                    {
-                        cmd.ExecuteNonQuery();
-                    }
-                    */
-
                     con.Execute("sp_server_info", commandType: CommandType.StoredProcedure);
-                    /*
-                    using (SqlCommand cmd = new SqlCommand("sp_server_info", con))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.ExecuteNonQuery();
-                    }
-                    */
-
                 }
 
                 reader.Stop();
