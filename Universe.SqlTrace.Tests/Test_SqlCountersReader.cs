@@ -145,8 +145,9 @@ TableName:         {env.TableName}");
 
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
-                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}{Environment.NewLine}" +
-                                  $"{con.Manage().MediumServerVersion}");
+                var man = con.Manage();
+                Console.WriteLine($"Version of [{masterConnectionString}]: {man.ShortServerVersion}{Environment.NewLine}" +
+                                  $"{man.MediumServerVersion}");
             }
 
 
@@ -304,12 +305,12 @@ TableName:         {env.TableName}");
             Assert.Fail("Deadlock is expected");
         }
 
-        [Test]
-        public void Test_Empty_Session()
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Test_Empty_Session(string connectionString)
         {
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All);
+                reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
                 
                 // summary
                 SqlCounters summary = reader.ReadSummaryReport();
@@ -327,21 +328,21 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test]
-        public void Single_StoredProcedure_Is_Captured()
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Single_StoredProcedure_Is_Captured(string connectionString)
         {
             string sql = @"SELECT @@version, @parameter;";
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All);
+                reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
 
-                using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
+                using (SqlConnection con = new SqlConnection(connectionString))
                 {
                     con.Open();
                     using (SqlCommand cmd = new SqlCommand(sql, con))
                     {
-                        cmd.Parameters.Add("@parameter", SqlDbType.Int).Value = 0;
+                        cmd.Parameters.Add("@parameter", SqlDbType.Int).Value = 42;
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -363,18 +364,18 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test]
-        public void Test_Sp_Reset_Connection()
+        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
+        public void Test_Sp_Reset_Connection(string connectionString)
         {
-            string app = "Test " + Guid.NewGuid();
-            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(TestEnvironment.DbConnectionString);
+            string app = "Test " + Guid.NewGuid().ToString("N");
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(connectionString);
             b.ApplicationName = app;
             // important
             b.Pooling = true;
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
+                reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
 
                 int nQueries = 42;
                 for (int i = 0; i < nQueries; i++)
@@ -382,10 +383,13 @@ TableName:         {env.TableName}");
                     using (SqlConnection con = new SqlConnection(b.ConnectionString))
                     {
                         con.Open();
-                        using (SqlCommand cmd = new SqlCommand("Select @@version", con))
+                        int rowsCount = con.Query<dynamic>("Select @@version as Ver, 42 as Answer").Count();
+                        /*
+                        using (SqlCommand cmd = new SqlCommand("Select @@version as Ver, 42 as Answer", con))
                         {
                             cmd.ExecuteNonQuery();
                         }
+                    */
                     }
                 }
                 // Details
