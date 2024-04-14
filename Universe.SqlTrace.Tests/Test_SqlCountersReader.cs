@@ -145,7 +145,8 @@ TableName:         {env.TableName}");
 
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
-                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
+                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}{Environment.NewLine}" +
+                                  $"{con.Manage().MediumServerVersion}");
             }
 
 
