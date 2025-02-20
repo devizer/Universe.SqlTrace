@@ -117,6 +117,8 @@ namespace Universe.SqlTrace
             }
         }
 
+        // TODO:
+        // System.Data.SqlClient.SqlException : Cannot convert to text/ntext or collate to 'Latin1_General_100_CI_AS_SC_UTF8' because these legacy LOB types do not support UTF-8 or UTF-16 encodings. Use types varchar(max), nvarchar(max) or a collation which does not have the _SC or _UTF8 flags.
         public TraceDetailsReport ReadDetailsReport()
         {
             using (SqlConnection con = new SqlConnection(_connectionString))
