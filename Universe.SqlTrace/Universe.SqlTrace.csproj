@@ -35,7 +35,7 @@
         <Title>Universe.SqlTrace</Title>
         <Authors>Volodymyr Hoida</Authors>
         <Product>Universe.SqlTrace</Product>
-        <Description>Tiny library that wraps MS SQL Profiler API into strongly types data access. It supports column chooser and row filtering. Tested on SQL Server 2005 ... 2019 including SQL Server on Linux. Targets .Net Framework 2.0+, Net Standard 1.3+</Description>
+        <Description>Tiny library that wraps MS SQL Profiler API into strongly types data access. It supports column chooser and row filtering. Tested on SQL Server 2005 ... 2022 including SQL Server on Linux and LocalDB. Targets .Net Framework 2.0+, Net Standard 1.3+</Description>
         <PackageProjectUrl>https://github.com/devizer/Universe.SqlTrace</PackageProjectUrl>
         <RepositoryUrl>https://github.com/devizer/Universe.SqlTrace</RepositoryUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
