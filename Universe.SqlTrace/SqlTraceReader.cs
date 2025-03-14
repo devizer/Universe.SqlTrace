@@ -8,10 +8,14 @@ using Universe.Utils;
 
 namespace Universe.SqlTrace
 {
+    // Event id="122": Showplan XML (Actual)
+    // Event id="168": Showplan XML For Query Compile"
+    // TextData is xml plan
     public class SqlTraceReader : IDisposable
     {
         // Kilo Bytes
         public int MaxFileSize { get; set; }
+
 
         private int _traceId;
         private string _traceFile;
