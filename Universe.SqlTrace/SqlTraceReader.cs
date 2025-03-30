@@ -16,6 +16,9 @@ namespace Universe.SqlTrace
         // Kilo Bytes
         public int MaxFileSize { get; set; }
 
+        public bool NeedActualExecutionPlan { get; set; } // 122, after Start() can not be changed
+        public bool NeedCompiledExecutionPlan { get; set; } // 168, after Start() can not be changed
+
 
         private int _traceId;
         private string _traceFile;
@@ -55,6 +58,15 @@ namespace Universe.SqlTrace
                 {
                     TraceFieldInfo info = TraceFieldInfo.Get(field);
                     sqlSetFields.AppendFormat(SQL_SET_TRACE_COLUMN, info.SqlId, field);
+                }
+
+                if (NeedActualExecutionPlan)
+                {
+                    sqlSetFields.AppendFormat(SQL_SET_TRACE_XML_PLAN, 122, "Actual Execution Plan");
+                }
+                if (NeedCompiledExecutionPlan)
+                {
+                    sqlSetFields.AppendFormat(SQL_SET_TRACE_XML_PLAN, 168, "Compiled Execution Plan");
                 }
 
                 List<SqlParameter> parameters = new List<SqlParameter>();
@@ -436,7 +448,13 @@ EXEC sp_trace_setstatus @trace, 2",
             SQL_SET_TRACE_COLUMN = @"
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 10, {0}, @ON; -- {1}
 EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
+",
+
+            SQL_SET_TRACE_XML_PLAN = @"
+EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 1 /* TextData */, @ON; -- {1}
+EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* TextData */, @ON; -- SPID for {1}
 ";
+
 
         public string TraceFile
         {
@@ -477,6 +495,8 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
                         index = p;
                         break;
                     }
+
+                    p++; //wha?
                 }
 
                 if (error == 0)

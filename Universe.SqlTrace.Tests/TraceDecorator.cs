@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Runtime.Remoting.Messaging;
 using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
@@ -24,6 +25,8 @@ namespace Universe.SqlTrace.Tests
                 {
                     // int? spid = SqlServerUtils.GetCurrentSpid(connection);
                     int? spid = connection.Manage().CurrentSPID;
+                    rdr.NeedActualExecutionPlan = true;
+                    rdr.NeedCompiledExecutionPlan = true;
                     rdr.Start(
                         TestEnvironment.MasterConnectionString, 
                         TestEnvironment.TracePath, 

@@ -5,7 +5,7 @@ namespace Universe.SqlTrace
     [Flags]
     public enum TraceColumns
     {
-        Sql = 1,
+        Sql = 1, /* Group By SQL is nonsense */
         Application = 2,
         Database = 4,
         ClientHost = 8,

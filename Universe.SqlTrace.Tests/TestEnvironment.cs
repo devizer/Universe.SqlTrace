@@ -22,12 +22,12 @@ namespace Universe.SqlTrace.Tests
             if (Initialized) return;
             Initialized = true;
             if (MasterConnectionString != null) return;
-            var servers = MyServers.GetSqlServers();
+            var servers = SqlServerTestCase.GetSqlServers();
             foreach (var server in servers)
             {
                 try
                 {
-                    using (SqlConnection con = new SqlConnection(server))
+                    using (SqlConnection con = new SqlConnection(server.ConnectionString))
                     {
                         var man = con.Manage();
                         var isSysAdmin = (man.FixedServerRoles & FixedServerRoles.SysAdmin) != 0;
@@ -35,7 +35,7 @@ namespace Universe.SqlTrace.Tests
                         // if (!man.IsLocalDB && isSysAdmin)
                         if (isLinux || true)
                         {
-                            MasterConnectionString = server;
+                            MasterConnectionString = server.ConnectionString;
                             Console.WriteLine("Discovered SQL Server: {0}, Ver is {1}", MasterConnectionString, man.ShortServerVersion);
                             return;
                         }

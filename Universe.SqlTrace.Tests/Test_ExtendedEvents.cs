@@ -22,9 +22,11 @@ namespace Universe.SqlTrace.Tests
             TestEnvironment.SetUp();
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Show_Extended_Events_Types(string masterConnectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Show_Extended_Events_Types(SqlServerTestCase testCase)
         {
+            string masterConnectionString = testCase.ConnectionString;
+
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
                 if (con.Manage().IsAzure)

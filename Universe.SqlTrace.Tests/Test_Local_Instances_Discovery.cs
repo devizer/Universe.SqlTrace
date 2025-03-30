@@ -79,12 +79,13 @@ namespace Universe.SqlTrace.Tests
             Console.WriteLine("TearDown");
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Test_Discovery(string master)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Test_Discovery(SqlServerTestCase testCase)
         {
-            using (SqlConnection con = new SqlConnection(master))
+            string masterConnectionString = testCase.ConnectionString;
+            using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
-                var server = new SqlConnectionStringBuilder(master).DataSource;
+                var server = new SqlConnectionStringBuilder(masterConnectionString).DataSource;
                 Console.WriteLine($"Ver: {con.Manage().ShortServerVersion} {con.Manage().ProductLevel} {con.Manage().ProductUpdateLevel} ({server})");
                 // Console.WriteLine($"{master}");
             }
@@ -93,7 +94,7 @@ namespace Universe.SqlTrace.Tests
         [Test]
         public void Test_Explicit_Discovery()
         {
-            var servers = MyServers.GetSqlServers();
+            var servers = SqlServerTestCase.GetSqlServers();
             foreach (var server in servers)
             {
                 Console.WriteLine($" * {server}");

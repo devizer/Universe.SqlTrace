@@ -86,7 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DbMan.cs" />
-    <Compile Include="MyServers.cs" />
+    <Compile Include="SqlServerTestCase.cs" />
     <Compile Include="MyWaitHandle.cs" />
     <Compile Include="RamDriveInfo.cs" />
     <Compile Include="SqlUnitOfWork.cs" />

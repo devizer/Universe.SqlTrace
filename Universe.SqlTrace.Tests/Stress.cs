@@ -25,6 +25,8 @@ namespace Universe.SqlTrace.Tests
             using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
             using (SqlTraceReader rdr = new SqlTraceReader())
             {
+                rdr.NeedActualExecutionPlan = true;
+                rdr.NeedCompiledExecutionPlan = true;
                 rdr.Start(TestEnvironment.DbConnectionString, TestEnvironment.TracePath, TraceColumns.All);
                 SqlUnitOfWork.UnitOfWork(con, 1);
             }
@@ -113,6 +115,8 @@ namespace Universe.SqlTrace.Tests
                                                 connection.Open();
                                                 int? spid = connection.Manage().CurrentSPID;
                                                 SqlTraceReader rdr = new SqlTraceReader();
+                                                rdr.NeedActualExecutionPlan = true;
+                                                rdr.NeedCompiledExecutionPlan = true;
                                                 rdr.Start(
                                                     traceConnection.ConnectionString,
                                                     Path.Combine(scenario.TraceDrive, "temp\\traces"),
@@ -175,7 +179,8 @@ namespace Universe.SqlTrace.Tests
                                     v1.Pooling = true;
                                     v1.ApplicationName = name;
 
-
+                                    rdr.NeedActualExecutionPlan = true;
+                                    rdr.NeedCompiledExecutionPlan = true;
                                     rdr.Start(
                                         v1.ConnectionString,
                                         TestEnvironment.TracePath,

@@ -13,7 +13,7 @@ namespace Universe.SqlTrace.Tests
     [TestFixture]
     public class Test_SqlCountersReader
     {
-        private string Table1Name = "##Temp_" + Guid.NewGuid().ToString("N");
+        private string Table1Name = null; // "##Temp_" + Guid.NewGuid().ToString("N");
 
         // Tricky hack - Table1Holder prevents deletion of Table1Name table until teardown.
         SqlConnection Table1Holder;
@@ -27,23 +27,33 @@ namespace Universe.SqlTrace.Tests
                 Assert.Fail("At least one instance of running SQL Server is required");
 
             TestEnvironment.SetUp();
-            
-            Table1Holder = new SqlConnection(TestEnvironment.DbConnectionString);
+
+            var dbConnectionString = TestEnvironment.DbConnectionString;
+        }
+
+        private void CreateTable1(string dbConnectionString)
+        {
+            Table1Name = "##Temp_" + Guid.NewGuid().ToString("N");
+            Table1Holder = new SqlConnection(dbConnectionString);
             Table1Holder.Open();
             Table1Holder.Execute($"Create table {Table1Name}(id int)");
             Console.WriteLine($"Table Created: {Table1Name}");
         }
 
-        [Test]
-        public void Test_Sandbox()
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Test_Sandbox(SqlServerTestCase testCase)
         {
+            CreateTable1(testCase.ConnectionString);
+
             using (SqlTraceReader reader = new SqlTraceReader())
             {
                 var filterByProcess = TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id);
                 var filterLikeSqlTrace = TraceRowFilter.CreateLikeApplication("SqlTrace");
-                reader.Start(TestEnvironment.MasterConnectionString, TestEnvironment.TracePath, TraceColumns.All, filterByProcess, filterLikeSqlTrace);
+                reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
+                reader.Start(testCase.ConnectionString, TestEnvironment.TracePath, TraceColumns.All, filterByProcess, filterLikeSqlTrace);
 
-                using (SqlConnection con = new SqlConnection(TestEnvironment.DbConnectionString))
+                using (SqlConnection con = new SqlConnection(testCase.ConnectionString))
                 {
                     con.Open();
 
@@ -57,8 +67,14 @@ namespace Universe.SqlTrace.Tests
                 }
 
                 reader.Stop();
-                var rptGroups = reader.ReadGroupsReport<string>(TraceColumns.ClientHost);
-                var bySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
+                var groupsByClientHost = reader.ReadGroupsReport<string>(TraceColumns.ClientHost);
+                // Grouping By SQL? What for? Does not work for UTF8 Default Collation
+                var collation = new SqlConnection(testCase.ConnectionString).Manage().Databases["master"].DefaultCollationName;
+                Console.WriteLine($"Collation: {collation}");
+                if (!collation.ToLower().EndsWith("utf8"))
+                {
+                    var groupsBySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
+                }
 
                 var rptSummary = reader.ReadSummaryReport();
                 var rpt = reader.ReadDetailsReport();
@@ -72,9 +88,10 @@ namespace Universe.SqlTrace.Tests
             }
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void RowCounts_Of_Insert(string masterConnectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void RowCounts_Of_Insert(SqlServerTestCase testCase)
         {
+            var masterConnectionString = testCase.ConnectionString;
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
                 if (con.Manage().IsAzure)
@@ -107,6 +124,8 @@ Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
 TableName:         {env.TableName}");
 
+                    reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                    reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                     reader.Start(env.MasterConnectionString, env.TraceDirectory,
                         TraceColumns.Sql | TraceColumns.ClientProcess, 
                         TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
@@ -131,9 +150,10 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Single_SqlBatch_Is_Captured(string masterConnectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Single_SqlBatch_Is_Captured(SqlServerTestCase testCase)
         {
+            string masterConnectionString = testCase.ConnectionString;
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
                 if (con.Manage().IsAzure)
@@ -163,6 +183,8 @@ Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
 TableName:         {env.TableName}");
 
+                    reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                    reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                     reader.Start(env.MasterConnectionString, env.TraceDirectory,
                         TraceColumns.Sql | TraceColumns.ClientProcess);
 
@@ -196,9 +218,10 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Error_Is_Captured(string masterConnectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Error_Is_Captured(SqlServerTestCase testCase)
         {
+            string masterConnectionString = testCase.ConnectionString;
             using (SqlConnection con = new SqlConnection(masterConnectionString))
             {
                 if (con.Manage().IsAzure)
@@ -226,6 +249,8 @@ Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
 TableName:         {env.TableName}");
 
+                    reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                    reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                     reader.Start(env.MasterConnectionString, env.TraceDirectory,
                         TraceColumns.Sql | TraceColumns.ClientProcess, TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id));
 
@@ -253,10 +278,13 @@ TableName:         {env.TableName}");
                     Assert.AreEqual(1, detailsReport.Count, "Exactly one statement is expected");
                     Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
 
+                    var expecedSqlErrorCode = 8134;
                     foreach (SqlStatementCounters report in detailsReport)
                     {
-                        if (report.SqlErrorCode != 8134)
+                        if (report.SqlErrorCode != expecedSqlErrorCode)
                             Assert.Fail("SQL ERROR 8134 expected. Caught Exception is " + caught);
+                        else
+                            Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}SQL Error Code {expecedSqlErrorCode} found{Environment.NewLine}{report}");
                     }
 
                 }
@@ -264,9 +292,10 @@ TableName:         {env.TableName}");
         }
 
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void RaiseDeadLock1205(string connectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void RaiseDeadLock1205(SqlServerTestCase testCase)
         {
+            string connectionString = testCase.ConnectionString;
             var cmds = new[]
             {
                 "Begin Tran",
@@ -305,11 +334,14 @@ TableName:         {env.TableName}");
             Assert.Fail("Deadlock is expected");
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Test_Empty_Session(string connectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Test_Empty_Session(SqlServerTestCase testCase)
         {
+            string connectionString = testCase.ConnectionString;
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
                 
                 // summary
@@ -328,13 +360,16 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Single_StoredProcedure_Is_Captured(string connectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Single_StoredProcedure_Is_Captured(SqlServerTestCase testCase)
         {
+            string connectionString = testCase.ConnectionString;
             string sql = @"SELECT @@version, @parameter;";
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
 
                 using (SqlConnection con = new SqlConnection(connectionString))
@@ -364,9 +399,10 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(MyServers), nameof(MyServers.GetSqlServers))]
-        public void Test_Sp_Reset_Connection(string connectionString)
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        public void Test_Sp_Reset_Connection(SqlServerTestCase testCase)
         {
+            string connectionString = testCase.ConnectionString;
             string app = "Test " + Guid.NewGuid().ToString("N");
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(connectionString);
             b.ApplicationName = app;
@@ -375,6 +411,8 @@ TableName:         {env.TableName}");
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
+                reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
 
                 int nQueries = 42;

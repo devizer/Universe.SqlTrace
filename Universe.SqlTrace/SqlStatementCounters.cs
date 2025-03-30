@@ -13,11 +13,16 @@ namespace Universe.SqlTrace
         public int? SqlErrorCode;
         public string SqlErrorText;
 
+        // TODO for TraceDetailsReport.ReadDetailsReport()
+        // public string CompiledXmlPlan;
+        // public string ActualXmlPlan;
+
         public SqlCounters Counters;
 
         public override string ToString()
         {
-            return string.Format("Sql: {0}, Application: {1}, Database: {2}, ClientHost: {3}, ClientProcess: {4}, Login: {5}, ServerProcess: {6}, {7}", Sql, Application, Database, ClientHost, ClientProcess, Login, ServerProcess, Counters);
+            return string.Format("Sql: {0}, Application: {1}, Database: {2}, ClientHost: {3}, ClientProcess: {4}, Login: {5}, ServerProcess: {6}, {7}", Sql, Application, Database, ClientHost, ClientProcess, Login, ServerProcess, Counters)
+                + (SqlErrorCode.HasValue ? $", Error {SqlErrorCode} '{SqlErrorText}'" : "");
         }
     }
 }
