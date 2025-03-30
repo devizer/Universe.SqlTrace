@@ -38,7 +38,7 @@ namespace Universe.SqlTrace.Tests
             ThreadPool.SetMinThreads(workers, prevPorts);
 
             var aliveConnectionStrings = all
-                .Select(x => x.ConnectionString)
+                .Select(x => PatchConnectionString(x.ConnectionString))
                 .AsParallel().WithDegreeOfParallelism(Math.Max(all.Count, 2))
                 .Where(IsAlive)
                 .ToList();
@@ -52,6 +52,15 @@ namespace Universe.SqlTrace.Tests
             }
 
             return ret;
+        }
+
+        static string PatchConnectionString(string cs)
+        {
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(cs);
+            b.ApplicationName = "SqlTrace unit-tests";
+            b.Encrypt = false;
+            b.Pooling = true;
+            return b.ConnectionString;
         }
 
         static bool IsAlive(string cs)

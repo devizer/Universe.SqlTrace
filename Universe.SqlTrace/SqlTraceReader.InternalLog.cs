@@ -24,6 +24,20 @@ namespace Universe.SqlTrace
             _InternalLog.Add(message);
         }
 
+        string DumpSqlCommandParameters(SqlCommand cmd)
+        {
+            StringBuilder ret = new StringBuilder();
+            foreach (SqlParameter cmdParameter in cmd.Parameters)
+            {
+                object v = cmdParameter.Value;
+                if (v is string) v = $"'{v}'";
+                var t = cmdParameter.SqlDbType.ToString();
+                if (t?.ToLower() == "nvarchar") t = $"{t}(4000)";
+                ret.AppendLine($"DECLARE {cmdParameter.ParameterName} {t}; SET {cmdParameter.ParameterName} = {v}");
+            }
+
+            return ret.ToString();
+        }
         private void AddInternalTableRow(SqlDataReader rdr)
         {
             if (!EnableInternalLog) return;
@@ -31,14 +45,17 @@ namespace Universe.SqlTrace
             bool isEmpty = _InternalTable.Count == 0;
             if (isEmpty)
             {
-                var header = new List<object>(rdr.FieldCount);
+                var header = new List<object>(rdr.FieldCount + 1);
+                header.Add("#");
                 for (int c = 0; c < rdr.FieldCount; c++) header.Add(rdr.GetName(c));
                 _InternalTable.Add(header);
             }
 
-            object[] row = new object[rdr.FieldCount];
-            rdr.GetValues(row);
-            _InternalTable.Add(row.ToList());
+            object[] sqlValues = new object[rdr.FieldCount];
+            rdr.GetValues(sqlValues);
+            var row = sqlValues.ToList();
+            row.Insert(0, _InternalTable.Count - 1);
+            _InternalTable.Add(row);
         }
     }
 }

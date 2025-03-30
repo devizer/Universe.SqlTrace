@@ -115,10 +115,6 @@ namespace Universe.SqlTrace
 
                 string sqlCmd = SQL_START1_TRACE + sqlSetFields + SQL_START2_TRACE;
 
-                if (EnableInternalLog)
-                {
-                    Log($"Start Trace for TraceColumns=[{columns}]{Environment.NewLine}Declare @file nvarchar(4000); SET @file ='{_traceFile}';{Environment.NewLine}{sqlCmd}{Environment.NewLine}");
-                }
 
                 // Console.WriteLine($"TRACE ON {connectionString}");
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
@@ -128,6 +124,10 @@ namespace Universe.SqlTrace
                     var maxFileSize = Math.Max(8, MaxFileSize);
                     cmd.Parameters.Add("@MaxFileSize", SqlDbType.BigInt).Value = maxFileSize;
                     cmd.Parameters.AddRange(parameters.ToArray());
+                    if (EnableInternalLog)
+                    {
+                        Log($"Start Trace for TraceColumns=[{columns}]{Environment.NewLine}{DumpSqlCommandParameters(cmd)}{Environment.NewLine}{sqlCmd}{Environment.NewLine}");
+                    }
                     _traceId = (int)cmd.ExecuteScalar();
                     // PInvoke.DeleteFileOnReboot(_traceFile + ".trc");
 
@@ -508,8 +508,8 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 ",
 
             SQL_SET_TRACE_XML_PLAN = @"
-EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 1 /* TextData */, @ON; -- {1}
-EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* SPID */, @ON; -- SPID for {1}
+EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 1  /* TextData */, @ON; -- {1}
+EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* SPID     */, @ON; -- SPID for {1}
 ";
 
 
