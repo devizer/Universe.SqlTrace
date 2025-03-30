@@ -170,7 +170,7 @@ namespace Universe.SqlTrace
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
                 // Always Three Error Columns 
-                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, Cast(CASE WHEN EventClass = 33 Then Cast(TextData as nvarchar(max)) Else Null END As nvarchar(max)) ErrorText, SPID SPID_For_Error";
+                var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, Cast(CASE WHEN EventClass = 33 Then Cast(TextData as nvarchar(max)) Else Null END As nvarchar(max)) ErrorText, SPID SPID";
                 // Optional Compiled Execution Plan
                 string sqlCompiledPlanColumns = null;
                 if (NeedCompiledExecutionPlan) // 168
@@ -199,8 +199,8 @@ namespace Universe.SqlTrace
                         while (rdr.Read())
                         {
                             if (EnableInternalLog) AddInternalTableRow(rdr);
-                            // ALWAYS: 0: SqlErrorCode, 1: SqlErrorText, 2: SPID for Error
-                            int? spidError = rdr.IsDBNull(2) ? (int?) null : rdr.GetInt32(2);
+                            // ALWAYS: 0: SqlErrorCode, 1: SqlErrorText, 2: SPID
+                            int? spid = rdr.IsDBNull(2) ? (int?) null : rdr.GetInt32(2);
                             // if (spid == null) throw new InvalidOperationException("SPID column #1 cannot be null");
 
                             SqlStatementCounters item = new SqlStatementCounters();
@@ -210,9 +210,9 @@ namespace Universe.SqlTrace
                             string tempErrorText = rdr.IsDBNull(1) ? (string) null : rdr.GetString(1);
                             if (tempSqlErrorNumber.GetValueOrDefault() != 0)
                             {
-                                if (spidError != null)
+                                if (spid != null)
                                 {
-                                    errors.SetErrorBySpid(spidError.Value, tempSqlErrorNumber.Value, tempErrorText);
+                                    errors.SetErrorBySpid(spid.Value, tempSqlErrorNumber.Value, tempErrorText);
                                 }
                                     
                                 continue;
@@ -285,14 +285,14 @@ namespace Universe.SqlTrace
                             
                             if (item.Counters != null)
                             {
-                                var errorBySpid = spidError.HasValue ? errors.GetErrorBySpid(spidError.Value) : null;
+                                var errorBySpid = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
                                 int? error = errorBySpid == null ? (int?) null : errorBySpid.Error; 
                                 if (error.GetValueOrDefault() != 0)
                                 {
                                     item.SqlErrorCode = error;
                                     item.SqlErrorText = errorBySpid?.ErrorText;
                                 }
-                                if (spidError.HasValue) errors.SetErrorBySpid(spidError.Value, 0, null);
+                                if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0, null);
 
                                 ret.Add(item);
                             }
