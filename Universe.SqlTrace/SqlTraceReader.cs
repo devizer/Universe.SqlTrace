@@ -12,7 +12,7 @@ namespace Universe.SqlTrace
     // Event id="122": Showplan XML (Actual)
     // Event id="168": Showplan XML For Query Compile"
     // TextData is xml plan
-    public class SqlTraceReader : IDisposable
+    public partial class SqlTraceReader : IDisposable
     {
         // Kilo Bytes
         public int MaxFileSize { get; set; }
@@ -114,6 +114,12 @@ namespace Universe.SqlTrace
                 }
 
                 string sqlCmd = SQL_START1_TRACE + sqlSetFields + SQL_START2_TRACE;
+
+                if (EnableInternalLog)
+                {
+                    Log($"Start Trace for TraceColumns=[{columns}]{Environment.NewLine}Declare @file nvarchar(4000); SET @file ='{_traceFile}';{Environment.NewLine}{sqlCmd}{Environment.NewLine}");
+                }
+
                 // Console.WriteLine($"TRACE ON {connectionString}");
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
@@ -124,6 +130,7 @@ namespace Universe.SqlTrace
                     cmd.Parameters.AddRange(parameters.ToArray());
                     _traceId = (int)cmd.ExecuteScalar();
                     // PInvoke.DeleteFileOnReboot(_traceFile + ".trc");
+
                 }
             }
 
@@ -162,21 +169,38 @@ namespace Universe.SqlTrace
                 List<SqlStatementCounters> ret = new List<SqlStatementCounters>();
 
                 string sqlSelect = TraceFieldInfo.GetSqlSelect(_columns);
-                var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
+                // Always Three Error Columns 
                 var sqlErrorColumn = "Cast(CASE WHEN EventClass = 33 Then Error Else Null END As INT) Error, Cast(CASE WHEN EventClass = 33 Then Cast(TextData as nvarchar(max)) Else Null END As nvarchar(max)) ErrorText, SPID SPID_For_Error";
+                // Optional Compiled Execution Plan
+                string sqlCompiledPlanColumns = null;
+                if (NeedCompiledExecutionPlan) // 168
+                {
+                    sqlCompiledPlanColumns = ", SPID SPID_For_Compiled_Execution_Plan, Cast(CASE WHEN EventClass = 168 Then Cast(TextData as nvarchar(max)) Else Null End as nvarchar(max)) Compiled_Xml_Plan";
+                }
+                // Optional Actual Execution Plan
+                string sqlActualPlanColumns = null;
+                if (NeedActualExecutionPlan) // 122
+                {
+                    sqlActualPlanColumns = ", SPID SPID_For_Actual_Execution_Plan, Cast(CASE WHEN EventClass = 122 Then Cast(TextData as nvarchar(max)) Else Null End as nvarchar(max)) Actual_Xml_Plan";
+                }
+                var sqlColumns = sqlSelect == "" ? SQL_SELECT_COUNTERS : sqlSelect + ", " + SQL_SELECT_COUNTERS;
                 // TODO: Always read SPID
-                sqlColumns = sqlErrorColumn + ", " + sqlColumns;
+                sqlColumns = sqlErrorColumn + sqlCompiledPlanColumns + sqlActualPlanColumns + ", " + sqlColumns;
                 string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
 
+                if (EnableInternalLog) Log($"ReadDetailsReport Query{Environment.NewLine}Declare @file nvarchar(4000); set @file='{_traceFile}.trc';{Environment.NewLine}{sqlCmd}");
                 using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
                 {
                     cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
                         ErrorsBySpid errors = new ErrorsBySpid();
+                        if (EnableInternalLog) _InternalTable = null;
                         while (rdr.Read())
                         {
-                            int? spid = rdr.IsDBNull(2) ? (int?) null : rdr.GetInt32(2);
+                            if (EnableInternalLog) AddInternalTableRow(rdr);
+                            // ALWAYS: 0: SqlErrorCode, 1: SqlErrorText, 2: SPID for Error
+                            int? spidError = rdr.IsDBNull(2) ? (int?) null : rdr.GetInt32(2);
                             // if (spid == null) throw new InvalidOperationException("SPID column #1 cannot be null");
 
                             SqlStatementCounters item = new SqlStatementCounters();
@@ -186,15 +210,32 @@ namespace Universe.SqlTrace
                             string tempErrorText = rdr.IsDBNull(1) ? (string) null : rdr.GetString(1);
                             if (tempSqlErrorNumber.GetValueOrDefault() != 0)
                             {
-                                if (spid != null)
+                                if (spidError != null)
                                 {
-                                    errors.SetErrorBySpid(spid.Value, tempSqlErrorNumber.Value, tempErrorText);
+                                    errors.SetErrorBySpid(spidError.Value, tempSqlErrorNumber.Value, tempErrorText);
                                 }
                                     
                                 continue;
                             }
 
                             int colNum = 3;
+                            
+                            if (NeedCompiledExecutionPlan)
+                            {
+                                int? spidCompiledExecutionPlan = rdr.IsDBNull(colNum) ? (int?)null : rdr.GetInt32(colNum);
+                                colNum++;
+                                string compiledExecutionPlan = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
+                            }
+
+                            if (NeedActualExecutionPlan)
+                            {
+                                int? spidActualExecutionPlan = rdr.IsDBNull(colNum) ? (int?)null : rdr.GetInt32(colNum);
+                                colNum++;
+                                string actualExecutionPlan = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
+                                colNum++;
+                            }
+
                             if ((_columns & TraceColumns.Application) != 0)
                             {
                                 item.Application = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
@@ -244,14 +285,14 @@ namespace Universe.SqlTrace
                             
                             if (item.Counters != null)
                             {
-                                var errorBySpid = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
+                                var errorBySpid = spidError.HasValue ? errors.GetErrorBySpid(spidError.Value) : null;
                                 int? error = errorBySpid == null ? (int?) null : errorBySpid.Error; 
                                 if (error.GetValueOrDefault() != 0)
                                 {
                                     item.SqlErrorCode = error;
                                     item.SqlErrorText = errorBySpid?.ErrorText;
                                 }
-                                if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0, null);
+                                if (spidError.HasValue) errors.SetErrorBySpid(spidError.Value, 0, null);
 
                                 ret.Add(item);
                             }
@@ -468,7 +509,7 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, 12, {0}, @ON; -- {1}
 
             SQL_SET_TRACE_XML_PLAN = @"
 EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 1 /* TextData */, @ON; -- {1}
-EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* TextData */, @ON; -- SPID for {1}
+EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* SPID */, @ON; -- SPID for {1}
 ";
 
 
@@ -477,62 +518,5 @@ EXEC @ERROR = sp_trace_SetEvent @TRACE, {0}, 12 /* TextData */, @ON; -- SPID for
             get { return _traceFile; }
         }
 
-        class ErrorBySpid
-        {
-            // Key
-            public int Spid;
-            
-            // Value
-            public int Error;
-            public string ErrorText;
-        }
-
-        class ErrorsBySpid
-        {
-            private List<ErrorBySpid> Buffer = new List<ErrorBySpid>();
-
-            public ErrorBySpid GetErrorBySpid(int spid)
-            {
-                foreach (var errorBySpid in Buffer)
-                {
-                    if (errorBySpid.Spid == spid) return errorBySpid;
-                }
-
-                return null;
-            }
-
-            public void SetErrorBySpid(int spid, int error, string errorText)
-            {
-                int index = -1, p = 0;
-                foreach (var errorBySpid in Buffer)
-                {
-                    if (errorBySpid.Spid == spid)
-                    {
-                        index = p;
-                        break;
-                    }
-
-                    p++; //wha?
-                }
-
-                if (error == 0)
-                {
-                    if (index >= 0)
-                        Buffer.RemoveAt(index);
-
-                    return;
-                }
-
-                if (index >= 0)
-                {
-                    Buffer[index].Error = error;
-                    Buffer[index].ErrorText = errorText;
-                }
-                else
-                {
-                    Buffer.Add(new ErrorBySpid() { Spid = spid, Error = error, ErrorText = errorText});
-                }
-            }
-        }
     }
 }

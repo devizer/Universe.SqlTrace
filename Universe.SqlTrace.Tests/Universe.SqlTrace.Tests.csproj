@@ -79,6 +79,9 @@
       <HintPath>..\packages\Universe.CpuUsage.2.2.497.598\lib\net45\Universe.CpuUsage.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Universe.GenericTreeTable, Version=1.2.15.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Universe.GenericTreeTable.1.2.15\lib\net461\Universe.GenericTreeTable.dll</HintPath>
+    </Reference>
     <Reference Include="Universe.SqlServerJam, Version=1.0.98.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Universe.SqlServerJam.1.0.98\lib\net40\Universe.SqlServerJam.dll</HintPath>
       <Private>True</Private>

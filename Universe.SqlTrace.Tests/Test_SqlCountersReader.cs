@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Dapper;
 using NUnit.Framework;
+using Universe.GenericTreeTable;
 using Universe.SqlServerJam;
 
 namespace Universe.SqlTrace.Tests
@@ -50,6 +51,7 @@ namespace Universe.SqlTrace.Tests
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.EnableInternalLog = true;
                 var filterByProcess = TraceRowFilter.CreateByClientProcess(Process.GetCurrentProcess().Id);
                 var filterLikeSqlTrace = TraceRowFilter.CreateLikeApplication("SqlTrace");
                 reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
@@ -88,6 +90,31 @@ namespace Universe.SqlTrace.Tests
                 Console.WriteLine("My Process: " + Process.GetCurrentProcess().Id);
                 Console.WriteLine("Summary: " + rptSummary);
                 Console.WriteLine("Details Summary " + rpt.Summary);
+
+                DumpInternalLog(reader);
+
+            }
+        }
+
+        private void DumpInternalLog(SqlTraceReader reader)
+        {
+            var internalLog = reader.InternalLog;
+            if (internalLog == null) return;
+            Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}Internal SqlTraceReader Log{Environment.NewLine}{reader.InternalLog}");
+
+            var internalTable = reader.InternalTable;
+            if (internalTable != null)
+            {
+                var header = internalTable.FirstOrDefault();
+                if (header != null)
+                {
+                    ConsoleTable consoleTable = new ConsoleTable(header.Select(x => x.ToString()).ToArray());
+                    foreach (var rawRow in internalTable.Skip(1))
+                    {
+                        consoleTable.AddRow(rawRow.ToArray());
+                    }
+                    Console.WriteLine(Environment.NewLine + consoleTable.ToString());
+                }
             }
         }
 
@@ -111,6 +138,7 @@ namespace Universe.SqlTrace.Tests
             {
                 using (SqlTraceReader reader = new SqlTraceReader())
                 {
+                    reader.EnableInternalLog = true;
                     Console.WriteLine($@"
 Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
@@ -135,6 +163,7 @@ TableName:         {env.TableName}");
                     reader.Stop();
                     var detailsReport = reader.ReadDetailsReport();
                     DumpCounters(detailsReport);
+                    DumpInternalLog(reader);
                     Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
                     var rowCountsOfLastStatements = detailsReport.Last().Counters.RowCounts;
                     Assert.AreEqual(4, rowCountsOfLastStatements, "Insert 4x should result RowCounts==4");
@@ -157,6 +186,7 @@ TableName:         {env.TableName}");
                 sql = sql + sql + sql;
                 using (SqlTraceReader reader = new SqlTraceReader())
                 {
+                    reader.EnableInternalLog = true;
                     Console.WriteLine($@"
 Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
@@ -179,6 +209,7 @@ TableName:         {env.TableName}");
                     reader.Stop();
                     var detailsReport = reader.ReadDetailsReport();
                     DumpCounters(detailsReport);
+                    DumpInternalLog(reader);
                     Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
 
                     int idProcess = Process.GetCurrentProcess().Id;
@@ -211,6 +242,7 @@ TableName:         {env.TableName}");
                 sql = sql + sql + sql;
                 using (SqlTraceReader reader = new SqlTraceReader())
                 {
+                    reader.EnableInternalLog = true;
                     Console.WriteLine($@"
 Master Connection: {env.MasterConnectionString}
 TraceDir:          {env.TraceDirectory}
@@ -242,6 +274,7 @@ TableName:         {env.TableName}");
                     reader.Stop();
                     var detailsReport = reader.ReadDetailsReport();
                     DumpCounters(detailsReport);
+                    DumpInternalLog(reader);
                     Assert.AreEqual(1, detailsReport.Count, "Exactly one statement is expected");
                     Assert.Greater(detailsReport.Count, 0, "At least one sql command should be caught");
 
@@ -310,6 +343,7 @@ TableName:         {env.TableName}");
             string connectionString = testCase.ConnectionString;
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.EnableInternalLog = true;
                 reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
                 reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
@@ -326,6 +360,7 @@ TableName:         {env.TableName}");
                 CollectionAssert.IsEmpty(details.GroupByApplication(), "Groups by application");
 
                 reader.Stop();
+                DumpInternalLog(reader);
                 reader.Dispose();
             }
         }
@@ -340,6 +375,7 @@ TableName:         {env.TableName}");
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.EnableInternalLog = true;
                 reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
                 reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All);
@@ -358,6 +394,7 @@ TableName:         {env.TableName}");
                 var groups = reader.ReadGroupsReport<int>(TraceColumns.ClientProcess);
                 var details = reader.ReadDetailsReport();
                 DumpCounters(details);
+                DumpInternalLog(reader);
                 int idProcess = Process.GetCurrentProcess().Id;
                 Console.WriteLine("Trace summary is " + details.Summary);
 
@@ -386,6 +423,7 @@ TableName:         {env.TableName}");
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
+                reader.EnableInternalLog = true;
                 reader.NeedActualExecutionPlan = testCase.NeedActualExecutionPlan;
                 reader.NeedCompiledExecutionPlan = testCase.NeedCompiledExecutionPlan;
                 reader.Start(connectionString, TestEnvironment.TracePath, TraceColumns.All, TraceRowFilter.CreateByApplication(app));
@@ -408,6 +446,7 @@ TableName:         {env.TableName}");
                 // Details
                 var details = reader.ReadDetailsReport();
                 Console.WriteLine("Trace summary is " + details.Summary);
+                DumpInternalLog(reader);
 
                 Assert.AreEqual(details.Count, nQueries);
             }

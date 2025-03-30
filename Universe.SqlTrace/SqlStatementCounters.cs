@@ -14,8 +14,8 @@ namespace Universe.SqlTrace
         public string SqlErrorText { get; set; }
 
         // TODO for TraceDetailsReport.ReadDetailsReport()
-        // public string CompiledXmlPlan { get; set; }
-        // public string ActualXmlPlan { get; set; }
+        // public List<string> CompiledXmlPlan { get; set; }
+        // public List<string> ActualXmlPlan { get; set; }
 
         public SqlCounters Counters { get; set; }
 
