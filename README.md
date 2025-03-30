@@ -1,6 +1,6 @@
 # Universe.SqlTrace
 
-Tiny library, which wraps MS SQL Server `sp_trace*` calls and queries to `::fn_trace_gettable` into strongly types data access.
+Tiny library, which wraps MS SQL Server Profiler API (`sp_trace*` calls and queries to `::fn_trace_gettable`) into strongly types data access.
 
 It supports column chooser and row filtering. 
 

@@ -2,22 +2,22 @@ namespace Universe.SqlTrace
 {
     public class SqlStatementCounters
     {
-        public string SpName;
-        public string Sql;
-        public string Application;
-        public string Database;
-        public string ClientHost;
-        public int ClientProcess;
-        public string Login;
-        public int ServerProcess;
-        public int? SqlErrorCode;
-        public string SqlErrorText;
+        public string SpName { get; set; }
+        public string Sql { get; set; }
+        public string Application { get; set; }
+        public string Database { get; set; }
+        public string ClientHost { get; set; }
+        public int ClientProcess { get; set; }
+        public string Login { get; set; }
+        public int ServerProcess { get; set; }
+        public int? SqlErrorCode { get; set; }
+        public string SqlErrorText { get; set; }
 
         // TODO for TraceDetailsReport.ReadDetailsReport()
-        // public string CompiledXmlPlan;
-        // public string ActualXmlPlan;
+        // public string CompiledXmlPlan { get; set; }
+        // public string ActualXmlPlan { get; set; }
 
-        public SqlCounters Counters;
+        public SqlCounters Counters { get; set; }
 
         public override string ToString()
         {
