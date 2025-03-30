@@ -43,6 +43,9 @@ namespace Universe.SqlTrace.Tests
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Test_Sandbox(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
+            
             CreateTable1(testCase.ConnectionString);
 
             using (SqlTraceReader reader = new SqlTraceReader())
@@ -91,21 +94,10 @@ namespace Universe.SqlTrace.Tests
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void RowCounts_Of_Insert(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
+
             var masterConnectionString = testCase.ConnectionString;
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                if (con.Manage().IsAzure)
-                {
-                    Console.WriteLine("Tracing for Azure is not yet implemented");
-                    return;
-                }
-            }
-
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
-            }
-
 
             var table = $"#T_{Guid.NewGuid().ToString("N")}";
             string[] sqlCommands = new[]
@@ -153,23 +145,10 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Single_SqlBatch_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
+
             string masterConnectionString = testCase.ConnectionString;
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                if (con.Manage().IsAzure)
-                {
-                    Console.WriteLine("Tracing for Azure is not yet implemented");
-                    return;
-                }
-            }
-
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                var man = con.Manage();
-                Console.WriteLine($"Version of [{masterConnectionString}]: {man.ShortServerVersion}{Environment.NewLine}" +
-                                  $"{man.MediumServerVersion}");
-            }
-
 
             TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
             using (env)
@@ -221,22 +200,10 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Error_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
+
             string masterConnectionString = testCase.ConnectionString;
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                if (con.Manage().IsAzure)
-                {
-                    Console.WriteLine("Tracing for Azure is not yet implemented");
-                    return;
-                }
-            }
-
-            using (SqlConnection con = new SqlConnection(masterConnectionString))
-            {
-                Console.WriteLine($"Version of [{masterConnectionString}]: {con.Manage().ShortServerVersion}");
-            }
-
-
             TraceTetsEnv env = new TraceTetsEnv(masterConnectionString);
             using (env)
             {
@@ -295,6 +262,7 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void RaiseDeadLock1205(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             string connectionString = testCase.ConnectionString;
             var cmds = new[]
             {
@@ -337,6 +305,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Test_Empty_Session(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
             string connectionString = testCase.ConnectionString;
             using (SqlTraceReader reader = new SqlTraceReader())
             {
@@ -363,6 +333,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Single_StoredProcedure_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
             string connectionString = testCase.ConnectionString;
             string sql = @"SELECT @@version, @parameter;";
 
@@ -402,6 +374,9 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
         public void Test_Sp_Reset_Connection(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
+            if (testCase.IsAzure()) return;
+
             string connectionString = testCase.ConnectionString;
             string app = "Test " + Guid.NewGuid().ToString("N");
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(connectionString);

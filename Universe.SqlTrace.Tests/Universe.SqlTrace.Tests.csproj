@@ -89,6 +89,7 @@
     <Compile Include="SqlServerTestCase.cs" />
     <Compile Include="MyWaitHandle.cs" />
     <Compile Include="RamDriveInfo.cs" />
+    <Compile Include="SqlServerTestCaseExtensions.cs" />
     <Compile Include="SqlUnitOfWork.cs" />
     <Compile Include="Stress.cs" />
     <Compile Include="Test_ExtendedEvents.cs" />

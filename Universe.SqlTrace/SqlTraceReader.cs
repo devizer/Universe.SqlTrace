@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Universe.Utils;
 
@@ -16,9 +17,22 @@ namespace Universe.SqlTrace
         // Kilo Bytes
         public int MaxFileSize { get; set; }
 
-        public bool NeedActualExecutionPlan { get; set; } // 122, after Start() can not be changed
-        public bool NeedCompiledExecutionPlan { get; set; } // 168, after Start() can not be changed
+        // 122, after Start() can not be changed
+        public bool NeedActualExecutionPlan
+        {
+            get => _NeedActualExecutionPlan;
+            set => _NeedActualExecutionPlan = IsStarted ? throw new InvalidOperationException() : value;
+        }
 
+        // 168, after Start() can not be changed
+        public bool NeedCompiledExecutionPlan
+        {
+            get => _NeedCompiledExecutionPlan;
+            set => _NeedCompiledExecutionPlan = IsStarted ? throw new InvalidOperationException() : value;
+        }
+
+        private bool _NeedActualExecutionPlan; // 122
+        private bool _NeedCompiledExecutionPlan; // 168
 
         private int _traceId;
         private string _traceFile;
@@ -32,6 +46,8 @@ namespace Universe.SqlTrace
         {
             MaxFileSize = 128 * 1024;
         }
+
+        public bool IsStarted => _traceFile != null;
 
         public void Start(string connectionString, string tracePath, TraceColumns columns, params TraceRowFilter[] rowFilters)
         {
