@@ -74,7 +74,7 @@ namespace Universe.SqlTrace.Tests
                 // Grouping By SQL? What for? Does not work for UTF8 Default Collation
                 var collation = new SqlConnection(testCase.ConnectionString).Manage().Databases["master"].DefaultCollationName;
                 Console.WriteLine($"Collation: {collation}");
-                if (!collation.ToLower().EndsWith("utf8"))
+                if (true || !collation.ToLower().EndsWith("utf8")) // supported since 1.6.8.2
                 {
                     var groupsBySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
                 }
