@@ -30,7 +30,7 @@ namespace Universe.SqlTrace
             foreach (SqlParameter cmdParameter in cmd.Parameters)
             {
                 object v = cmdParameter.Value;
-                if (v is string) v = $"'{v}'";
+                if (v is string) v = $"'{v.ToString().Replace(Environment.NewLine, " /* \\n */ ")}'";
                 var t = cmdParameter.SqlDbType.ToString();
                 if (t?.ToLower() == "nvarchar") t = $"{t}(4000)";
                 ret.AppendLine($"DECLARE {cmdParameter.ParameterName} {t}; SET {cmdParameter.ParameterName} = {v}");

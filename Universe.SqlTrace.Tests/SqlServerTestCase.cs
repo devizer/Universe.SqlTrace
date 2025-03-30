@@ -18,7 +18,9 @@ namespace Universe.SqlTrace.Tests
         public override string ToString()
         {
             List<string> ret = new List<string>();
-            ret.Add(ConnectionString);
+            SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(ConnectionString);
+            var dataSource = b.DataSource;
+            ret.Add(dataSource);
             if (NeedCompiledExecutionPlan && NeedActualExecutionPlan) ret.Add("Compiled+Actual XML Plan");
             if (NeedCompiledExecutionPlan && !NeedActualExecutionPlan) ret.Add("Compiled XML Plan");
             if (!NeedCompiledExecutionPlan && NeedActualExecutionPlan) ret.Add("Actual XML Plan");

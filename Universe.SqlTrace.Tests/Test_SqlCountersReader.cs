@@ -2,7 +2,9 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using Dapper;
 using NUnit.Framework;
 using Universe.GenericTreeTable;
@@ -92,29 +94,6 @@ namespace Universe.SqlTrace.Tests
                 Console.WriteLine("Details Summary " + rpt.Summary);
 
                 DumpInternalLog(reader);
-
-            }
-        }
-
-        private void DumpInternalLog(SqlTraceReader reader)
-        {
-            var internalLog = reader.InternalLog;
-            if (internalLog == null) return;
-            Console.WriteLine($"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}Internal SqlTraceReader Log{Environment.NewLine}{reader.InternalLog}");
-
-            var internalTable = reader.InternalTable;
-            if (internalTable != null)
-            {
-                var header = internalTable.FirstOrDefault();
-                if (header != null)
-                {
-                    ConsoleTable consoleTable = new ConsoleTable(header.Select(x => x.ToString()).ToArray());
-                    foreach (var rawRow in internalTable.Skip(1))
-                    {
-                        consoleTable.AddRow(rawRow.ToArray());
-                    }
-                    Console.WriteLine(Environment.NewLine + consoleTable.ToString());
-                }
             }
         }
 
@@ -465,6 +444,38 @@ TableName:         {env.TableName}");
                     + ", ErrorText: " + (statement.SqlErrorText == null ? "<null>" : $"'{statement.SqlErrorText}'"));
             }
         }
+
+        private void DumpInternalLog(SqlTraceReader reader)
+        {
+            var internalLog = reader.InternalLog;
+            if (internalLog == null) return;
+            StringBuilder ret = new StringBuilder();
+            ret.AppendLine($"{Environment.NewLine}{Environment.NewLine}{Environment.NewLine}Internal SqlTraceReader Log{Environment.NewLine}{reader.InternalLog}");
+
+            var internalTable = reader.InternalTable;
+            if (internalTable != null)
+            {
+                var header = internalTable.FirstOrDefault();
+                if (header != null)
+                {
+                    ConsoleTable consoleTable = new ConsoleTable(header.Select(x => x.ToString()).ToArray());
+                    foreach (var rawRow in internalTable.Skip(1))
+                    {
+                        consoleTable.AddRow(rawRow.ToArray());
+                    }
+                    ret.AppendLine(Environment.NewLine + consoleTable.ToString());
+                }
+            }
+
+            var testName = TestContext.CurrentContext.Test.Name;
+            Console.WriteLine(ret);
+            var dirName = "SqlTraceReader Internal Logs";
+            if (!Directory.Exists(dirName)) Directory.CreateDirectory(dirName);
+            var fileName = Path.Combine(dirName, testName.Replace("\\", "-") + ".txt");
+            File.WriteAllText(fileName, ret.ToString());
+        }
+
+
 
 
 
