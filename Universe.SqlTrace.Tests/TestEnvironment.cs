@@ -22,7 +22,7 @@ namespace Universe.SqlTrace.Tests
             if (Initialized) return;
             Initialized = true;
             if (MasterConnectionString != null) return;
-            var servers = SqlServerTestCase.GetSqlServers();
+            var servers = SqlServerTestCase.GetSqlServersVariesByPlans();
             foreach (var server in servers)
             {
                 try

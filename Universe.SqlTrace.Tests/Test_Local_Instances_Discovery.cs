@@ -79,7 +79,7 @@ namespace Universe.SqlTrace.Tests
             Console.WriteLine("TearDown");
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Discovery(SqlServerTestCase testCase)
         {
             string masterConnectionString = testCase.ConnectionString;
@@ -94,7 +94,7 @@ namespace Universe.SqlTrace.Tests
         [Test]
         public void Test_Explicit_Discovery()
         {
-            var servers = SqlServerTestCase.GetSqlServers();
+            var servers = SqlServerTestCase.GetSqlServersVariesByPlans();
             foreach (var server in servers)
             {
                 Console.WriteLine($" * {server}");

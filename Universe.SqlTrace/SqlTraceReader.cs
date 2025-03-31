@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -65,7 +66,7 @@ namespace Universe.SqlTrace
                 _PrevCreatedDirectory = tracePath;
             }
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (DbConnection con = SqlTraceExtensions.CreateConnection(connectionString))
             {
                 con.Open();
 
@@ -85,7 +86,7 @@ namespace Universe.SqlTrace
                     sqlSetFields.AppendFormat(SQL_SET_TRACE_XML_PLAN, 168, "Compiled Execution Plan");
                 }
 
-                List<SqlParameter> parameters = new List<SqlParameter>();
+                List<DbParameter> parameters = new List<DbParameter>();
                 List<TraceColumns> rowFilterColumns = new List<TraceColumns>();
                 TraceRowFilter[] distinctRowFilter = TraceRowFilter.GetDistinct(rowFilters);
                 foreach (TraceRowFilter rowFilter in distinctRowFilter)
@@ -104,7 +105,8 @@ namespace Universe.SqlTrace
                         info.GroupExpression);
 
                     sqlSetFields.AppendLine();
-                    SqlParameter p = new SqlParameter(pName, comparisonValue);
+                    // SqlParameter p = new SqlParameter(pName, comparisonValue);
+                    var p = con.CreateCommandParameter(pName, comparisonValue);
                     parameters.Add(p);
 
                     if (rowFilterColumns.Contains(rowFilter.Column))
@@ -117,13 +119,17 @@ namespace Universe.SqlTrace
 
 
                 // Console.WriteLine($"TRACE ON {connectionString}");
-                using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
+                // using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
+                using (DbCommand cmd = con.CreateDbCommand(sqlCmd))
                 {
                     cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile;
+                    // cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile;
+                    cmd.AddCommandParameter("@file", DbType.String, _traceFile);
                     var maxFileSize = Math.Max(8, MaxFileSize);
-                    cmd.Parameters.Add("@MaxFileSize", SqlDbType.BigInt).Value = maxFileSize;
-                    cmd.Parameters.AddRange(parameters.ToArray());
+                    // cmd.Parameters.Add("@MaxFileSize", SqlDbType.BigInt).Value = maxFileSize;
+                    cmd.AddCommandParameter("@MaxFileSize", DbType.Int64, maxFileSize);
+                    // cmd.Parameters.AddRange(parameters.ToArray());
+                    foreach (var dbParameter in parameters) cmd.Parameters.Add(dbParameter);
                     if (EnableInternalLog)
                     {
                         Log($"Start Trace for TraceColumns=[{columns}]{Environment.NewLine}{DumpSqlCommandParameters(cmd)}{Environment.NewLine}{sqlCmd}{Environment.NewLine}");
@@ -143,13 +149,14 @@ namespace Universe.SqlTrace
             {
                 _NeedStop = false;
 
-                using (SqlConnection con = new SqlConnection(_connectionString))
+                using (DbConnection con = SqlTraceExtensions.CreateConnection(_connectionString))
                 {
                     con.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(SQL_STOP_TRACE, con))
+                    using (DbCommand cmd = con.CreateDbCommand(SQL_STOP_TRACE))
                     {
-                        cmd.Parameters.Add("@trace", SqlDbType.Int).Value = _traceId;
+                        // cmd.Parameters.Add("@trace", SqlDbType.Int).Value = _traceId;
+                        cmd.AddCommandParameter("@trace", DbType.Int32, _traceId);
                         cmd.ExecuteNonQuery();
                     }
                 }
@@ -160,7 +167,8 @@ namespace Universe.SqlTrace
         // System.Data.SqlClient.SqlException : Cannot convert to text/ntext or collate to 'Latin1_General_100_CI_AS_SC_UTF8' because these legacy LOB types do not support UTF-8 or UTF-16 encodings. Use types varchar(max), nvarchar(max) or a collation which does not have the _SC or _UTF8 flags.
         public TraceDetailsReport ReadDetailsReport()
         {
-            using (SqlConnection con = new SqlConnection(_connectionString))
+            // using (SqlConnection con = new SqlConnection(_connectionString))
+            using (var con = SqlTraceExtensions.CreateConnection(_connectionString))
             {
 
                 if (con.State != ConnectionState.Open)
@@ -189,10 +197,13 @@ namespace Universe.SqlTrace
                 string sqlCmd = string.Format(SQL_SELECT_DETAILS, sqlColumns);
 
                 if (EnableInternalLog) Log($"ReadDetailsReport Query{Environment.NewLine}Declare @file nvarchar(4000); set @file='{_traceFile}.trc';{Environment.NewLine}{sqlCmd}");
-                using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
+                // using (SqlCommand cmd = new SqlCommand(sqlCmd, con))
+                using (var cmd = con.CreateDbCommand(sqlCmd))
                 {
-                    cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    // cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
+                    cmd.AddCommandParameter("@file", DbType.String, _traceFile + ".trc");
+                    // using (SqlDataReader rdr = cmd.ExecuteReader())
+                    using (DbDataReader rdr = cmd.ExecuteReader())
                     {
                         ErrorsBySpid errors = new ErrorsBySpid();
                         PlansBySpidBuffer actualXmlPlansBuffer = new PlansBySpidBuffer();
@@ -351,15 +362,18 @@ namespace Universe.SqlTrace
                 SQL_SELECT_GROUPS,
                 info.GroupExpression);
 
-            using (SqlConnection con = new SqlConnection(_connectionString))
+            // using (SqlConnection con = new SqlConnection(_connectionString))
+            using (DbConnection con = SqlTraceExtensions.CreateConnection(_connectionString))
             {
                 if (con.State != ConnectionState.Open)
                     con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(sql, con))
+                // using (SqlCommand cmd = new SqlCommand(sql, con))
+                using (DbCommand cmd = con.CreateDbCommand(sql))
                 {
-                    cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
-                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    // cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
+                    cmd.AddCommandParameter("@file", DbType.String, _traceFile + ".trc");
+                    using (var rdr = cmd.ExecuteReader())
                     {
                         TraceGroupsReport<TKey> ret = new TraceGroupsReport<TKey>();
                         while (rdr.Read())
@@ -387,15 +401,18 @@ namespace Universe.SqlTrace
 
         public SqlCounters ReadSummaryReport()
         {
-            using (SqlConnection con = new SqlConnection(_connectionString))
+            // using (SqlConnection con = new SqlConnection(_connectionString))
+            using (DbConnection con = SqlTraceExtensions.CreateConnection(_connectionString))
             {
                 if (con.State != ConnectionState.Open)
                     con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(SQL_SELECT_SUMMARY, con))
+                // using (SqlCommand cmd = new SqlCommand(SQL_SELECT_SUMMARY, con))
+                using (DbCommand cmd = con.CreateDbCommand(SQL_SELECT_SUMMARY))
                 {
-                    cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
-                    using (SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow))
+                    // cmd.Parameters.Add("@file", SqlDbType.NVarChar).Value = _traceFile + ".trc";
+                    cmd.AddCommandParameter("@file", DbType.String, _traceFile + ".trc");
+                    using (DbDataReader rdr = cmd.ExecuteReader(CommandBehavior.SingleRow))
                     {
                         SqlCounters summary;
                         if (rdr.Read())
@@ -411,7 +428,8 @@ namespace Universe.SqlTrace
         }
 
 
-        private static SqlCounters ReadCounters_WithRequestsCount(SqlDataReader rdr, int startIndex)
+        // private static SqlCounters ReadCounters_WithRequestsCount(SqlDataReader rdr, int startIndex)
+        private static SqlCounters ReadCounters_WithRequestsCount(DbDataReader rdr, int startIndex)
         {
 
             SqlCounters ret = new SqlCounters();
@@ -433,7 +451,8 @@ namespace Universe.SqlTrace
             return ret;
         }
 
-        private static SqlCounters ReadCounters(SqlDataReader rdr, int startIndex)
+        // private static SqlCounters ReadCounters(SqlDataReader rdr, int startIndex)
+        private static SqlCounters ReadCounters(DbDataReader rdr, int startIndex)
         {
 
             SqlCounters ret = new SqlCounters();

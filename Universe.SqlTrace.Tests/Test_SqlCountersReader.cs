@@ -44,7 +44,7 @@ namespace Universe.SqlTrace.Tests
             Console.WriteLine($"Table Created: {Table1Name}");
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Sandbox(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -99,7 +99,7 @@ namespace Universe.SqlTrace.Tests
             }
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void RowCounts_Of_Insert(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -152,7 +152,7 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Single_SqlBatch_Is_Captured(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -209,7 +209,7 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Error_Is_Captured(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -316,7 +316,7 @@ TableName:         {env.TableName}");
             Assert.Fail("Deadlock is expected");
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Empty_Session(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -346,7 +346,7 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Single_StoredProcedure_Is_Captured(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
@@ -396,7 +396,7 @@ TableName:         {env.TableName}");
             }
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Sp_Reset_Connection(SqlServerTestCase testCase)
         {
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");

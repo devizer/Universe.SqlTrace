@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -24,13 +25,14 @@ namespace Universe.SqlTrace
             _InternalLog.Add(message);
         }
 
+        /*
         string DumpSqlCommandParameters(SqlCommand cmd)
         {
             StringBuilder ret = new StringBuilder();
             foreach (SqlParameter cmdParameter in cmd.Parameters)
             {
                 object v = cmdParameter.Value;
-                if (v is string) v = $"'{v.ToString().Replace(Environment.NewLine, " /* \\n */ ")}'";
+                if (v is string) v = $"'{v.ToString().Replace(Environment.NewLine, " /* \\n #1# ")}'";
                 var t = cmdParameter.SqlDbType.ToString();
                 if (t?.ToLower() == "nvarchar") t = $"{t}(4000)";
                 ret.AppendLine($"DECLARE {cmdParameter.ParameterName} {t}; SET {cmdParameter.ParameterName} = {v}");
@@ -38,7 +40,25 @@ namespace Universe.SqlTrace
 
             return ret.ToString();
         }
-        private void AddInternalTableRow(SqlDataReader rdr)
+        */
+
+        string DumpSqlCommandParameters(DbCommand cmd)
+        {
+            StringBuilder ret = new StringBuilder();
+            foreach (DbParameter cmdParameter in cmd.Parameters)
+            {
+                object v = cmdParameter.Value;
+                if (v is string) v = $"'{v.ToString().Replace(Environment.NewLine, " /* \\n */ ")}'";
+                var t = cmdParameter.DbType.ToString();
+                if (t?.ToLower() == "nvarchar") t = $"{t}(4000)";
+                ret.AppendLine($"DECLARE {cmdParameter.ParameterName} {t}; SET {cmdParameter.ParameterName} = {v}");
+            }
+
+            return ret.ToString();
+        }
+
+        // private void AddInternalTableRow(SqlDataReader rdr)
+        private void AddInternalTableRow(DbDataReader rdr)
         {
             if (!EnableInternalLog) return;
             _InternalTable ??= new List<List<object>>();

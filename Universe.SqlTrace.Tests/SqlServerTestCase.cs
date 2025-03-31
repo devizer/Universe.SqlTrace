@@ -48,6 +48,20 @@ namespace Universe.SqlTrace.Tests
             foreach (var aliveConnectionString in aliveConnectionStrings)
             {
                 ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString });
+            }
+
+            return ret;
+        }
+
+        public static List<SqlServerTestCase> GetSqlServersVariesByPlans()
+        {
+            var withoutPlans = GetSqlServers();
+            List<SqlServerTestCase> ret = new List<SqlServerTestCase>();
+
+            foreach (var sqlServerTestCase in withoutPlans)
+            {
+                var aliveConnectionString = sqlServerTestCase.ConnectionString;
+                ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString });
                 ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true });
                 ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedCompiledExecutionPlan = true });
                 ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true, NeedCompiledExecutionPlan = true });

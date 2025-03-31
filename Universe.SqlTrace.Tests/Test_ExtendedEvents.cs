@@ -22,7 +22,7 @@ namespace Universe.SqlTrace.Tests
             TestEnvironment.SetUp();
         }
 
-        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServers))]
+        [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Show_Extended_Events_Types(SqlServerTestCase testCase)
         {
             string masterConnectionString = testCase.ConnectionString;

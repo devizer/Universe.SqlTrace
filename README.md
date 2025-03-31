@@ -4,17 +4,11 @@ Tiny library, which wraps MS SQL Server Profiler API (`sp_trace*` calls and quer
 
 It supports column chooser and row filtering. 
 
-### How to build from source
-```
-git clone https://github.com/devizer/Universe.SqlTrace.git
-cd Universe.SqlTrace
-call restore-build-test.cmd
-```
+Tested on SQL Server 2005 ... 2022 (incuding MS SQL LocalDB) is fully automated in linux and windows.
 
-### How to install using nuget
-```
-nuget install Universe.SqlTrace
-```
+Targets both .NET Core, .Net Standard, and .NET Framework
+
+Version 1.8+ Supports both System and Microsoft sql client.
 
 
 
@@ -28,11 +22,14 @@ nuget install Universe.SqlTrace
  * `Login`: Login
  * `ServerProcess`: SQL Server Process Id
 
+Version 1.7+ also provides actual and compiled execution plans.
+
 #### Mandatory trace columns, which are always presented in the trace session
 * `Duration`
 * `CPU`
 * `Reads`
 * `Writes`
+* `Rows`
 
 #### Trace Session row filters
 Any optional column above could be used as row filter: Application, Database, ClientHost, ClientProcess, Login or Server Process
