@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -11,6 +12,7 @@ namespace Universe.SqlTrace.Tests
 {
     public class SqlServerTestCase
     {
+        public DbProviderFactory DbProvider { get; set; }
         public string ConnectionString { get; set; }
         public bool NeedActualExecutionPlan { get; set; }
         public bool NeedCompiledExecutionPlan { get; set; }
@@ -21,11 +23,18 @@ namespace Universe.SqlTrace.Tests
             SqlConnectionStringBuilder b = new SqlConnectionStringBuilder(ConnectionString);
             var dataSource = b.DataSource;
             ret.Add(dataSource);
+            var dbProviderString = GetDbProviderTitle();
+            if (dbProviderString != null) ret.Add(dbProviderString);
             if (NeedCompiledExecutionPlan && NeedActualExecutionPlan) ret.Add("Compiled+Actual XML Plan");
             if (NeedCompiledExecutionPlan && !NeedActualExecutionPlan) ret.Add("Compiled XML Plan");
             if (!NeedCompiledExecutionPlan && NeedActualExecutionPlan) ret.Add("Actual XML Plan");
 
             return string.Join(". ", ret);
+        }
+
+        public string GetDbProviderTitle()
+        {
+            return DbProvider?.GetType().Namespace.Split('.').FirstOrDefault();
         }
 
 
@@ -58,13 +67,17 @@ namespace Universe.SqlTrace.Tests
             var withoutPlans = GetSqlServers();
             List<SqlServerTestCase> ret = new List<SqlServerTestCase>();
 
+            DbProviderFactory[] dbProviders = new DbProviderFactory[] { System.Data.SqlClient.SqlClientFactory.Instance, Microsoft.Data.SqlClient.SqlClientFactory.Instance };
             foreach (var sqlServerTestCase in withoutPlans)
             {
                 var aliveConnectionString = sqlServerTestCase.ConnectionString;
-                ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString });
-                ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true });
-                ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedCompiledExecutionPlan = true });
-                ret.Add(new SqlServerTestCase() { ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true, NeedCompiledExecutionPlan = true });
+                foreach (var dbProvider in dbProviders)
+                {
+                    ret.Add(new SqlServerTestCase() { DbProvider = dbProvider, ConnectionString = aliveConnectionString });
+                    ret.Add(new SqlServerTestCase() { DbProvider = dbProvider, ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true });
+                    ret.Add(new SqlServerTestCase() { DbProvider = dbProvider, ConnectionString = aliveConnectionString, NeedCompiledExecutionPlan = true });
+                    ret.Add(new SqlServerTestCase() { DbProvider = dbProvider, ConnectionString = aliveConnectionString, NeedActualExecutionPlan = true, NeedCompiledExecutionPlan = true });
+                }
             }
 
             return ret;

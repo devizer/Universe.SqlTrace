@@ -47,6 +47,8 @@ namespace Universe.SqlTrace.Tests
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Sandbox(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
             
@@ -102,6 +104,8 @@ namespace Universe.SqlTrace.Tests
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void RowCounts_Of_Insert(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
 
@@ -155,6 +159,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Single_SqlBatch_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
 
@@ -212,6 +218,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Error_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
 
@@ -319,6 +327,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Empty_Session(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
             string connectionString = testCase.ConnectionString;
@@ -349,6 +359,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Single_StoredProcedure_Is_Captured(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
             string connectionString = testCase.ConnectionString;
@@ -399,6 +411,8 @@ TableName:         {env.TableName}");
         [Test, TestCaseSource(typeof(SqlServerTestCase), nameof(SqlServerTestCase.GetSqlServersVariesByPlans))]
         public void Test_Sp_Reset_Connection(SqlServerTestCase testCase)
         {
+            Console.WriteLine($"DB Provider: {testCase.GetDbProviderTitle()}");
+            SqlTraceConfiguration.DbProvider = testCase.DbProvider;
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
 
