@@ -9,11 +9,13 @@ namespace Universe.SqlTrace
 {
     public static class SqlTraceConfiguration
     {
+        // TODO: Remove this type and move the property to instance property of SqlTraceReader
         public static DbProviderFactory DbProvider { get; set; } = SqlClientFactory.Instance;
     }
 
     public static class SqlTraceExtensions
     {
+        // TODO: Remove this type and move ALL THE METHOD to private instance methods of SqlTraceReader
         public static DbParameter CreateCommandParameter(this DbConnection connection, string parameterName, object parameterValue)
         {
             DbParameter p = SqlTraceConfiguration.DbProvider.CreateParameter();
