@@ -387,6 +387,12 @@ TableName:         {env.TableName}");
 
                 if (!isCaught)
                     Assert.Fail("Expected sql proc '{0}' call by process {1}", "sp_executesql", idProcess);
+
+                var actualExecutionPlans = details.SelectMany(x => x.ActualXmlPlan ?? new List<string>()).Count();
+                if (testCase.NeedActualExecutionPlan)
+                    Assert.GreaterOrEqual(actualExecutionPlans, 1, "Detail Report does not return any Actual XML Plan. At least one is expected");
+                else
+                    Assert.AreEqual(0, actualExecutionPlans, "Details Report should not return any Actual XML Plan");
             }
         }
 
