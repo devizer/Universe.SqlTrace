@@ -529,11 +529,11 @@ EXEC sp_trace_setstatus @trace, 2",
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_SUMMARY =
-                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Sum(RowCounts), Count(Duration) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33;
+                @"SELECT Sum(Duration), Sum(CPU), Sum(Reads), Sum(Writes), Sum(RowCounts), Count(Duration) FROM ::fn_trace_gettable (@file, -1) Where EventClass In (10,12);
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
 
             SQL_SELECT_GROUPS =
-                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]), Sum(RowCounts) FROM ::fn_trace_gettable (@file, -1) Where EventClass <> 33 GROUP BY {0};
+                @"SELECT {0}, Count(1), Sum([Duration]), Sum([CPU]), Sum([Reads]), Sum([Writes]), Sum(RowCounts) FROM ::fn_trace_gettable (@file, -1) Where EventClass In (10,12) GROUP BY {0};
 -- This magic comment as well as a batch are skipped by SqlTraceReader.Read call",
                 
 

@@ -75,15 +75,12 @@ namespace Universe.SqlTrace.Tests
                 }
 
                 reader.Stop();
-                var groupsByClientHost = reader.ReadGroupsReport<string>(TraceColumns.ClientHost);
+                TraceGroupsReport<string> groupsByClientHost = reader.ReadGroupsReport<string>(TraceColumns.ClientHost);
                 // Grouping By SQL? What for? Does not work for UTF8 Default Collation
                 var collation = new SqlConnection(testCase.ConnectionString).Manage().Databases["master"].DefaultCollationName;
                 Console.WriteLine($"Collation: {collation}");
-                if (true || !collation.ToLower().EndsWith("utf8")) // supported since 1.6.8.2
-                {
-                    var groupsBySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
-                }
-
+                
+                var rptGroupsBySql = reader.ReadGroupsReport<string>(TraceColumns.Sql);
                 var rptSummary = reader.ReadSummaryReport();
                 var rpt = reader.ReadDetailsReport();
                 Console.WriteLine("Statements: " + rpt.Count);
@@ -95,6 +92,10 @@ namespace Universe.SqlTrace.Tests
                 Console.WriteLine("Details Summary " + rpt.Summary);
 
                 DumpInternalLog(reader);
+
+                Assert.GreaterOrEqual(groupsByClientHost.Count, 1, "Group By Client Host does not return any data");
+                Assert.GreaterOrEqual(rptGroupsBySql.Count, 1, "Group By Sql does not return any data");
+                Assert.GreaterOrEqual(rpt.Count, 1, "Details Report does not return any data");
             }
         }
 
