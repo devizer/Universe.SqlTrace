@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Universe.SqlTrace
 {
     public class SqlStatementCounters
@@ -13,16 +16,29 @@ namespace Universe.SqlTrace
         public int? SqlErrorCode { get; set; }
         public string SqlErrorText { get; set; }
 
-        // TODO for TraceDetailsReport.ReadDetailsReport()
-        // public List<string> CompiledXmlPlan { get; set; }
-        // public List<string> ActualXmlPlan { get; set; }
+        // Done: for TraceDetailsReport.ReadDetailsReport()
+        public List<string> CompiledXmlPlan { get; set; }
+        public List<string> ActualXmlPlan { get; set; }
 
         public SqlCounters Counters { get; set; }
 
         public override string ToString()
         {
             return string.Format("Sql: {0}, Application: {1}, Database: {2}, ClientHost: {3}, ClientProcess: {4}, Login: {5}, ServerProcess: {6}, {7}", Sql, Application, Database, ClientHost, ClientProcess, Login, ServerProcess, Counters)
-                + (SqlErrorCode.HasValue ? $", Error {SqlErrorCode} '{SqlErrorText}'" : "");
+                + (SqlErrorCode.HasValue ? $", Error {SqlErrorCode} '{SqlErrorText}'" : "")
+                + XmlPlanToString("Compiled XML Plans", CompiledXmlPlan)
+                + XmlPlanToString("Actual XML Plans", ActualXmlPlan);
+        }
+
+        string XmlPlanToString(string title, List<string> plans)
+        {
+            if (plans != null && plans.Count > 0)
+            {
+                var countString = plans.Count == 1 ? "(1 plan)" : $"({plans.Count} plans)";
+                return $"{Environment.NewLine}{title} {countString}{Environment.NewLine}{string.Join(Environment.NewLine, plans.ToArray())}";
+            }
+
+            return null;
         }
     }
 }

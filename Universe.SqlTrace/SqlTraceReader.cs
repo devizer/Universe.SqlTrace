@@ -195,6 +195,8 @@ namespace Universe.SqlTrace
                     using (SqlDataReader rdr = cmd.ExecuteReader())
                     {
                         ErrorsBySpid errors = new ErrorsBySpid();
+                        PlansBySpidBuffer actualXmlPlansBuffer = new PlansBySpidBuffer();
+                        PlansBySpidBuffer compiledXmlPlansBuffer = new PlansBySpidBuffer();
                         if (EnableInternalLog) _InternalTable = null;
                         while (rdr.Read())
                         {
@@ -226,6 +228,11 @@ namespace Universe.SqlTrace
                                 colNum++;
                                 string compiledExecutionPlan = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
                                 colNum++;
+                                if (compiledExecutionPlan != null && spid.HasValue)
+                                {
+                                    compiledXmlPlansBuffer.AddPlanForSpid(spid.Value, compiledExecutionPlan);
+                                    continue;
+                                }
                             }
 
                             if (NeedActualExecutionPlan)
@@ -234,6 +241,11 @@ namespace Universe.SqlTrace
                                 colNum++;
                                 string actualExecutionPlan = rdr.IsDBNull(colNum) ? null : rdr.GetString(colNum);
                                 colNum++;
+                                if (actualExecutionPlan != null && spid.HasValue)
+                                {
+                                    actualXmlPlansBuffer.AddPlanForSpid(spid.Value, actualExecutionPlan);
+                                    continue;
+                                }
                             }
 
                             if ((_columns & TraceColumns.Application) != 0)
@@ -285,6 +297,7 @@ namespace Universe.SqlTrace
                             
                             if (item.Counters != null)
                             {
+                                // Error for sql steatement
                                 var errorBySpid = spid.HasValue ? errors.GetErrorBySpid(spid.Value) : null;
                                 int? error = errorBySpid == null ? (int?) null : errorBySpid.Error; 
                                 if (error.GetValueOrDefault() != 0)
@@ -293,6 +306,28 @@ namespace Universe.SqlTrace
                                     item.SqlErrorText = errorBySpid?.ErrorText;
                                 }
                                 if (spid.HasValue) errors.SetErrorBySpid(spid.Value, 0, null);
+
+                                if (NeedActualExecutionPlan)
+                                {
+                                    // Actual XML Plans for statement
+                                    var actualPlans = spid.HasValue ? actualXmlPlansBuffer.GetPlansBySpid(spid.Value) : null;
+                                    if (actualPlans != null)
+                                    {
+                                        item.ActualXmlPlan = actualPlans.SqlPlans;
+                                        actualXmlPlansBuffer.ClearPlansForSpid(spid.Value);
+                                    }
+                                }
+
+                                if (NeedCompiledExecutionPlan)
+                                {
+                                    // Compiled XML Plans for statement
+                                    var compiledPlans = spid.HasValue ? compiledXmlPlansBuffer.GetPlansBySpid(spid.Value) : null;
+                                    if (compiledPlans != null)
+                                    {
+                                        item.CompiledXmlPlan = compiledPlans.SqlPlans;
+                                        compiledXmlPlansBuffer.ClearPlansForSpid(spid.Value);
+                                    }
+                                }
 
                                 ret.Add(item);
                             }

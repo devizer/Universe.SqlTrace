@@ -50,7 +50,7 @@ namespace Universe.SqlTrace.Tests
             throw new InvalidOperationException("Local Sql Express or LocalDB 2014+ (or above) with SysAdmin permission for the current user not found");
         }
 
-        public static readonly string DB = "UNITEST_" + Guid.NewGuid().ToString("N");
+        public static readonly string DB = "SQLTRACE_UNITEST_" + Guid.NewGuid().ToString("N");
 
         public static string TracePath =
             Environment.SystemDirectory.Substring(0, 2)

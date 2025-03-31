@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -350,7 +351,7 @@ TableName:         {env.TableName}");
             Console.WriteLine($"Connection String: [{testCase.ConnectionString}]{Environment.NewLine}Version: [{testCase.GetMediumVersion()}]");
             if (testCase.IsAzure()) return;
             string connectionString = testCase.ConnectionString;
-            string sql = @"SELECT @@version, @parameter;";
+            string sql = @"SELECT @@version VER, DATALENGTH(@@VERSION), @parameter ARG, 2 * @parameter DoubleARG, (Select Count(1) SchemaCount From (Select count(name) count From Sys.Objects Group By schema_id) as s) SchemaCount;";
 
             using (SqlTraceReader reader = new SqlTraceReader())
             {
@@ -369,6 +370,7 @@ TableName:         {env.TableName}");
                     }
                 }
 
+                reader.Stop();
                 var summary = reader.ReadSummaryReport();
                 var groups = reader.ReadGroupsReport<int>(TraceColumns.ClientProcess);
                 var details = reader.ReadDetailsReport();
@@ -434,14 +436,20 @@ TableName:         {env.TableName}");
 
         private void DumpCounters(TraceDetailsReport rpt)
         {
-            Console.WriteLine("STATEMENTS");
+            var emptyStringList = new List<string>();
+            IEnumerable<string> actualPlans = rpt.SelectMany(r => r.ActualXmlPlan ?? emptyStringList);
+            IEnumerable<string> compiledPlans = rpt.SelectMany(r => r.CompiledXmlPlan ?? emptyStringList);
+            Console.WriteLine($"STATEMENTS (Count={rpt.Count}, Plan Count Actual={actualPlans.Count()} Compiled={compiledPlans.Count()})");
             Console.WriteLine("~~~~~~~~~~");
             foreach (SqlStatementCounters statement in rpt)
             {
+                Console.WriteLine(statement);
+                /*
                 Console.WriteLine(
                     "{" + (statement.SpName == null ? statement.Sql : statement.SpName + ": " + statement.Sql) + "}: "
                     + statement.Counters + ", Error: " + (statement.SqlErrorCode.HasValue ? statement.SqlErrorCode.ToString() : "<None>")
                     + ", ErrorText: " + (statement.SqlErrorText == null ? "<null>" : $"'{statement.SqlErrorText}'"));
+            */
             }
         }
 
